@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Mobile Specific Meta -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Favicon-->
+    <link rel="shortcut icon" href="<%= static_path(@conn, "/images/fav.ico") %>">
+    <!-- Author Meta -->
+    <meta name="author" content="CS Digital">
+    <!-- Meta Description -->
+    <meta name="description" content="">
+    <!-- Meta Keyword -->
+    <meta name="keywords" content="">
+    <!-- meta character set -->
+    <meta charset="UTF-8">
+
+    <title>Thamani online</title>
+
+      <link href='https://fonts.googleapis.com/css?family=Muli:400,300' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/font-awesome/css/font-awesome.min.css") %>">
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/material-dashboard.css")   %>">
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/bootstrap.min.css")   %>">
+    <style>
+      .loader-show {
+        border: 16px solid #f3f3f3;
+        border-top: 16px solid #ffd700;
+        border-right: 16px solid #ef001d;
+        border-bottom: 16px solid #00bf48;
+        border-radius: 50%;
+        margin-top: 30px;
+        width: 20px;
+        height: 20px;
+        -webkit-animation: spin 2s linear ; /* Safari */
+        animation: spin 2s linear ;
+      }
+       .dt-button, .buttons-print {
+        margin-left:-170px;
+      }
+      .buttons-html5 {
+       margin-left:0px;
+     }
+
+
+      .loader-hide {
+        display:none;
+      }
+      /* Safari */
+      @-webkit-keyframes spin {
+        0% { -webkit-transform: rotate(0deg); }
+        100% { -webkit-transform: rotate(360deg); }
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+</style>
+    <script language="javascript" type="text/javascript">
+
+
+    function timeMsg(){
+
+    	window.setTimeout("clearMsg()",5000);//10secs
+
+    }
+
+    //
+
+    function clearMsg(){
+
+    	document.getElementById("hideMsg").innerHTML = "";
+
+    }
+</script>
+
+  </head>
+
+  <body onLoad = "timeMsg()" style="background:#f5f5f5">
+    <div class="wrapper" >
+
+        <div class="col-md-10 col-sm-12 col-md-offset-1"  >
+            <nav class="navbar navbar-transparent navbar-absolute">
+                <div class="container-fluid">
+
+                    <div class="navbar-header">
+			  <img  style="width:200px;margin:10px;padding: 10px;color: #0ab3c8;font-size: 22px;"  alt="Thamani" src ="<%= static_path(@conn, "/images/thamani_logo.png") %>">
+
+                    </div>
+                    <div class="collapse navbar-collapse">
+                      <ul class="nav navbar-nav navbar-left" style="margin-top: 10px;padding: 10px;">
+
+                      </ul>
+                        <ul class="nav navbar-nav navbar-right" style="margin-top:-10px">
+
+
+                            <li style="margin-left:0px;">
+                                <a href="#" class="" data-toggle="dropdown">
+                                  <%= if @current_user do %>
+                                      <%= if @current_user.image != " "  do %>
+                                  <img style="width:50px;height: 50px;border:2px solid gold;margin-left: -24px;float:left;display:inline-block" src="<%= Thamani.ImageUploader.url({@current_user.image, @current_user})%>" alt="avatar" class="img-circle img-responsive">
+                                        <% end %>
+
+                                  <%end%>
+                                    <p class="btn btn-simple text-left" style="text-transform:none;"> <%= @current_user.firstname%> <%= @current_user.lastname %> <i style="margin-right:-20px;margin-left:-10px" class="fa fa-angle-down btn btn-simple btn-info "></i></p>
+                                    <ul class="dropdown-menu">
+                                      <%= if @current_user.userlevel  do %>
+                                    <li>
+                                      <%=link "Users", to: user_path(@conn, :index)  %>
+                                  </li>
+                                  <li>
+                                    <%= link "Sign out", to: login_path(@conn, :delete, @current_user),
+                                                         method: "delete" %>
+                                  </li>
+                                      <% else %>
+
+
+                                        <li>
+                                            <%=link "My Profile", to: user_path(@conn, :show, @current_user)  %>
+                                        </li>
+                                        <li>
+                                          <%= link "Sign out", to: login_path(@conn, :delete,@current_user),
+                                                               method: "delete" %>
+                                        </li>
+
+                                      <% end %>
+                                    </ul>
+                                      </a>
+                            </li>
+                        </ul>
+
+                    </div>
+                </div>
+            </nav>
+    <div class="container" style="width:auto">
+
+      <div id ="hideMsg">
+
+      <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
+      <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
+
+    </div>
+      <main role="main">
+        <%= render @view_module, @view_template, assigns %>
+      </main>
+
+    </div> <!-- /container -->
+    <footer class="footer">
+               <div class="container-fluid">
+                   <nav class="pull-left">
+                       <ul>
+                         <li>
+                             <a href="https://www.thamanionline.com">
+                                 Website
+                             </a>
+                         </li>
+                         <li>
+                             <a href="https://www.thamanionline.com/terms">
+                                 Terms & Conditions
+                             </a>
+                         </li>
+                         <li>
+                             <a href="https://www.thamanionline.com/privacy">
+                                 Privacy
+                             </a>
+                         </li>
+                           <%= if @current_user.userlevel  do %>
+                         <li>
+                           <%=link "Users", to: user_path(@conn, :index)  %>
+                       </li>
+                       <li>
+                         <%= link "Sign out", to: login_path(@conn, :delete, @current_user),
+                                              method: "delete" %>
+                       </li>
+                           <% else %>
+
+
+                             <li>
+                                 <%=link "My Profile", to: user_path(@conn, :show, @current_user)  %>
+                             </li>
+                             <li>
+                               <%= link "Sign out", to: login_path(@conn, :delete,@current_user),
+                                                    method: "delete" %>
+                             </li>
+
+                           <% end %>
+
+                       </ul>
+                   </nav>
+                   <p class="copyright pull-right">
+                       &copy;
+                       <script>
+                           document.write(new Date().getFullYear())
+                       </script>
+                       Thamani Online. All Rights Reserved
+
+                   </p>
+               </div>
+           </footer>
+       </div>
+   </div>
+    <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
+
+    <!--   Core JS Files   -->
+<script src="<%= static_path(@conn, "/js/jquery-3.2.1.min.js") %>"></script>
+<script src="<%= static_path(@conn, "/js/bootstrap.min.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/material.min.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/perfect-scrollbar.jquery.min.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/arrive.min.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/jquery.bootstrap-wizard.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/jquery.tagsinput.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/jasny-bootstrap.min.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/jquery.validate.min.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/material-dashboard.js?v=1.2.1" ) %>"></script>
+<script  src="<%= static_path(@conn, "/js/bootstrap-table.js") %>"></script>
+<script  src="<%= static_path(@conn, "/js/bootstrap-table-print.js") %>"></script>
+<script  src="<%= static_path(@conn, "/js/bootstrap-table-export.js") %>"></script>
+<script  src="<%= static_path(@conn, "/js/tableexport.js") %>"></script>
+
+
+   <script type="text/javascript">
+   var $table = $('#fresh-table'),
+       $alertBtn = $('#alertBtn'),
+       full_screen = false;
+
+   $().ready(function(){
+     $('#toolbar').find('select').change(function () {
+       $table.bootstrapTable('refreshOptions', {
+         exportDataType: $(this).val()
+       });
+     });
+       $table.bootstrapTable({
+           toolbar: ".toolbar",
+
+           search: true,
+           showToggle: true,
+           showColumns: true,
+           pagination: true,
+           striped: true,
+           pageSize: 10,
+           pageList: [8,10,25,50,100],
+
+           formatShowingRows: function(pageFrom, pageTo, totalRows){
+               //do nothing here, we don't want to show the text "showing x of y from..."
+           },
+           formatRecordsPerPage: function(pageNumber){
+               return pageNumber + " rows visible";
+           },
+           icons: {
+               refresh: 'fa fa-refresh',
+               toggle: 'fa fa-th-list',
+               columns: 'fa fa-columns',
+               detailOpen: 'fa fa-plus-circle',
+               detailClose: 'fa fa-minus-circle'
+           }
+       });
+
+
+       $(window).resize(function () {
+           $table.bootstrapTable('resetView');
+       });
+
+
+   });
+
+
+       $(document).ready(function(){
+          // set up hover panels
+          // although this can be done without JavaScript, we've attached these events
+          // because it causes the hover to be triggered when the element is tapped on a touch device
+          $('.hover').hover(function(){
+            $(this).addClass('flip');
+          },function(){
+            $(this).removeClass('flip');
+          });
+        });
+
+
+
+
+   </script>
+  </body>
+</html>

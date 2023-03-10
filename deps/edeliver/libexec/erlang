@@ -1,0 +1,1317 @@
+#!/usr/bin/env bash
+
+# the local or remote (scp) directory where the built
+# releases should be copied to
+if [ -z "$LOCAL_RELEASE_STORE" ]
+then
+  LOCAL_RELEASE_STORE=".deliver"
+fi
+if [ -z "$RELEASE_STORE" ]
+then
+  RELEASE_STORE="$LOCAL_RELEASE_STORE"
+fi
+
+
+
+if [ -z "$REBAR_CONFIG" ]
+then
+  REBAR_OPTIONS=""
+else
+  REBAR_OPTIONS="-C $REBAR_CONFIG"
+fi
+
+REBAR_CMD=${REBAR_CMD:="./rebar $REBAR_OPTIONS"}
+MIX_CMD=${MIX_CMD:="mix"}
+RELX_CMD=${RELX_CMD:="./relx"}
+
+# sets the build host, user and path as deliver hosts and path
+set_build_hosts() {
+  # validate that there is only one build host
+  local _build_hosts=$(echo "$BUILD_HOST" | wc -w)
+  [[ $_build_hosts  -gt 1 ]] && error "There are several build hosts configured:\n\n\t$BUILD_HOST\n\nPlease configure only one build host in \$BUILD_HOST.\n"
+  # use build host and user for remote operations
+  export HOSTS=$BUILD_HOST
+  export APP_USER=$BUILD_USER
+  # use deliver to as built at destination
+  export DELIVER_TO=$BUILD_AT
+}
+
+# sets the deploy host, user and path as deliver hosts and path
+set_deploy_hosts() {
+  if [ "$DEPLOY_ENVIRONMENT" = "production" ]; then
+    export HOSTS=$PRODUCTION_HOSTS
+    export APP_USER=$PRODUCTION_USER
+  else
+    export HOSTS=$STAGING_HOSTS
+    export APP_USER=$STAGING_USER
+    export DELIVER_TO=$TEST_AT
+  fi
+}
+
+update_hosts_app_user() {
+  HOSTS_APP_USER=""
+  for _host in $HOSTS
+  do
+    HOSTS_APP_USER="$HOSTS_APP_USER,$APP_USER@$_host"
+  done
+  HOSTS="$(__remote_friendly $HOSTS)"
+  HOSTS_APP_USER="$(__remote_friendly $HOSTS_APP_USER)"
+}
+
+
+# sets all required config variables and defaults for deploy strategies
+require_deploy_config() {
+  DEPLOY_ENVIRONMENT="${DEPLOY_ENVIRONMENT:=staging}"
+  TEST_AT="${TEST_AT:=$DELIVER_TO}"
+
+  REQUIRED_CONFIGS+=("APP")
+
+  if [ "$DEPLOY_ENVIRONMENT" = "production" ]; then
+    REQUIRED_CONFIGS+=("PRODUCTION_HOSTS")
+    REQUIRED_CONFIGS+=("PRODUCTION_USER")
+    REQUIRED_CONFIGS+=("DELIVER_TO")
+  else
+    REQUIRED_CONFIGS+=("STAGING_HOSTS")
+    REQUIRED_CONFIGS+=("STAGING_USER")
+    REQUIRED_CONFIGS+=("TEST_AT")
+  fi
+
+  OPTIONAL_CONFIGS+=("VERSION")
+}
+
+# sets all required config variables and defaults for node execute strategies
+require_node_config() {
+  local _node_environment_uppercase=$(echo "$NODE_ENVIRONMENT" | tr '[:lower:]' '[:upper:]')
+  local _node_config_variable_name="${_node_environment_uppercase}_NODES"
+  eval NODES=\$$_node_config_variable_name
+  REQUIRED_CONFIGS+=("$_node_config_variable_name")
+  # set user@host:/path as default value if nodes config is not set
+  if [ -z "$NODES" ]; then
+    if [ "$NODE_ENVIRONMENT" = "production" ]; then
+      local _user=${PRODUCTION_USER}
+      local _path=${DELIVER_TO}
+    else
+      local _user=${STAGING_USER}
+      local _path=${TEST_AT:-$DELIVER_TO}
+    fi
+    if [[ -n "$_user" ]] && [[ -n "$_path" ]]; then
+      local _hosts_environment_variable_name="${_node_environment_uppercase}_HOSTS"
+      for i in $(eval echo \$$_hosts_environment_variable_name); do
+        eval $_node_config_variable_name=\"\$$_node_config_variable_name ${_user}@${i}:${_path}\"
+      done
+      eval NODES=\$$_node_config_variable_name
+    fi
+  fi
+}
+
+
+# clean fetch of dependencies on the remote build host
+erlang_get_and_update_deps() {
+  __exec_if_defined "pre_erlang_get_and_update_deps"
+
+  status "Fetching / Updating dependencies"
+  __sync_remote "
+    [ -f ~/.profile ] && source ~/.profile
+    set -e
+    cd $DELIVER_TO
+    if [ \"$BUILD_CMD\" = \"rebar\" ]; then
+      echo \"using rebar to fetch and update deps\"
+      $REBAR_CMD update-deps get-deps
+    elif [ \"$BUILD_CMD\" = \"mix\" ]; then
+      echo \"using mix to fetch and update deps\"
+      if [ ! -f ~/.mix/rebar ] || [ ! -f ~/.mix/rebar3 ]; then
+        APP=\"$APP\" MIX_ENV=\"$TARGET_MIX_ENV\" $MIX_CMD local.rebar --force
+      else
+        echo \"rebar and rebar3 for mix was built already\"
+      fi
+      APP=\"$APP\" MIX_ENV=\"$TARGET_MIX_ENV\" $MIX_CMD local.hex --force
+      APP=\"$APP\" MIX_ENV=\"$TARGET_MIX_ENV\" $MIX_CMD deps.get
+    fi
+  "
+  __exec_if_defined "post_erlang_get_and_update_deps"
+}
+
+# joins the arguments by the first argument
+__join_string() {
+  trim_string $(local IFS="$1"; shift; echo -ne "$*");
+}
+
+# gets the arguments from the --auto-version=, --increment-version and --set-version
+# options and concatenates them ready to be used as arguments for the release.version
+# mis tasks
+__get_auto_version_args() {
+  __join_string " " "$INCREMENT_RELEASE_VERSION" "$SET_RELEASE_VERSION" "$AUTO_RELEASE_VERSION"
+}
+
+# compiles the sources on the remote build host
+erlang_clean_compile() {
+  __exec_if_defined "pre_erlang_clean_compile"
+  [[ "$SKIP_MIX_CLEAN" = "true" ]] \
+    && status "Compiling sources (skipping cleaning)" \
+    || status "Compiling sources"
+
+  if [ "$RELEASE_CMD" = "mix" ]; then
+    [[ "$MODE" = "verbose" ]] && local _auto_release_verbose="--verbose"
+    local _auto_version_args="$(__get_auto_version_args)"
+    if [[ -n "$_auto_version_args" ]] || [[ -n "$AUTO_VERSION" ]]; then
+      local _set_auto_version=" release.version $_auto_version_args $_auto_release_verbose,"
+    fi
+  fi
+  __sync_remote "
+    [ -f ~/.profile ] && source ~/.profile
+    set -e
+    cd $DELIVER_TO
+    if [ \"$BUILD_CMD\" = \"rebar\" ]; then
+      echo \"using rebar to compile files\"
+      [[ \"$SKIP_MIX_CLEAN\" != \"true\" ]] && $REBAR_CMD clean skip_deps=true || :
+      $REBAR_CMD compile
+    elif [ \"$BUILD_CMD\" = \"mix\" ] && [ \"$RELEASE_CMD\" = \"mix\" ]; then
+      echo \"Checking whether deps must be compiled for mix version 1.3.[01234]\"
+      # see https://github.com/boldpoker/edeliver/issues/94
+      if $MIX_CMD --version | grep 'Mix 1.3.[01234]' >/dev/null 2>&1 ; then
+        echo \"Compiling deps because mix version 1.3.[01234] is used\"
+        APP=\"$APP\" MIX_ENV=\"$TARGET_MIX_ENV\" $MIX_CMD deps.compile
+      fi
+      if [[ \"$SKIP_MIX_CLEAN\" = \"true\" ]]; then
+        APP=\"$APP\" MIX_ENV=\"$TARGET_MIX_ENV\" AUTO_VERSION=\"$AUTO_VERSION\" BRANCH=\"$BRANCH\" SKIP_RELUP_MODIFICATIONS=\"$SKIP_RELUP_MODIFICATIONS\" RELUP_MODIFICATION_MODULE=\"$RELUP_MODIFICATION_MODULE\" USING_DISTILLERY=\"$USING_DISTILLERY\" $MIX_CMD do${_set_auto_version} compile
+      else
+        APP=\"$APP\" MIX_ENV=\"$TARGET_MIX_ENV\" AUTO_VERSION=\"$AUTO_VERSION\" BRANCH=\"$BRANCH\" SKIP_RELUP_MODIFICATIONS=\"$SKIP_RELUP_MODIFICATIONS\" RELUP_MODIFICATION_MODULE=\"$RELUP_MODIFICATION_MODULE\" USING_DISTILLERY=\"$USING_DISTILLERY\" $MIX_CMD do clean,${_set_auto_version} compile
+      fi
+    elif [ \"$BUILD_CMD\" = \"mix\" ]; then
+      echo \"using mix to compile files\"
+      if [[ \"$SKIP_MIX_CLEAN\" = \"true\" ]]; then
+        if [[ -n \"$AUTO_VERSION\" ]]; then
+          hint_message 'Using --auto-version together with --skip-mix-clean would not work!'
+        fi
+        APP=\"$APP\" MIX_ENV=\"$TARGET_MIX_ENV\" AUTO_VERSION=\"$AUTO_VERSION\" BRANCH=\"$BRANCH\" SKIP_RELUP_MODIFICATIONS=\"$SKIP_RELUP_MODIFICATIONS\" RELUP_MODIFICATION_MODULE=\"$RELUP_MODIFICATION_MODULE\" USING_DISTILLERY=\"$USING_DISTILLERY\" $MIX_CMD do deps.compile,${_set_auto_version} compile
+      else
+        APP=\"$APP\" MIX_ENV=\"$TARGET_MIX_ENV\" AUTO_VERSION=\"$AUTO_VERSION\" BRANCH=\"$BRANCH\" SKIP_RELUP_MODIFICATIONS=\"$SKIP_RELUP_MODIFICATIONS\" RELUP_MODIFICATION_MODULE=\"$RELUP_MODIFICATION_MODULE\" USING_DISTILLERY=\"$USING_DISTILLERY\" $MIX_CMD do clean, deps.compile,${_set_auto_version} compile
+      fi
+    fi
+  "
+
+  __exec_if_defined "post_erlang_clean_compile"
+}
+
+
+
+
+# generates the release on the remote build host
+erlang_generate_release() {
+  __exec_if_defined "pre_erlang_generate_release"
+
+  if [ "$RELEASE_CMD" = "mix" ]; then
+    if [[ "$USING_DISTILLERY" = "true" ]]; then
+      local _mix_release_verbose_flag=" --verbose"
+      local _env_flag=" --env=\"$TARGET_MIX_ENV\""
+      local _app_flag=" --name=\"$APP\""
+      if [[ -n "$WITH" ]] || [[ -n "$FROM" ]]; then
+        local _upgrade_flag=" --upgrade"
+        if [[ -n "$WITH" ]]; then
+          _upgrade_flag="${_upgrade_flag} --upfrom=\"$WITH\""
+        elif [[ -n "$OLD_RELEASE_VERSION" ]]; then
+          _upgrade_flag="${_upgrade_flag} --upfrom=\"$OLD_RELEASE_VERSION\""
+        fi
+      fi
+    else
+      [[ "$MODE" = "verbose" ]] && local _mix_release_verbose_flag=" --verbosity=normal" || local _mix_release_verbose_flag=" --verbosity=verbose"
+    fi
+    [[ "$MODE" = "verbose" ]] && local _auto_release_verbose=" --verbose"
+    local _auto_version_args="$(__get_auto_version_args)"
+    if [[ -n "$_auto_version_args" ]] || [[ -n "$AUTO_VERSION" ]]; then
+      local _set_auto_version="do release.version ${_auto_version_args}${_auto_release_verbose}, "
+    fi
+  fi
+
+  status "Generating release"
+  __sync_remote "
+    [ -f ~/.profile ] && source ~/.profile
+    set -e
+    cd $DELIVER_TO
+    if [ \"$RELEASE_CMD\" = \"rebar\" ]; then
+      echo \"using rebar to generate release\"
+      $REBAR_CMD $RELEASE_CMD_OPTIONS -f generate
+    elif [ \"$RELEASE_CMD\" = \"relx\" ]; then
+      echo \"using relx to generate release\"
+      $RELX_CMD release
+    elif [ \"$RELEASE_CMD\" = \"mix\" ]; then
+      echo \"using mix to generate release\"
+      MIX_ENV=\"$TARGET_MIX_ENV\" LINK_SYS_CONFIG=\"$LINK_SYS_CONFIG\" LINK_VM_ARGS=\"$LINK_VM_ARGS\" APP=\"$APP\" AUTO_VERSION=\"$AUTO_VERSION\" BRANCH=\"$BRANCH\" SKIP_RELUP_MODIFICATIONS=\"$SKIP_RELUP_MODIFICATIONS\" RELUP_MODIFICATION_MODULE=\"$RELUP_MODIFICATION_MODULE\" USING_DISTILLERY=\"$USING_DISTILLERY\" $MIX_CMD $_set_auto_version release${_force_no_interaction}${_mix_release_verbose_flag}${_env_flag}${_app_flag}${_upgrade_flag}
+    fi
+  "
+
+  __exec_if_defined "post_erlang_generate_release"
+}
+
+# generates an relup upgrade package with relx
+# expects that in _rel folder is the old release
+# and in compiled sources the new release
+relx_generate_relup() {
+  __exec_if_defined "pre_relx_generate_relup"
+
+  __detect_remote_release_dir
+  RELEASE_VERSION="" # redetect new version
+  __detect_remote_release_version
+  status "Generating relup to version ${RELEASE_VERSION}"
+  __sync_remote "
+    [ -f ~/.profile ] && source ~/.profile
+    set -e
+    cd $DELIVER_TO
+    $RELX_CMD relup
+  "
+
+  __exec_if_defined "post_relx_generate_relup"
+}
+
+# creates a tar.gz of the built release
+erlang_archive_release() {
+  __detect_remote_release_dir
+  __detect_remote_release_version
+  [[ "$RELEASE_CMD" = "mix" ]] && return 0 # mix archives release automatically
+  status "Building archive of release ${RELEASE_VERSION}"
+  # create tar
+  __sync_remote "
+    [ -f ~/.profile ] && source ~/.profile
+    set -e
+    cd $DELIVER_TO
+    if [ \"$RELEASE_CMD\" = \"rebar\" ]; then
+      tar -zcpf $(dirname $RELEASE_DIR)/${APP}_${RELEASE_VERSION}.tar.gz -C $(dirname $RELEASE_DIR) ${APP}
+    elif [ \"$RELEASE_CMD\" = \"relx\" ]; then
+      echo \"using relx to archive release\"
+      $RELX_CMD tar
+    fi
+  "
+}
+
+# copies the generated release from the remote build host
+# to the release store. takes the release type as first
+# parameter (release|upgrade) and the revision starting
+# with a dash as optional second parameter (e.g. "-abc123")
+copy_release_to_release_store() {
+  __detect_remote_release_dir
+  __detect_remote_release_version
+  __detect_release_store_type
+  local _release_type="$1"
+  local _release_revision="$2"
+  if [[ "$RELEASE_CMD" = "relx" ]]; then
+    local _release_file="$(dirname $RELEASE_DIR)/_rel/${APP}-${RELEASE_VERSION}.tar.gz"
+  elif [[ "$RELEASE_CMD" = "mix" ]]; then
+    if [[ "$USING_DISTILLERY" = "true" ]]; then
+      local _release_file="$(dirname $RELEASE_DIR)/${APP}/releases/${RELEASE_VERSION}/${APP}.tar.gz"
+    fi
+  else # used rebar to generate release
+    local _release_file="$(dirname $RELEASE_DIR)/${APP}_${RELEASE_VERSION}.tar.gz"
+  fi
+  status "Copying release ${RELEASE_VERSION} to $RELEASE_STORE_TYPE release store"
+  if [ "$RELEASE_STORE_TYPE" = "s3" ]; then
+    local _aws_script_content=$(cat $BASE_PATH/libexec/aws)
+    __remote "
+      [ -f ~/.profile ] && source ~/.profile
+      set -e
+      cd $(dirname ${_release_file}) $SILENCE
+      AWS_ARGUMENTS=\"put ${AWS_BUCKET_NAME}/${APP}_${RELEASE_VERSION}${_release_revision}.${_release_type}.tar.gz $(basename ${_release_file})\" AWS_ACCESS_KEY_ID=\"$AWS_ACCESS_KEY_ID\" AWS_SECRET_ACCESS_KEY=\"$AWS_SECRET_ACCESS_KEY\" perl $SILENCE <<'EOF'${_aws_script_content}EOF ;" "$HOSTS_APP_USER" "
+
+      [ -f ~/.profile ] && source ~/.profile
+      set -e
+      cd $(dirname ${_release_file}) $SILENCE
+      AWS_ARGUMENTS=\"put ${AWS_BUCKET_NAME}/${APP}_${RELEASE_VERSION}${_release_revision}.${_release_type}.tar.gz $(basename ${_release_file})\" AWS_ACCESS_KEY_ID=\"$AWS_ACCESS_KEY_ID\" \\
+      AWS_SECRET_ACCESS_KEY=\"$AWS_SECRET_ACCESS_KEY\" perl $SILENCE <<'EOF'
+        content from libexec/aws file
+      EOF ;"
+  elif [ "$RELEASE_STORE_TYPE" = "local" ]; then
+    status "Copying $(basename $_release_file) to release store"
+    __create_directory_in_release_store "/releases"
+    __exec "scp -o ConnectTimeout=\"$SSH_TIMEOUT\"  -p $BUILD_USER@$BUILD_HOST:${_release_file} ${RELEASE_STORE}/releases/${APP}_${RELEASE_VERSION}${_release_revision}.${_release_type}.tar.gz"
+  elif [ "$RELEASE_STORE_TYPE" = "remote" ]; then
+    local _release_store_path=${RELEASE_STORE#*:}
+    local _release_store_host=${RELEASE_STORE%:*}
+    local _build_hosts="${2:-"$HOSTS_APP_USER"}"
+    local _dest_file_name="${_release_store_path%%/}/${APP}_${RELEASE_VERSION}${_release_revision}.${_release_type}.tar.gz"
+    local _remote_job="
+      [ -f ~/.profile ] && source ~/.profile
+      set -e
+      [ -f \"$_release_file\" ]
+      if [[ \"$_build_hosts\" = \"$_release_store_host\" ]]; then
+        cp $_release_file $_dest_file_name
+      else
+        cat $_release_file | ssh $_release_store_host \"cat > $_dest_file_name\"
+      fi
+      exit
+    "
+    ssh -A -S none -o ConnectTimeout="$SSH_TIMEOUT" "$_build_hosts" "$_remote_job $SILENCE" || \
+      error "Copying release file failed\n  source: $_release_file on $_build_hosts\n  destination: $_dest_file_name on $_release_store_host"
+  else
+    error_message "Cannot copy releases to store for store type ${RELEASE_STORE_TYPE}"; exit 2
+  fi
+
+}
+
+# copies the release from the release store
+# to a local temp dir which is set to LOCAL_RELEASE_TMP_DIR
+# arg1 : release type: (release|upgrade)
+# arg2 : release version
+copy_release_to_local_temp_dir() {
+  __detect_release_store_type
+  local _release_type="$1"
+  local _release_version="$2"
+  status "Copying release from $RELEASE_STORE_TYPE release store to local temp dir"
+  mkdir -p "${LOCAL_RELEASE_STORE}/.tmp"
+  local _local_tmp_dir=$(mktemp -d "${LOCAL_RELEASE_STORE}/.tmp/${APP}_${_release_version}.${_release_type}.XXXXXX")
+  [[ "$MODE" = "verbose" ]] && echo "Temp dir: ${_local_tmp_dir}"
+  if [ "$RELEASE_STORE_TYPE" = "s3" ]; then
+    download_file_from_s3_release_store "${APP}_${_release_version}.${_release_type}.tar.gz" "${_local_tmp_dir}/${APP}_${_release_version}.${_release_type}.tar.gz"
+  elif [ "$RELEASE_STORE_TYPE" = "remote" ]; then
+    download_file_from_remote_release_store "${APP}_${_release_version}.${_release_type}.tar.gz" "${_local_tmp_dir}/${APP}_${_release_version}.${_release_type}.tar.gz"
+  elif [ "$RELEASE_STORE_TYPE" = "local" ]; then
+    cp ${RELEASE_STORE}/releases/${APP}_${_release_version}.${_release_type}.tar.gz ${_local_tmp_dir}
+  else
+    error_message "Cannot copy releases from store for store type ${RELEASE_STORE_TYPE}"; exit 2
+  fi
+  LOCAL_RELEASE_TMP_DIR="$_local_tmp_dir"
+}
+
+get_relup_content_from_upgrade() {
+  __detect_release_store_type
+  local _release_file="$1"
+  local _release_version=$(__release_version_from_archive_name "$_release_file" "upgrade")
+  if [ "$RELEASE_STORE_TYPE" = "local" ]; then
+    tar -Oxzf ${RELEASE_STORE}/releases/${_release_file} releases/${_release_version}/relup
+  elif [ "$RELEASE_STORE_TYPE" = "remote" ]; then
+    local _release_store_path=${RELEASE_STORE#*:}
+    local _release_store_host=${RELEASE_STORE%:*}
+    local _remote_job="
+      [ -f ~/.profile ] && source ~/.profile
+      set -e
+      cd $_release_store_path
+      tar -Oxzf \"$_release_file\" releases/${_release_version}/relup
+      exit
+    "
+    ssh -o ConnectTimeout="$SSH_TIMEOUT" "$_release_store_host" "$_remote_job $SILENCE"
+  elif [ "$RELEASE_STORE_TYPE" = "s3" ]; then
+    local _local_tmp_dir=$(mktemp -d "${LOCAL_RELEASE_STORE}/.tmp/${_release_file}.XXXXXX")
+    download_file_from_s3_release_store "$_release_file" "${_local_tmp_dir}/${_release_file}"
+    tar -Oxzf "${_local_tmp_dir}/${_release_file}" releases/${_release_version}/relup
+    [[ -n "$_local_tmp_dir" ]] && [[ -d "$_local_tmp_dir" ]] && rm -rf "$_local_tmp_dir"
+  fi
+}
+
+# copies a local file to the local or remote release store
+upload_file_to_release_store() {
+  __detect_release_store_type
+  local _source_file="$1"
+  local _destination_file="$2"
+  if [ "$RELEASE_STORE_TYPE" = "s3" ]; then
+    upload_file_to_s3_release_store "$_source_file" "$_destination_file"
+  elif [ "$RELEASE_STORE_TYPE" = "local" ]; then
+    status "Copying ${_source_file} to local release store"
+    [ "$FORCE" != "true" ] && file_exists_in_store $(basename $_destination_file) && {
+      read -n1 -p "${txtylw}Destination File '$_destination_file' already uploaded. Overwrite? (y/n)${txtrst}"
+      echo
+      [[ $REPLY = [yY] ]] || exit 1
+    }
+    cp $_source_file ${RELEASE_STORE}/releases/${_destination_file} || exit 2
+  elif [ "$RELEASE_STORE_TYPE" = "remote" ]; then
+    upload_file_to_remote_release_store  "$_source_file" "$_destination_file"
+  else
+    error_message "Cannot copy releases to store for store type ${RELEASE_STORE_TYPE}"; exit 2
+  fi
+}
+
+upload_file_to_s3_release_store() {
+  local _source_file=$1
+  local _destination_file=$(basename "$2")
+  [ ! -f "$_source_file" ] && error "\nFAILED to upload $_source_file.\nFile does not exist.\n" && exit 2
+  [ "$FORCE" != "true" ] && file_exists_in_store $_destination_file && {
+    read -n1 -p "${txtylw}Destination File '$_destination_file' already uploaded. Overwrite? (y/n)${txtrst}"
+    echo
+    [[ $REPLY = [yY] ]] || exit 1
+  }
+  status "Uploading file $_source_file to $_destination_file"
+  AWS_ARGUMENTS="put ${AWS_BUCKET_NAME}/${_destination_file} ${_source_file}" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" perl $BASE_PATH/libexec/aws || {
+      error "\nFAILED to upload $_source_file\n"
+  }
+}
+
+upload_file_to_remote_release_store() {
+  local _source_file=$1
+  local _destination_file=$(basename "$2")
+  local _release_store_path=${RELEASE_STORE#*:}
+  local _release_store_host=${RELEASE_STORE%:*}
+  [ ! -f "$_source_file" ] && error "\nFAILED to upload $_source_file.\nFile does not exist.\n" && exit 2
+  [ "$FORCE" != "true" ] && file_exists_in_store $_destination_file && {
+    read -n1 -p "${txtylw}Destination File '$_destination_file' already uploaded. Overwrite? (y/n)${txtrst}"
+    echo
+    [[ $REPLY = [yY] ]] || exit 1
+  }
+  status "Uploading file $_source_file to $_destination_file"
+  __exec "scp -o ConnectTimeout=\"$SSH_TIMEOUT\" -p ${_source_file} ${_release_store_host}:${_release_store_path%%/}/${_destination_file} $SILENCE"
+}
+
+# copies the generated appup files from the remote build host
+# to the release store
+copy_appups_to_release_store() {
+  __detect_remote_release_dir
+  RELEASE_VERSION="" # redetect new version
+  __detect_remote_release_version
+  local _old_version=$1
+  local _appup_files="$RELEASE_DIR/lib/*/ebin/*.appup"
+  status "Copying generated appup files to release store /appup/${_old_version}-${RELEASE_VERSION}"
+  # create release store directory if it is a local directory
+  __create_directory_in_release_store "/appup/${_old_version}-${RELEASE_VERSION}"
+  __exec "scp -o ConnectTimeout=\"$SSH_TIMEOUT\"  -p $BUILD_USER@$BUILD_HOST:${_appup_files} ${RELEASE_STORE}/appup/${_old_version}-${RELEASE_VERSION}"
+}
+
+file_exists_in_store() {
+  local _file=$1
+  local _release_type=${2:-*}
+  for i in $(__get_releases_in_store "$_release_type"); do
+    [[ "$i" = "$_file" ]] && return 0
+  done
+  return 1;
+}
+
+download_file_from_s3_release_store() {
+  local _source_file=$1
+  local _destination_file=$2
+  if [ -f "$_destination_file" ] && [ "$FORCE" != "true" ]; then
+    read -n1 -p "${txtylw}Destination File '$_destination_file' already exists. Overwrite? (y/n)${txtrst}"
+    echo
+    [[ $REPLY = [yY] ]] || exit 1
+  fi
+  file_exists_in_store $_source_file || {
+    error "\nFAILED to download $_source_file.\nFile does not exist in remote release store.\n"
+    exit 2
+  }
+  status "Downloading $_source_file to $_destination_file"
+  AWS_ARGUMENTS="get ${AWS_BUCKET_NAME}/${_source_file}" AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" perl $BASE_PATH/libexec/aws 2>/dev/null > "$_destination_file" || {
+      [[ -f "$_destination_file" ]] && [[ ! -s "$_destination_file" ]] && rm "$_destination_file"
+      error "\nFAILED to download $_source_file\n"
+  }
+}
+
+download_file_from_remote_release_store() {
+  local _source_file=$1
+  local _destination_file=$2
+  local _release_store_path=${RELEASE_STORE#*:}
+  local _release_store_host=${RELEASE_STORE%:*}
+  if [ -f "$_destination_file" ] && [ "$FORCE" != "true" ]; then
+    read -n1 -p "${txtylw}Destination File '$_destination_file' already exists. Overwrite? (y/n)${txtrst}"
+    echo
+    [[ $REPLY = [yY] ]] || exit 1
+  fi
+  file_exists_in_store $_source_file || {
+    error "\nFAILED to download $_source_file.\nFile does not exist in remote release store.\n"
+    exit 2
+  }
+  status "Downloading $_source_file to $_destination_file"
+  __exec "scp -o ConnectTimeout=\"$SSH_TIMEOUT\" -p ${_release_store_host}:${_release_store_path%%/}/${_source_file} ${_destination_file} $SILENCE"
+}
+
+# reselects the release or update to deploy to productions hosts
+# from the release store. Sets the RELEASE_FILE and VERSION variables
+# takes the release type as parameter (release|upgrade|release_or_upgrade_with_release|*)
+select_release_from_store() {
+  local _release_type="$1"
+  local _action=${2:-deploy}
+  if [ -n "$VERSION" ]; then
+    [[ "$_release_type" = "release_or_upgrade_with_release" ]] && _release_type="*" && local _autoselect_release_if_relase_and_upgrade_exists="true"
+    if [[ "$_release_type" = "*" ]]; then
+      local _release_files=( $(__get_releases_in_store "$_release_type" | grep "$VERSION" | sort -bt. -k1,1 -k2,2n -k3,3n -k4,4n -k5,5n) )
+      if [ ${#_release_files[@]} -eq 1 ]; then
+        RELEASE_FILE=$(basename ${_release_files[0]})
+      elif [ ${#_release_files[@]} -eq 0 ]; then
+        error_message "Release with version $VERSION not found in ${RELEASE_STORE_TYPE} release store."
+        hint_message "You can build one with the ./edeliver build $_release_type task."
+        exit 2
+      else
+        for _release_file in "${_release_files[@]}"; do
+          [[ "$_release_file" = "${APP}_${VERSION}."*".tar.gz" ]] && _release_file=${_release_file##${APP}_${VERSION}.} && _release_file=${_release_file%%.tar.gz} && _releases_types_with_version+=($_release_file)
+        done
+        if [ ${#_releases_types_with_version[@]} -eq 1 ]; then
+          _release_type=${_releases_types_with_version[0]}
+        else
+          if [[ "$_autoselect_release_if_relase_and_upgrade_exists" = "true" ]]; then
+            _release_type="release"
+            RELEASE_FILE="${APP}_${VERSION}.${_release_type}.tar.gz"
+          else
+            hint_message "Found ${#_releases_types_with_version[@]} different release types for version ${VERSION}."
+            for _release_type in "${_releases_types_with_version[@]}"; do
+              hint_message " $_release_type"
+            done
+            hint_message "Enter Release Type:"
+            read _release_type
+          fi
+        fi
+        RELEASE_FILE="${APP}_${VERSION}.${_release_type}.tar.gz"
+      fi
+    else
+      RELEASE_FILE="${APP}_${VERSION}.${_release_type}.tar.gz"
+    fi
+  else
+    [[ "$_release_type" = "release_or_upgrade_with_release" ]] && _release_type="*" && local _autoselect_release_if_relase_and_upgrade_exists="true"
+    __detect_release_store_type
+    local _release_files=( $(__get_releases_in_store "$_release_type" | sort -bt. -k1,1 -k2,2n -k3,3n -k4,4n -k5,5n) )
+    if [ ${#_release_files[@]} -eq 1 ]; then
+      RELEASE_FILE=$(basename ${_release_files[0]})
+      VERSION=$(__release_version_from_archive_name "$RELEASE_FILE" "$_release_type")
+    elif [ ${#_release_files[@]} -eq 0 ]; then
+      error_message "No $_release_type(s) found in ${RELEASE_STORE_TYPE} release store."
+      hint_message "You can build one with the ./edeliver build $_release_type task."
+      exit 2
+    else
+      status "Selecting release"
+      hint_message "Found ${#_release_files[@]} different versions to ${_action}."
+      hint_message "Type the version you want to ${_action}"
+      hint_message "or set --version=X in the command line."
+      hint_message "Versions:"
+      local _release_file
+      for _release_file in "${_release_files[@]}"; do
+        local _current_version=$(__release_version_from_archive_name "$_release_file" "$_release_type")
+        hint_message " $_current_version"
+      done
+      hint_message "Enter Version:"
+      read VERSION
+      if [[ "$_release_type" = "*" ]]; then
+        local _releases_types_with_version=()
+        for _release_file in "${_release_files[@]}"; do
+          [[ "$_release_file" = "${APP}_${VERSION}."*".tar.gz" ]] && _release_file=${_release_file##${APP}_${VERSION}.} && _release_file=${_release_file%%.tar.gz} && _releases_types_with_version+=($_release_file)
+        done
+        if [ ${#_releases_types_with_version[@]} -eq 1 ]; then
+          _release_type=${_releases_types_with_version[0]}
+        else # found release and upgrade
+          if [[ "$_autoselect_release_if_relase_and_upgrade_exists" = "true" ]]; then
+            _release_type="release"
+            RELEASE_FILE="${APP}_${VERSION}.${_release_type}.tar.gz"
+          else
+            hint_message "Found ${#_releases_types_with_version[@]} different release types for version ${VERSION}."
+            for _release_type in "${_releases_types_with_version[@]}"; do
+              hint_message " $_release_type"
+            done
+            hint_message "Enter Release Type:"
+            read _release_type
+          fi
+        fi
+        RELEASE_FILE="${APP}_${VERSION}.${_release_type}.tar.gz"
+      else
+        RELEASE_FILE="${APP}_${VERSION}.${_release_type}.tar.gz"
+      fi
+    fi
+  fi
+}
+
+# validates that the release or upgrade with the given version is in
+# the release store.
+# takes the release type as first parameter (release|update|upgrade)
+# and the version that should be in the store as second parameter
+validate_release_is_in_store() {
+  local _release_type="$1"
+  local _release_version="$2"
+  __detect_release_store_type
+  status "Validating ${_release_type} version ${_release_version} is in ${RELEASE_STORE_TYPE} release store"
+  local _release_files=( $(__get_releases_in_store "$_release_type") )
+  for _release_file in "${_release_files[@]}"; do
+    local _current_version=$(__release_version_from_archive_name "$_release_file" "$_release_type")
+    [[ "$_current_version" = "$_release_version" ]] && RELEASE_FILE="$_release_file" && return 0
+  done
+  error_message "\n${_release_type} version ${_release_version} not found in release store\n"
+  return 1
+}
+
+# lists the available releases in the store
+list_releases_in_store() {
+  local _release_type="$1"
+  __detect_release_store_type
+  status "Listing ${APP} releases in ${RELEASE_STORE_TYPE} release store"
+  local _release_files=( $(__get_releases_in_store "$_release_type") )
+  local _app_column_width=${#APP}
+  [[ $_app_column_width -lt 11 ]] && _app_column_width="11"
+  printf "\n %${_app_column_width}s | Version | Revision |    Type | File\n-" "Application"
+  for i in $(seq 1 $_app_column_width); do printf "-"; done
+  printf '-' {1.."$_app_column_width"}
+  printf "+---------+----------+---------+---------------------\n"
+  local _release_file
+  for _release_file in "${_release_files[@]}"; do
+    local _full_release_version=$(__release_version_from_archive_name "$_release_file" "$_release_type")
+    local _release_revision=${_full_release_version##*-}
+    _release_version=${_full_release_version%%-*}
+    [[ "$_release_revision" = "$_release_version" ]] && _release_revision=""
+    local _removed_app_name=${_release_file/${APP}_/}
+    local _removed_archive_extension=${_removed_app_name/\.tar\.gz/}
+    local _current_release_type=${_removed_archive_extension/$_full_release_version./}
+    printf " %${_app_column_width}s | %7s | %8s | %7s | %s\n" "$APP" "$_release_version" "$_release_revision" "$_current_release_type" "$_release_file"
+  done
+}
+
+# gets the names of the release packages in the release store.
+__get_releases_in_store() {
+  local _release_type="$1"
+  __detect_release_store_type
+  if [ "$RELEASE_STORE_TYPE" = "s3" ]; then
+    AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" ${BASE_PATH}/libexec/aws ls ${AWS_BUCKET_NAME} 2>/dev/null | grep -o "${APP}_.*.${_release_type}.tar.gz" | sort -bt. -k1,1 -k2,2n -k3,3n -k4,4n -k5,5n
+  elif [ "$RELEASE_STORE_TYPE" = "local" ]; then
+    local _release_file;
+    for _release_file in $(ls -1 ${RELEASE_STORE}/releases/${APP}_*.${_release_type}.tar.gz | sort -bt. -k1,1 -k2,2n -k3,3n -k4,4n -k5,5n); do
+      echo $(basename $_release_file)
+    done
+  elif [ "$RELEASE_STORE_TYPE" = "remote" ]; then
+    local _release_store_path=${RELEASE_STORE#*:}
+    local _release_store_host=${RELEASE_STORE%:*}
+    local _remote_job="
+      [ -f ~/.profile ] && source ~/.profile
+      set -e
+      cd $_release_store_path
+      ls -1 ${APP}_*.${_release_type}.tar.gz
+      exit
+    "
+    ssh -o ConnectTimeout="$SSH_TIMEOUT" "$_release_store_host" "$_remote_job $SILENCE"
+  else
+    error_message "Cannot detect releases in store for store type ${RELEASE_STORE_TYPE}"; exit 2
+  fi
+}
+
+
+# copies the release archive to the production hosts to the given path.
+# the current release file and version must be set in the
+# RELEASE_FILE and VERSION variables. an optional destination directory
+# can be passed as argument, which is $DELIVER_TO by default
+upload_release_archive() {
+  local _destination_directory=${1:-"$DELIVER_TO"}
+  local _release_file=${2:-"$RELEASE_FILE"}
+  local _release_version=${3:-"$VERSION"}
+  __detect_release_store_type
+  status "Uploading archive of release $_release_version from $RELEASE_STORE_TYPE release store"
+  # when building releses with mix, the tar does not contain the app name as subdirectory
+  [[ "$RELEASE_CMD" = "mix" ]] && [[ ! "$_release_file" =~ upgrade\.tar\.gz$ ]] && _destination_directory="${_destination_directory%%/}/${APP}"
+  if [ "$RELEASE_STORE_TYPE" = "s3" ]; then
+    local _aws_script_content=$(cat $BASE_PATH/libexec/aws)
+    __remote "
+      [ -f \"\$HOME/.profile\" ] && . \"\$HOME/.profile\"
+      set -e
+      mkdir -p \"${_destination_directory}\" $SILENCE
+      cd \"${_destination_directory}\" $SILENCE
+      AWS_ARGUMENTS=\"get ${AWS_BUCKET_NAME}/${_release_file} \" AWS_ACCESS_KEY_ID=\"$AWS_ACCESS_KEY_ID\" AWS_SECRET_ACCESS_KEY=\"$AWS_SECRET_ACCESS_KEY\" perl > ${APP}_${_release_version}.tar.gz 2>/dev/null <<'EOF'${_aws_script_content}EOF ;" "$HOSTS_APP_USER" "
+
+      [ -f \"\$HOME/.profile\" ] && . \"\$HOME/.profile\"
+      set -e
+      mkdir -p \"${_destination_directory}\" $SILENCE
+      cd \"${_destination_directory}\" $SILENCE
+      AWS_ARGUMENTS=\"get ${AWS_BUCKET_NAME}/${_release_file} \" AWS_ACCESS_KEY_ID=\"$AWS_ACCESS_KEY_ID\" \\
+      AWS_SECRET_ACCESS_KEY=\"$AWS_SECRET_ACCESS_KEY\" perl > ${APP}_${_release_version}.tar.gz 2>/dev/null <<'EOF'
+        content from libexec/aws file
+      EOF ;"
+  elif [ "$RELEASE_STORE_TYPE" = "local" ]; then
+    __remote "
+      [ -f \"\$HOME/.profile\" ] && . \"\$HOME/.profile\"
+      set -e
+      mkdir -p \"${_destination_directory}\" "
+    __parallel_scp "${RELEASE_STORE}/releases/${_release_file}" "${_destination_directory}/${APP}_${_release_version}.tar.gz"
+  elif [ "$RELEASE_STORE_TYPE" = "remote" ]; then
+    local _release_store_path=${RELEASE_STORE#*:}
+    local _release_store_host=${RELEASE_STORE%:*}
+    local _deploy_hosts="${HOSTS_APP_USER}"
+    local _dest_file_name="${_destination_directory}/${APP}_${_release_version}.tar.gz"
+
+    local _remote_job="
+      [ -f \"\$HOME/.profile\" ] && . \"\$HOME/.profile\"
+      set -e
+      cd \"$_release_store_path\"
+      [ -f \"$_release_file\" ] || exit 1
+      background_jobs_pids=()
+      background_jobs=()
+    "
+    for _host in $_deploy_hosts; do
+      _remote_job="$_remote_job
+        if [ \"$_host\" = \"$_release_store_host\" ]; then
+          mkdir -p \"${_destination_directory}\"
+          cp $_release_file $_dest_file_name &
+        else
+          ssh \"$_host\" \"mkdir -p \\\"${_destination_directory}\\\" \"
+          cat $_release_file | ssh \"$_host\" \"cat > $_dest_file_name\" &
+        fi
+        background_jobs_pids+=(\"\$!\")
+      "
+    done
+    _remote_job="$_remote_job
+      for pid in \$(echo \"\${background_jobs_pids[@]}\"); do
+        while true; do
+          kill -0 \$pid 2>/dev/null && sleep 1 || break
+        done
+      done
+      exit
+    "
+    ssh -A -S none -o ConnectTimeout="$SSH_TIMEOUT" "$_release_store_host" "$_remote_job $SILENCE" || \
+      error "Uploading release file failed\n  source: ${_release_store_path%%/}/${_release_file} on $_release_store_host\n  destination: $_dest_file_name on deploy hosts"
+  else
+    error_message "Cannot upload release for store type ${RELEASE_STORE_TYPE}"; exit 2
+  fi
+}
+
+# upgrades the remote hosts with running nodes to
+# the new release version.
+upgrade_release() {
+  __exec_if_defined "pre_upgrade_release"
+  status "Upgrading release to $VERSION"
+  [[ "$RELEASE_CMD" = "mix" ]] && local _upgrade_command="bin/${APP} upgrade ${VERSION} $SILENCE" \
+                               || local _upgrade_command="bin/${APP} upgrade ${APP}_${VERSION} $SILENCE"
+  __remote "
+    [ -f \"\$HOME/.profile\" ] && . \"\$HOME/.profile\"
+    set -e
+    cd \"${DELIVER_TO}/${APP}\" $SILENCE
+    $_upgrade_command
+  "
+  __exec_if_defined "post_upgrade_release"
+}
+
+# deletes the $APP/releases, $APP/lib and $APP/erts*
+# directories before the release is extracted
+remote_clean_release_dir() {
+  local _release_version=${1:-"$VERSION"}
+  local _archive_dir=${2:-"$DELIVER_TO"}
+  local _archive="${APP}_${_release_version}.tar.gz"
+  status "Cleaning release directory"
+  __remote "
+    [ -f \"\$HOME/.profile\" ] && . \"\$HOME/.profile\"
+    set -e
+    cd \"${_archive_dir}\" $SILENCE
+    [ \"$RELEASE_CMD\" = \"mix\" ] && _app_folder=\"${APP}\" || _app_folder=\$(dirname \$(dirname \$(tar -tzf ${_archive} | grep releases/RELEASES)))
+    [ -n \"\$_app_folder\" ] || exit 1
+    if [ -d \"\$_app_folder\" ]; then
+      cd \"\${_app_folder}\"
+      if [ -d releases ]; then
+        echo \"deleting releases dir in \${_app_folder}\" $SILENCE
+        rm -rf releases $SILENCE
+      else
+        echo \"releases dir already deleted in \${_app_folder}\" $SILENCE
+      fi
+      if [ -d lib ]; then
+        echo \"deleting lib dir in \${_app_folder}\" $SILENCE
+        rm -rf lib $SILENCE
+      else
+        echo \"lib dir already deleted in \${_app_folder}\" $SILENCE
+      fi
+      ls -al | grep erts- > /dev/null && {
+        for erts_dir in erts-*; do
+          if [ -n \"\$erts_dir\" ] && [ -d \"\$erts_dir\" ]; then
+            echo \"deleting \${erts_dir} in \${_app_folder}\" $SILENCE
+            rm -rf \"\${erts_dir}\" $SILENCE
+          else
+            echo \"erts dir already deleted in \${_app_folder}\" $SILENCE
+          fi
+        done
+      } || {
+        echo \"erts dir already deleted in \${_app_folder}\" $SILENCE
+      }
+    else
+      echo \"\${_app_folder} does not exist\" $SILENCE
+    fi
+      "
+}
+
+__get_node_command() {
+  local _node_command="$1"
+  local _app_path="$2"
+  local _config_arg="$3"
+  if [[ "$USING_DISTILLERY" = "true" ]]; then
+    local _rpc_command="rpcterms"
+    local _rpc_open_brackets="["
+    local _rpc_close_brackets="]"
+  else
+    local _rpc_command="rpc"
+    local _rpc_open_brackets="[["
+    local _rpc_close_brackets="]]"
+  fi
+  [[ "${_node_command}" = start* ]] && local _is_start_command="true" || :
+  [[ "${_node_command}" = restart* ]] && local _is_restart_command="true" || :
+  echo "
+    [ -f \"\$HOME/.profile\" ] && . \"\$HOME/.profile\"
+    set -e
+    cd \"${_app_path}/${APP}\" $SILENCE
+    output_lines=\"\$(bin/${APP} ping | wc -l | tr -d ' ')\"
+    if [ \"\$output_lines\" -gt 1 ]; then
+      output_filter_command='tail'
+      output_filter_command_options=\"-n+\$output_lines\"
+    else
+      output_filter_command='cat'
+      output_filter_command_options=''
+    fi
+    __edeliver_node_running() {
+      bin/${APP} ping 2>/dev/null >/dev/null
+    }
+    __edeliver_synchronous_start() {
+      bin/${APP} start | \$output_filter_command \$output_filter_command_options
+      sleep 1
+      for i in 1 2 3 4 5 6 7 8 9 10; do
+        __edeliver_node_running && break || :
+        sleep 1
+      done
+      bin/${APP} ${_rpc_command} Elixir.Edeliver run_command '${_rpc_open_brackets}monitor_startup_progress, \"$APP\", $MODE${_rpc_close_brackets}.' | \$output_filter_command \$output_filter_command_options | grep -e 'Started\\|^ok' || :
+    }
+    if [ \"$RELEASE_CMD\" = \"mix\" ] && [ \"$_is_start_command\" = \"true\" ]; then
+      ping_result=\"\$(bin/${APP} ping | \$output_filter_command \$output_filter_command_options || :)\"
+      if __edeliver_node_running; then
+        echo \"${txtred}already running${txtrst}\" && exit 1
+      else
+        __edeliver_synchronous_start
+      fi
+    elif [ \"$_is_restart_command\" = \"true\" ]; then
+      # use stop / start instead of restart command to
+      # not just restart the applications but also the erlang vm
+      # with the most recent release
+      if __edeliver_node_running; then
+        STOP_OUTPUT=\"\$(${_node_env}bin/${APP} stop ${_config_arg} | \$output_filter_command \$output_filter_command_options)\"
+        if [ \"\$?\" -ne 0 ]; then
+          cat \"\$STOP_OUTPUT\"
+          exit 1
+        fi
+      fi
+      if [ \"$RELEASE_CMD\" = \"mix\" ]; then
+        __edeliver_synchronous_start
+      else
+        ${_node_env}bin/${APP} start ${_config_arg} > >(\$output_filter_command \$output_filter_command_options)
+      fi
+    else # no restart command
+      ${_node_env}bin/${APP} ${_node_command} ${_config_arg} > >(\$output_filter_command \$output_filter_command_options)
+    fi
+  "
+}
+
+# starts the deployed release. if release is already running,
+# it is restarted.
+force_start_release() {
+  __exec_if_defined "pre_start_deployed_release"
+  status "Starting deployed release"
+  __remote "{
+    $(__get_node_command "restart" "$DELIVER_TO" "")
+  }"
+  __exec_if_defined "post_start_deployed_release"
+}
+
+# installs a release at all production hosts
+remote_extract_release_archive() {
+  local _release_version=${1:-"$VERSION"}
+  local _archive_dir=${2:-"$DELIVER_TO"}
+  local _archive="${APP}_${_release_version}.tar.gz"
+  status "Extracting archive ${_archive}"
+  # when building releses with mix, the tar does not contain the app name as subdirectory
+  [[ "$RELEASE_CMD" = "mix" ]] && _archive_dir="${_archive_dir%%/}/${APP}"
+  __remote "
+    [ -f \"\$HOME/.profile\" ] && . \"\$HOME/.profile\"
+    set -e
+    cd \"${_archive_dir}\" $SILENCE
+    tar -xzvf \"${_archive}\" $SILENCE && rm \"${_archive}\" $SILENCE"
+  __exec_if_defined "post_extract_release_archive"
+}
+
+# gets the sha hash of the latest commit of the branch to deploy
+get_latest_commit() {
+  __exec "git rev-parse $BRANCH;"
+}
+
+# checks the given commit out on the remote build host
+git_checkout_remote() {
+  local _revision=$1
+  status "Checking out $_revision"
+  __sync_remote "
+    [ -f ~/.profile ] && source ~/.profile
+    set -e
+    cd $DELIVER_TO
+    git checkout $_revision
+  "
+}
+
+# removes the leading and trailing whitespaces for the arg
+trim_string() {
+  sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' <<< "$@"
+}
+
+# cleans the build directory on the remote build host.
+# by default all generated files are cleaned but that
+# can be adjusted by the GIT_CLEAN_PATHS env. This
+# function does nothing if SKIP_GIT_CLEAN="true"
+git_clean_remote() {
+  if [[ "$SKIP_GIT_CLEAN" = "true" ]]; then
+    status "Skipped cleaning generated files from last build"
+  else
+    GIT_CLEAN_PATHS=${GIT_CLEAN_PATHS:="."}
+    status "Cleaning generated files from last build"
+    __sync_remote "
+      [ -f ~/.profile ] && source ~/.profile
+      set -e
+      cd $DELIVER_TO
+      echo \"cleaning files in: $GIT_CLEAN_PATHS\"
+      git clean -ffdx $GIT_CLEAN_PATHS
+    "
+  fi
+}
+
+# renames the release directory on the remote build host
+# by adding the release version to the release folder name
+rename_release_add_version() {
+  local _release_description=${1:-"old"}
+  __detect_remote_release_dir
+  __detect_remote_release_version
+  local _release_version=${2:-"$RELEASE_VERSION"}
+  status "Moving ${_release_description} release to ${APP}_${_release_version}"
+  __sync_remote "
+    [ -f ~/.profile ] && source ~/.profile
+    set -e
+    cd $(dirname $RELEASE_DIR)
+    mv ${APP} ${APP}_${_release_version}
+  "
+}
+
+# renames the release directory on the remote build host
+# by removing the release version on the release folder name
+rename_release_remove_version() {
+  __detect_remote_release_dir
+  local _release_version=${1:-"$RELEASE_VERSION"}
+  status "Removing version ${_release_version} from remote release directory"
+  __sync_remote "
+    [ -f ~/.profile ] && source ~/.profile
+    set -e
+    cd $(dirname $RELEASE_DIR)
+    mv ${APP}_${_release_version} ${APP}
+  "
+}
+
+# removes the old release archive when building
+# upgrades with `mix release`
+remove_built_release_archive() {
+  __detect_remote_release_dir
+  local _release_version=${1}
+  local _release_file="${APP}-${_release_version}.tar.gz"
+  local _release_dir="releases/${_release_version}"
+  status "Removing built release ${_release_version} from remote release directory"
+  __sync_remote "
+    [ -f ~/.profile ] && source ~/.profile
+    set -e
+    cd \"$(dirname $RELEASE_DIR)/${APP}\"
+    [[ -f \"$_release_file\" ]] && rm \"$_release_file\"
+    [[ -n \"$_release_dir\" ]] && [[ -d \"$_release_dir\" ]] && rm -rf \"$_release_dir\"
+  "
+}
+
+
+# generates the upgrade from the old version to the new version
+rebar_generate_appup() {
+  __detect_remote_release_dir
+  RELEASE_VERSION="" # redetect new version
+  __detect_remote_release_version
+  local _old_version=$1
+  status "Generating default appup scripts for release ${RELEASE_VERSION}"
+  __sync_remote "
+    [ -f ~/.profile ] && source ~/.profile
+    set -e
+    cd $DELIVER_TO
+    $REBAR_CMD generate-appups previous_release=${APP}_${_old_version}
+  "
+}
+
+# copies the custom appups from the release store to the current release
+# on the build host. this overrides previously generated default appups
+copy_appups_from_release_store_to_build_host() {
+  __detect_remote_release_dir
+  RELEASE_VERSION="" # redetect new version
+  __detect_remote_release_version
+  local _old_version=$1
+  if [ -d "$RELEASE_STORE/appup/${_old_version}-${RELEASE_VERSION}" ]; then
+    local _num_scripts=$(ls -1 $RELEASE_STORE/appup/${_old_version}-${RELEASE_VERSION}/*.appup | wc -l)
+    status "Overwriting appups with ${_num_scripts// /} custom scripts from /appup/${_old_version}-${RELEASE_VERSION}/"
+    for appup_file in $RELEASE_STORE/appup/${_old_version}-${RELEASE_VERSION}/*.appup; do
+      local _appup_base_name=$(basename $appup_file)
+      local _appup_app_name=${_appup_base_name%.*}
+      __exec "echo \"Copying $RELEASE_STORE/appup/${_old_version}-${RELEASE_VERSION}/${_appup_base_name}\" to $BUILD_USER@$BUILD_HOST:${RELEASE_DIR}/lib/${_appup_app_name}*/ebin/${_appup_base_name}"
+      __exec "scp -o ConnectTimeout=\"$SSH_TIMEOUT\" -p $RELEASE_STORE/appup/${_old_version}-${RELEASE_VERSION}/${_appup_base_name} $BUILD_USER@$BUILD_HOST:${RELEASE_DIR}/lib/${_appup_app_name}*/ebin/${_appup_base_name}"
+    done
+  else
+    status "Using default appup scripts. No custom scripts in /appup/${_old_version}-${RELEASE_VERSION}/"
+  fi
+}
+
+# generates the upgrade from the old version to the new version
+rebar_generate_upgrade() {
+  __detect_remote_release_dir
+  RELEASE_VERSION="" # redetect new version
+  __detect_remote_release_version
+  local _old_version=$1
+  status "Generating upgrade to version ${RELEASE_VERSION}"
+  __sync_remote "
+    [ -f ~/.profile ] && source ~/.profile
+    set -e
+    cd $DELIVER_TO
+    $REBAR_CMD generate-upgrade previous_release=${APP}_${_old_version}
+  "
+}
+
+# generates the appup files from the old version to the new version
+rebar_generate_appup() {
+  __detect_remote_release_dir
+  RELEASE_VERSION="" # redetect new version
+  __detect_remote_release_version
+  local _old_version=$1
+  status "Generating appups for version ${RELEASE_VERSION}"
+  __sync_remote "
+    [ -f ~/.profile ] && source ~/.profile
+    set -e
+    cd $DELIVER_TO
+    $REBAR_CMD generate-appups previous_release=${APP}_${_old_version}
+  "
+}
+
+
+
+
+# detects the directory that contains the generated release
+# on the remote build host
+__detect_remote_release_dir() {
+  if ! [ -z "$RELEASE_DIR" ]; then
+    return
+  else
+    if [ "$RELEASE_CMD" = "relx" ]; then
+      local _relx_release_dir_exists=($(__remote "
+        [ -f ~/.profile ] && source ~/.profile
+        set -e
+        cd $DELIVER_TO $SILENCE
+        [[ -d ./_rel ]] && echo true || echo false
+      "))
+      if [ "$_relx_release_dir_exists" = "true" ]; then
+        RELEASE_DIR=${DELIVER_TO%%/}/_rel
+      else
+        error_message "Failed to detect generated release at\n$APP_USER@$HOSTS:$DELIVER_TO/_rel\n"
+        exit 1
+      fi
+    else # built with rebar
+      local _release_directories=($(__remote "
+        [ -f ~/.profile ] && source ~/.profile
+        set -e
+        cd $DELIVER_TO $SILENCE
+        OS_TYPE=\$(uname)
+        if [[ \"\$OS_TYPE\" = \"Darwin\" ]]; then
+          find ./ -name RELEASES | cut -b3- | (echo -n "\$PWD" && cat) | grep -E $APP/releases/RELEASES\$
+        else
+          find ./ -name RELEASES -exec readlink -f {} \; | grep -E $APP/releases/RELEASES\$
+        fi
+      "))
+      if [ ${#_release_directories[@]} -eq 1 ]; then
+        RELEASE_DIR=${_release_directories[0]/\/releases\/RELEASES/}
+      else
+        error_message "Failed to detect generated release at\n$APP_USER@$HOSTS:$DELIVER_TO\n"
+        error_message "Please set RELEASE_DIR in the config file to fix that,\nor check that the APP variable is set correctly."
+        if [ ${#_release_directories[@]} -gt 1 ]; then
+          hint_message "Maybe one of these directories contains the release:"
+          for _dir in "${_release_directories[@]}"; do
+            hint_message "  ${_dir/\/releases\/RELEASES/}"
+          done
+        fi
+        exit 1
+      fi
+    fi
+  fi
+}
+
+# detectes the current version of the generated release
+# on the remote build host
+__detect_remote_release_version() {
+  if ! [ -z $RELEASE_VERSION ]; then
+    return
+  else
+    local _releases=($(__remote "
+      ls -Ad $RELEASE_DIR/releases/*/
+    "))
+    if [ ${#_releases[@]} -eq 1 ]; then
+      RELEASE_VERSION=`basename ${_releases[0]}`
+    else
+      error_message "Failed to detect generated release version at:\n$APP_USER@$HOSTS:$RELEASE_DIR/releases/\n"
+      if [ ${#_releases[@]} -gt 1 ]; then
+        hint_message "Detected several releases:"
+        for _release in "${_releases[@]}"; do
+          hint_message " $(basename $_release)"
+        done
+        error_message "Please rerun with RELEASE_VERSION=x environment variable set."
+      elif [[ ${#_releases[@]} -eq 0 && -n "$OLD_RELEASE_VERSION" && "$RELEASE_CMD" = "mix" ]]; then
+        __show_upgrade_version_does_not_differ_error_message
+      elif [[ ${#_releases[@]} -eq 0 ]]; then
+        hint_message "No built release found."
+      fi
+      exit 1
+    fi
+  fi
+}
+
+__show_upgrade_version_does_not_differ_error_message() {
+    error_message "The build upgrade has the same version as the installed version."
+    error_message "That release cannot be deployed as an upgrade. Alter the release version"
+    error_message "or consider using the --auto-version=revision|commit-count|date option"
+    error_message "to automatically increment the version or append the git revision."
+    error_message "It is recommended to enable the git-auto-revision permanently"
+    error_message "for automatic upgrades by setting AUTO_VERSION=revision in the config."
+}
+
+
+# detects the type of the release store. sets RELEASE_STORE_TYPE either
+# to "local", "remote" or "s3" and also the following environment variables
+# depending on the detected release store type:
+#
+# AWS_SECRET_ACCESS_KEY (for s3)
+# AWS_SECRET_ACCESS_KEY (for s3)
+# AWS_BUCKET_NAME (for s3)
+__detect_release_store_type() {
+  if [[ "$RELEASE_STORE" =~ ^[sS]3://[^@]+@[^:]+:.+$ ]]; then
+    local _s3location=${RELEASE_STORE/#[sS]3:\/\//}
+    AWS_ACCESS_KEY_ID=${_s3location%%@*}
+    _s3location=${_s3location##*@}
+    AWS_SECRET_ACCESS_KEY=${_s3location%%:*}
+    _s3location=${_s3location##*:}
+    AWS_BUCKET_NAME=${_s3location%%*:}
+  fi
+
+  if [[ "$RELEASE_STORE" =~ ^[sS]3://[^@]+@[^:]+:.+$ ]] && [[ -n \"${AWS_ACCESS_KEY_ID}\" ]] && [[ -n \"${AWS_SECRET_ACCESS_KEY}\" ]] && [[ -n \"${AWS_BUCKET_NAME}\" ]]; then
+    RELEASE_STORE_TYPE="s3"
+  elif [[ "$RELEASE_STORE" =~ ^[^@]+@[^:]+:.+$ ]]; then
+    RELEASE_STORE_TYPE="remote"
+  else
+    RELEASE_STORE_TYPE="local"
+  fi
+}
+
+# creates a subdirectory or subdirectories on the release store
+__create_directory_in_release_store() {
+  local _directory=$1
+  # create release store directory if it is a local directory
+  ! [[ "$RELEASE_STORE" =~ .*:.* ]] && __exec "mkdir -p ${RELEASE_STORE}${_directory}"
+  # TODO: create directories also on remote stores
+}
+
+# gets the release version from the release archive name
+# $1 = release file name
+# $2 = release type (optional)
+__release_version_from_archive_name() {
+  local _release_type=${2}
+  _release_type=${_release_type:=*}
+  local _removed_app_name=${1/${APP}_/}
+  local _removed_archive_extension=${_removed_app_name/\.tar\.gz/}
+  local _removed_release_type=${_removed_archive_extension%.${_release_type}}
+  echo ${_removed_release_type}
+}
+
+# copy a file to all remote production hosts in parallel
+__parallel_scp() {
+  local _source_file="$1"
+  local _destination_dir="$2"
+  local _hosts="${3:-"$HOSTS_APP_USER"}"
+  if [ "${MODE}" = "compact" ]; then
+    local _options=" -q"
+  else
+    local _options=""
+  fi
+
+  background_jobs_pids=()
+  background_jobs=()
+
+  __log "${_hosts} : $_remote_job"
+
+
+  for _host in $_hosts
+  do
+    if [ "$SKIP_COPYING_EXISTING_FILES" = "skip" ]; then
+      local _local_md5=$(__local_md5 $_source_file)
+      local _remote_md5=$(__remote_md5 $_host "$_destination_dir")
+      if [[ -n "$_local_md5" ]] && [[ -n "$_remote_md5" ]] && [[ "$_local_md5" = "$_remote_md5" ]]; then
+        __exec "echo \"file \$(basename \$_source_file) already exists on host \$_host (checksum: \$_remote_md5)\""
+        continue
+      fi
+    fi
+    __exec "echo \"copying $_source_file to $_host:$_destination_dir\""
+    scp -o ConnectTimeout="$SSH_TIMEOUT" $_options "$_source_file" "$_host:$_destination_dir" &
+    background_jobs_pids+=("$!")
+    local _background_job="scp -o ConnectTimeout=$SSH_TIMEOUT $_options $_source_file $_host:$_destination_dir $SILENCE"
+    background_jobs+=("$_background_job")
+  done
+
+  __monitor_background_jobs
+}
+
+# gets the md5 checksum of a release in the local release store
+__local_md5() {
+  local _file_name="$1"
+  if [ -z "$LOCAL_MD5_COMMAND" ]; then
+    LOCAL_MD5_COMMAND=$(which md5)
+    if [ $? -eq 1 ]; then
+      LOCAL_MD5_COMMAND=$(which md5sum)
+      [ $? -eq 1 ] && LOCAL_MD5_COMMAND=""
+    fi
+  fi
+  if ! [ -z "$LOCAL_MD5_COMMAND" ]; then
+    $LOCAL_MD5_COMMAND ${_file_name} | grep -o "[0-9a-fA-F]\{32\}"
+  else
+    echo ""
+  fi
+}
+
+# gets the md5 checksum of a release file on the remote host
+__remote_md5() {
+  local _remote_host="$1"
+  local _remote_file_name="$2"
+  _remote_job="
+    if [ -f \"${_remote_file_name}\" ]; then
+      if [ -z \"\$REMOTE_MD5_COMMAND\" ]; then
+        REMOTE_MD5_COMMAND=\$(which md5)
+        if [ \$? -eq 1 ]; then
+          REMOTE_MD5_COMMAND=\$(which md5sum)
+          [ \$? -eq 1 ] && LOCAL_MD5_COMMAND=""
+        fi
+      fi
+      if ! [ -z \"\$REMOTE_MD5_COMMAND\" ]; then
+        \$REMOTE_MD5_COMMAND ${_remote_file_name} | grep -o \"[0-9a-fA-F]\\{32\\}\"
+      else
+        echo \"\"
+      fi
+    else
+        echo \"\"
+    fi
+  "
+  ssh -o ConnectTimeout="$SSH_TIMEOUT" "$_remote_host" "$_remote_job"
+}
+
+begin() {
+  case "$COMMAND" in
+    (build)
+      local _message="${bldgrn}BUILDING $(upcase "${COMMAND_INFO}")${bldgrn} OF $(upcase "${APP}") APP ON BUILD HOST${txtrst}"
+    ;;
+    (deploy)
+      local _host_color="${bldylw}"
+      [ "$DEPLOY_ENVIRONMENT" = "production" ] && _host_color="${bldred}"
+      local _message="${bldgrn}DEPLOYING ${bldylw}$(upcase "${COMMAND_INFO}")${bldgrn} OF $(upcase "${APP}") APP TO ${_host_color}$(upcase ${DEPLOY_ENVIRONMENT}) HOSTS${txtrst}"
+    ;;
+    (*)
+      local _message="${bldgrn}$(upcase "edeliver ${APP} with $COMMAND command")${txtrst}"
+    ;;
+  esac
+  echo -e "\n$_message\n"
+  __log "$_message"
+}
+
+
+# If we reach this step, delivery was successfull
+#
+finish() {
+  case "$COMMAND" in
+    (build)
+      local _message="${bldgrn}$(upcase "${COMMAND_INFO} BUILD OF $APP WAS SUCCESSFUL!")${txtrst}"
+      ;;
+    (deploy)
+      local _message="${bldgrn}DEPLOYED $(upcase "${COMMAND_INFO} TO ${DEPLOY_ENVIRONMENT}!")${txtrst}"
+    ;;
+    (*)
+      local _message="${bldgrn}$(upcase "$COMMAND DONE!")${txtrst}"
+    ;;
+  esac
+  echo -e "\n$_message\n"
+  __log "$_message"
+  __log "===========================================================\n"
+}
+
+help() {
+  [[ -n "$COMMAND_INFO" ]] && local _command="$COMMAND $COMMAND_INFO" || local _command="$COMMAND"
+  error "\nNo custom help provided for command '$_command'. Try --help option.\n"
+}

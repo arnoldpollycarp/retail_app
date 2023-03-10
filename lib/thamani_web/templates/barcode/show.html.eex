@@ -1,0 +1,60 @@
+<div class="row">
+                       <div class="col-md-12">
+
+                         <span><%= link "Back", to: barcode_path(@conn, :index), class: "btn btn-gold btn-gold" %></span>
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">Barcordes</h4>
+                                   <p class="category"><%= link "Dashboard", to: manufacturer_admin_dashboard_path(@conn, :index) %>/ Barcode/ Show Barcode</p>
+
+                               </div>
+                               <table class="table" style="margin-left: 15px;">
+                                    <tbody>
+                                            <tr>
+                                                   <td>
+                                                          <h5>  GTIN: <%= @barcode.code %> </h5>
+                                                    </td>
+                                          </tr>
+                                          <tr>
+                                                    <td>
+                                                            <h5>  Carton: <%= @barcode.carton %> </label>
+                                                    </td>
+                                          </tr>
+                                          <tr>
+                                                    <td>
+                                                            <h5>  Name: <%= @barcode.name %> </label>
+                                                    </td>
+                                          </tr>
+                                          <tr>
+                                                    <td>
+                                                            <h5>  Description: <%= @barcode.description %> </label>
+                                                    </td>
+                                          </tr>
+                                          <tr>
+                                                    <td>
+                                                            <h5>  Member Number: <%= @barcode.mn %> </label>
+                                                    </td>
+                                          </tr>
+                                          <tr>
+                                                    <td>
+
+                                                              <%= if @barcode.active == "true" do %>
+                                                                <h5>Active:<i class="fa fa-check" style= "color:#66bb6a !important"></i></h5>
+                                                              <% else  %>
+                                                              <h5>Active:<i class="fa fa-close" style= "color:#f44336 !important"></i></h5>
+                                                              <% end %>
+                                                    </td>
+                                            </tr>
+                                          </tbody>
+                                      </table>
+<ul>
+
+
+        <span><%= link "Add barcode", to: barcode_path(@conn, :new), class: "btn btn-gold btn-gold" %></span>
+       <span><%= link "Edit", to: barcode_path(@conn, :edit, @barcode) , class: "btn btn-gold btn-gold" %></span>
+
+</ul>
+
+      </div>
+      </div>
+      </div>

@@ -1,0 +1,189 @@
+<div class="row">
+  <div class="col-lg-12 col-md-12">
+        <div class="card">
+            <div class="card-header" data-background-color="gold">
+
+                <h4 class="">Float Dashboard </h4>
+                <script>
+                    document.write(new Date())
+                </script>
+            </div>
+            <div class="card-content table-responsive">
+
+            </div>
+        </div>
+    </div>
+</div>
+                  <div class="row">
+                  <div class="col-lg-3 col-md-6 col-sm-6">
+                      <div class="card card-stats">
+                          <div class="card-header" data-background-color="blue">
+                              <i class="fa fa-edit"></i>
+                          </div>
+                          <div class="card-content">
+
+				<%= if is_nil(@count_credit) || is_nil(@count_debit) do %>
+                               <h4 class="title"> 0 </h4>
+                                <% else %>
+                                 <h4 class="title"> <%= Decimal.to_float(@count_credit) - Decimal.to_float(@count_debit) %></h4>
+                                 <% end %>
+                          </div>
+                          <div class="card-footer">
+                              <div class="stats">
+
+                                  Total Amount
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                       <div class="col-lg-3 col-md-6 col-sm-6">
+                           <div class="card card-stats">
+                               <div class="card-header" data-background-color="orange">
+                                   <i class="fa fa-inbox"></i>
+                               </div>
+                               <div class="card-content">
+                               <%= if is_nil(@count_debit) do %>
+                               <h4 class="title"> 0</h4>
+                               <% else %>
+                                <h4 class="title"> <%= Float.ceil(@count_debit,2) %></h4>
+                               <% end %>
+
+                               </div>
+                               <div class="card-footer">
+                                   <div class="stats">
+
+                                        Total Debit
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+
+                       <div class="col-lg-3 col-md-6 col-sm-6">
+                           <div class="card card-stats">
+                               <div class="card-header" data-background-color="blue">
+                                   <i class="fa fa-edit"></i>
+                               </div>
+                               <div class="card-content">
+                               <%= if is_nil(@count_credit) do %>
+                               <h4 class="title"> 0</h4>
+                               <% else %>
+                                <h4 class="title"> <%= @count_credit %></h4>
+                               <% end %>
+                               </div>
+                               <div class="card-footer">
+                                   <div class="stats">
+
+                                       Total Credit
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+
+                       <div class="col-lg-3 col-md-6 col-sm-6">
+                           <div class="card card-stats">
+                               <div class="card-header" data-background-color="green">
+                                   <i class="fa fa-money"></i>
+                               </div>
+                               <div class="card-content">
+
+                               <%= if is_nil(@accounts) do %>
+                               <h4 class="title"> 0</h4>
+                               <% else %>
+                                <h4 class="title"> <%= @accounts %></h4>
+                               <% end %>
+
+                               </div>
+                               <div class="card-footer">
+                                   <div class="stats">
+                                        All Accounts
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+
+                       <div class="col-lg-6 col-md-12">
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">Float</h4>
+                                 <p class="category">Last Five debit</p>
+                               </div>
+                               <div class="card-content table-responsive">
+                                   <table class="table table-hover">
+                                       <thead class="text-warning">
+                                         <tr>
+
+                                         <th data-field="sku" data-sortable="true">SKU</th>
+                                         <th data-field="name" data-sortable="true">Item Name</th>
+                                         <th data-field="quantity" data-sortable="true">quantity</th>
+                                         <th data-field="mode" data-sortable="true">Mode of Pay</th>
+                                         <th data-field="price" data-sortable="true">Price</th>
+
+                                        </tr>
+                                       </thead>
+                                       <tbody>
+
+                                       <%= for debit <- @list_debit do %>
+                                           <tr>
+                                           <td><%= debit.sku.gtin %> </td>
+                                           <td><%= debit.sku.name %> </td>
+                                           <td><%= debit.quantity %> </td>
+                                           <td><%= debit.mode %> </td>
+                                           <td><%= debit.retailer %> </td>
+
+                                             </tr>
+                                         <% end %>
+
+                                       </tbody>
+                                   </table>
+                               </div>
+                           </div>
+                       </div>
+                       <div class="col-lg-6 col-md-12">
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">Float</h4>
+                                 <p class="category">Last Five credit</p>
+                               </div>
+                               <div class="card-content table-responsive">
+                                   <table class="table table-hover">
+                                       <thead class="text-warning">
+                                         <tr>
+
+                                        <th >Account</th>
+                                        <th >Amount</th>
+                                        <th >Recieved From</th>
+                                        <th >Retailer</th>
+                                        <th class="text-center" >Status</th>
+
+                                        </tr>
+                                       </thead>
+                                       <tbody>
+
+                                       <%= for float <- @list_credit do %>
+                                           <tr>
+                                             <td><%= float.account %> </td>
+                                             <td><%= float.amount %></td>
+                                             <td><%= float.from %></td>
+                                              <td><%= float.user.company %></td>
+
+
+                                             <%= if float.active == "true" do %>
+                                               <td class ="text-center"><i class="fa fa-check" style= "color:#66bb6a !important"></i></td>
+                                             <% else  %>
+                                             <td class ="text-center" ><i class="fa fa-close" style= "color:#f44336 !important"></i></td>
+                                             <% end %>
+
+                                             </tr>
+                                         <% end %>
+
+                                       </tbody>
+                                   </table>
+                               </div>
+                           </div>
+                       </div>
+
+
+
+
+
+                   </div>

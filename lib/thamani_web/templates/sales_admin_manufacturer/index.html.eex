@@ -1,0 +1,55 @@
+
+                                            <div class="row">
+                                                                   <div class="col-md-12">
+
+                                                                       <div class="card">
+                                                                           <div class="card-header" data-background-color="gold">
+                                                                               <h4 class="title">Sales</h4>
+                                                                               <p class="category"><%= link "Dashboard", to: sales_admin_manufacturer_path(@conn, :index) %>/Sales</p>
+
+                                                                           </div>
+
+                                                                           <div class="card-content table-responsive">
+                                                                             <div id="toolbar" style="margin-top: -16px;">
+                                                                            <select class="form-control">
+                                                                              <option value="">Export Current page</option>
+                                                                              <option value="all">Export All</option>
+                                                                              <option value="selected">Export Selected</option>
+                                                                            </select>
+                                                                          </div>
+                                          <table class="table" id ="fresh-table" data-toggle="table" data-toolbar="#toolbar" data-search="true"  data-pagination="true" data-show-print="true" data-show-export="true"   data-export-options='{"fileName": "reports"}'>
+                                              <thead class="text-info">
+                                                <tr>
+                                                  <th data-field="state" data-checkbox="true"></th>
+      <th data-field="name" data-sortable="true">Item</th>
+      <th data-field="quantity" data-sortable="true">Sale ID</th>
+      <th data-field="price" data-sortable="true">Price</th>
+      <th data-field="retailer" data-sortable="true">retailer</th>
+      <th data-field="date" data-sortable="true">Transaction Date</th>
+      <th class="text-center"> </th>
+
+    </tr>
+  </thead>
+  <tbody>
+<%= for sale <- @sales do %>
+    <tr>
+    <td></td>
+      <td><%= sale.sku.name %> </td>
+      <td><%= sale.sale_id %> </td>
+      <td><%= sale.manufacturer * sale.quantity %> </td>
+      <td><%= sale.user.company %> </td>
+      <td><%= String.slice(to_string(sale.inserted_at), 0..18) %> </td>
+      <td class="text-right">
+
+
+
+</td>
+
+    </tr>
+<% end %>
+  </tbody>
+</table>
+</div>
+                                                        </div>
+                                                      </div>
+                                                    </div>

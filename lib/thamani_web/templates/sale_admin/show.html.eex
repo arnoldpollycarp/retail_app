@@ -1,0 +1,54 @@
+
+
+<div class="row">
+                <div class="col-md-12">
+
+
+                             <span><%= link "Back", to: sale_admin_path(@conn, :index), class: "btn btn-gold btn-gold" %></span>
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">Sales</h4>
+                                   <p class="category"><%= link "Dashboard", to: retail_admin_dashboard_path(@conn, :index) %>/ sale/ Show </p>
+
+                               </div>
+
+                               <table class="table" style="margin-left: 15px;">
+                                    <tbody>
+
+                                      <tr>
+                                        <td>SKU GTIN:
+                                        <%= @sale.sku.gtin %></td>
+                                      </tr>
+
+                                    <tr>
+                                      <td>Name of item:
+                                      <%= @sale.sku.name %></td>
+                                    </tr>
+
+                                    <tr>
+                                      <td>Quantity:
+                                      <%= @sale.quantity %></td>
+                                    </tr>
+
+				      <tr>
+                                      <td>Sale ID:
+                                      <%= @sale.sale_id %></td>
+                                    </tr>
+
+                                    <tr>
+                                      <td>Price:
+                                      <%= @sale.retailer %></td>
+                                    </tr>
+
+                                  </tbody>
+                              </table>
+                            </div>
+                          </div>
+
+
+<ul>
+
+
+</ul>
+
+</div>

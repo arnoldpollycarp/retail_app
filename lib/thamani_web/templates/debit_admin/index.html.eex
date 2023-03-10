@@ -1,0 +1,42 @@
+
+                                            <div class="row">
+                                                                   <div class="col-md-12">
+                                                                       <div class="card">
+                                                                           <div class="card-header" data-background-color="gold">
+                                                                               <h4 class="title">Debit Transactions</h4>
+                                                                               <p class="category"><%= link "Dashboard", to: float_admin_dashboard_path(@conn, :index,@current_user) %>/debit transactions</p>
+
+                                                                           </div>
+
+                                                                           <div class="card-content table-responsive">
+                                          <table id ="fresh-table" class="table">
+                                              <thead class="text-info">
+                                                <tr>
+      <th data-field="sku" data-sortable="true">SKU</th>
+      <th data-field="name" data-sortable="true">Item Name</th>
+      <th data-field="quantity" data-sortable="true">quantity</th>
+      <th data-field="mode" data-sortable="true">Mode of Pay</th>
+      <th data-field="price" data-sortable="true">Price</th>
+
+
+    </tr>
+  </thead>
+  <tbody>
+<%= for debit <- @debit do %>
+    <tr>
+      <td><%= debit.sku.gtin %> </td>
+      <td><%= debit.sku.name %> </td>
+      <td><%= debit.quantity %> </td>
+      <td><%= debit.mode %> </td>
+      <td><%= debit.retailer %> </td>
+
+
+
+    </tr>
+<% end %>
+  </tbody>
+</table>
+</div>
+                                                        </div>
+                                                      </div>
+                                                    </div>

@@ -1,0 +1,126 @@
+<% alias Thamani.Sales
+
+
+%>
+<span class="col-md-10" style="margin-left: -25px;"> <%= link "Back", to: reconcile_path(@conn, :index),class: "btn btn-gold btn-gold"  %></span>
+
+<div class="card" style="margin:25px -10px">
+    <div class="card-header" data-background-color="gold">
+        <h4 class="title">reconciliation</h4>
+        <p class="category"><%= link "Dashboard", to: reconcile_path(@conn, :index) %>/ reconciliation </p>
+
+    </div>
+    <div class="container-fluid">
+      <div class="row">
+        <form>
+
+          <div class="col-md-12">
+              <div class="col-md-1">
+
+               </div>
+               <div class="col-md-4">
+                   <div class="form-group label">
+                     <label class= "control-label">From  date</label>
+                     <input type = "date" name="date" class="form-control select-with-transition" value="<%= @date_0 %>"  >
+                       <input type = "hidden" name="date_0" value="<%= @date_0 %>"  >
+                   </div>
+               </div>
+               <div class="col-md-4">
+                   <div class="form-group label">
+                     <label class= "control-label">To date</label>
+                     <input type = "date" name="date_1" class="form-control select-with-transition" value="<%= @date_01 %>"  >
+                      <input type = "hidden" name="date_01"  value="<%= @date_01 %>"  >
+                   </div>
+               </div>
+               <div class="col-md-2">
+                    <button style="margin-top:30px" drab-click="fetch_list">Look Up</button>
+
+                </div>
+             <div class="col-md-1">
+                  <div class="loader <%= @loader_class %>"></div>
+              </div>
+          </div>
+          <div class="col-md-12">
+	    <div class="col-md-4">
+           <div class="form-group">
+	       <p>
+          Total Thamani revenue :   <%= count_10 = case Sales.get_countall_gs1_value_by_search( @date_0,@date_01) do
+                    nil -> 0
+                    _ -> Float.ceil(Sales.get_countall_gs1_value_by_search(@date_0,@date_01), 2)
+                  end
+            %>
+            </p>
+           </div>
+           </div>
+
+          </div>
+          <div class="col-md-12">
+          <div class="col-md-1">
+
+           </div>
+           <div class="col-md-9">
+
+
+          <table class="table" id ="fresh-table" data-toggle="table" data-toolbar="#toolbar" data-search="true"  data-pagination="true" data-show-print="true" data-show-export="true"   data-export-options='{"fileName": "reports"}'>
+                <thead class="text-info">
+                  <tr>
+
+                    <th data-field="quantity" data-sortable="true">SHORT CODE</th>
+                    <th data-field="amount" data-sortable="true">AMOUNT</th>
+                      <th data-field="name" data-sortable="true">REFERENCE NUMBER</th>
+
+
+                  </tr>
+                </thead>
+                  <tbody>
+                    <%= for user <- @list_users do %>
+                    <%   count_7 =   case Sales.get_count_manufacturer_value_by_search(user, @date_0,@date_01) do
+                        nil -> 0
+                        _ -> Float.ceil(Sales.get_count_manufacturer_value_by_search(user, @date_0,@date_01), 2)
+                      end
+                      count_8 = case Sales.get_count_warehouse_value_by_search(user, @date_0,@date_01) do
+                        nil -> 0
+                        _ -> Float.ceil(Sales.get_count_warehouse_value_by_search(user, @date_0,@date_01), 2)
+                      end
+                      count_9 = case Sales.get_count_retailer_value_by_search(user, @date_0,@date_01) do
+                          nil -> 0
+                          _ -> Float.ceil(Sales.get_count_retailer_value_by_search(user, @date_0,@date_01), 2)
+                        end
+                      %>
+
+                    <tr>
+
+                    <td><%= user.paybill %> </td>
+		      <%= if (count_7 + count_8 + count_9) == 0 do %>
+                    <td>0</td>
+                    <% else %>
+                    <td><%= :erlang.float_to_binary((count_7 + count_8 + count_9), decimals: 2)%></td>
+                    <% end %>
+                    <td><%= user.company %> </td>
+
+                    </tr>
+                    <% end %>
+                  </tbody>
+            </table>
+            </div>
+            <div class="col-md-2">
+
+             </div>
+          </div>
+
+          <div class="col-md-12">
+
+          <div class="col-md-2">
+          <input name="current_user" id="current_user" type = "hidden" class="form-control select-with-transition"  value=<%= @current_user.id %> />
+
+          </div>
+
+
+          </div>
+
+        </form>
+      </div>
+    </div>
+
+  </div>
+

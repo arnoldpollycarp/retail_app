@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Mobile Specific Meta -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Favicon-->
+    <link rel="shortcut icon" href="<%= static_path(@conn, "/images/fav.ico") %>">
+    <!-- Author Meta -->
+    <meta name="author" content="CS Digital">
+    <!-- Meta Description -->
+    <meta name="description" content="">
+    <!-- Meta Keyword -->
+    <meta name="keywords" content="">
+    <!-- meta character set -->
+    <meta charset="UTF-8">
+
+    <title>Thamani online</title>
+
+     <!-- example for Phoenix.HTML 2.7.1+ -->
+     <link href='https://fonts.googleapis.com/css?family=Muli:400,300' rel='stylesheet' type='text/css'>
+   <!-- example for Phoenix.HTML 2.7.0 and below-->
+     <style>
+          .loader-show {
+            border: 16px solid #f3f3f3;
+            border-top: 16px solid #ffd700;
+            border-right: 16px solid #ef001d;
+            border-bottom: 16px solid #00bf48;
+            border-radius: 50%;
+            margin-top: 30px;
+            width: 20px;
+            height: 20px;
+            -webkit-animation: spin 2s linear ; /* Safari */
+            animation: spin 2s linear ;
+          }
+           .dt-button, .buttons-print {
+            margin-left:-170px;
+          }
+          .buttons-html5 {
+           margin-left:0px;
+         }
+
+
+          .loader-hide {
+            display:none;
+          }
+          /* Safari */
+          @-webkit-keyframes spin {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
+          }
+
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+
+        /* style for add to cart   */
+    a.add-to-cart {
+    	width: 216px;
+    	height: 48px;
+    	background: #ffab00;
+    	font-size: 18px;
+    	line-height: 48px;
+    	letter-spacing: 2px;
+    	color: rgb(255, 255, 255);
+    	text-transform: uppercase;
+    	-moz-border-radius: 24px;
+    	-webkit-border-radius: 24px;
+    	border-radius: 24px;
+    	text-decoration: none;
+    	text-align: center;
+    	left: 24px;
+    	position: absolute;
+    	top: 48px;
+    	display: block;
+    	box-shadow: 0 3px 6px rgba(255, 171, 0, 0.16), 0 3px 6px rgba(255, 171, 0, 0.23);
+    	-moz-box-shadow: 0 3px 6px rgba(255, 171, 0, 0.16), 0 3px 6px rgba(255, 171, 0, 0.23);
+    	-webkit-box-shadow: 0 3px 6px rgba(255, 171, 0, 0.16), 0 3px 6px rgba(255, 171, 0, 0.23);
+    }
+
+    a.add-to-cart.size {
+    	width: 48px;
+    	left: 108px;
+    	font-size: 0;
+    	color: #e7bb45;
+    	letter-spacing: 0;
+    	-webkit-transition: .2s linear;
+    	-moz-transition: .2s linear;
+    	-ms-transition: .2s linear;
+    	-o-transition: .2s linear;
+    	transition: .2s linear;
+    }
+
+    a.add-to-cart.hover {
+    	-webkit-transition: .2s linear;
+    	-moz-transition: .2s linear;
+    	-ms-transition: .2s linear;
+    	-o-transition: .2s linear;
+    	transition: .2s linear;
+    	-webkit-transform: rotate(180deg);
+    	-moz-transform: rotate(180deg);
+    	-ms-transform: rotate(180deg);
+    	-o-transform: rotate(180deg);
+    	transform: rotate(180deg);
+    	-webkit-transform-origin: 108px 24px;
+    	-moz-transform-origin: 108px 24px;
+    	-o-transform-origin: 108px 24px;
+    	-ms-transform-origin: 108px 24px;
+    	transform-origin: 108px 24px;
+    }
+
+    a.back, .continue, .searches, .orders {
+      width: 72px;
+      height: 72px;
+      -moz-border-radius: 36px;
+      -webkit-border-radius: 36px;
+      border-radius: 36px;
+      font-size: 18px;
+      text-align: center;
+      color: #616161;
+      text-decoration: none;
+      position: absolute;
+      right: 24px;
+      top: 36px;
+      display: block;
+      background: #535558  center no-repeat;
+      background-size: 36px;
+      box-shadow: 0 3px 6px rgba(97, 97, 97 0.16), 0 3px 6px rgba(97, 97, 97 0.23);
+      -moz-box-shadow: 0 3px 6px rgba(97, 97, 97 0.16), 0 3px 6px rgba(97, 97, 97 0.23);
+      -webkit-box-shadow: 0 3px 6px rgba(97, 97, 97 0.16), 0 3px 6px rgba(97, 97, 97 0.23);
+    }
+
+
+
+    a.cart {
+    	width: 72px;
+    	height: 72px;
+    	-moz-border-radius: 36px;
+    	-webkit-border-radius: 36px;
+    	border-radius: 36px;
+    	font-size: 18px;
+    	text-align: center;
+    	color: #616161;
+    	text-decoration: none;
+    	position: absolute;
+    	right: 24px;
+    	top: 36px;
+    	display: block;
+    	background: #535558 url(http://images.vfl.ru/ii/1484930184/14435803/15757225.png
+    ) center no-repeat;
+    	background-size: 36px;
+    	box-shadow: 0 3px 6px rgba(97, 97, 97 0.16), 0 3px 6px rgba(97, 97, 97 0.23);
+    	-moz-box-shadow: 0 3px 6px rgba(97, 97, 97 0.16), 0 3px 6px rgba(97, 97, 97 0.23);
+    	-webkit-box-shadow: 0 3px 6px rgba(97, 97, 97 0.16), 0 3px 6px rgba(97, 97, 97 0.23);
+    }
+
+    a.cart > span {
+    	width: 24px;
+    	height: 24px;
+    	font-size: 16px;
+    	color: #fff;
+    	line-height: 24px;
+    	position: absolute;
+    	-moz-border-radius: 12px;
+    	-webkit-border-radius: 12px;
+    	border-radius: 12px;
+    	display: block;
+    	transform: scale(0);
+    	-o-transform: scale(0);
+    	-ms-transform: scale(0);
+    	-moz-transform: scale(0);
+    	-webkit-transform: scale(0);
+    	top: 0;
+    	right: 0;
+    	bottom: 0;
+    	left: 0;
+    	margin: auto;
+    	background: #ffab00;
+    	box-shadow: 0 3px 6px rgba(255, 171, 0, 0.16), 0 3px 6px rgba(255, 171, 0, 0.23);
+    	-moz-box-shadow: 0 3px 6px rgba(255, 171, 0, 0.16), 0 3px 6px rgba(255, 171, 0, 0.23);
+    	-webkit-box-shadow: 0 3px 6px rgba(255, 171, 0, 0.16), 0 3px 6px rgba(255, 171, 0, 0.23);
+    }
+
+    a.cart > span.counter {
+    	left: 48px;
+    	bottom: 48px;
+    	-webkit-transition: .2s linear;
+    	-moz-transition: .2s linear;
+    	-ms-transition: .2s linear;
+    	-o-transition: .2s linear;
+    	transition: .2s linear;
+    	transform: scale(1);
+    	-o-transform: scale(1);
+    	-ms-transform: scale(1);
+    	-moz-transform: scale(1);
+    	-webkit-transform: scale(1);
+    }
+
+    .product-image {
+  float: left;
+  width: 20%;
+}
+
+.product-details {
+  float: left;
+  width: 37%;
+}
+
+.product-price {
+  float: left;
+  width: 12%;
+}
+
+.product-quantity {
+  float: left;
+  width: 10%;
+}
+
+.product-removal {
+  float: left;
+  width: 9%;
+}
+
+.product-line-price {
+  float: left;
+  width: 12%;
+  text-align: right;
+}
+
+/* This is used as the traditional .clearfix class */
+.group:before, .shopping-cart:before, .column-labels:before, .product:before, .totals-item:before,
+.group:after,
+.shopping-cart:after,
+.column-labels:after,
+.product:after,
+.totals-item:after {
+  content: '';
+  display: table;
+}
+
+.group:after, .shopping-cart:after, .column-labels:after, .product:after, .totals-item:after {
+  clear: both;
+}
+
+.group, .shopping-cart, .column-labels, .product, .totals-item {
+  zoom: 1;
+}
+
+/* Apply clearfix in a few places */
+/* Apply dollar signs */
+.product .product-price:before, .product .product-line-price:before, .totals-value:before {
+  content: 'Ksh ';
+}
+
+
+.shopping-cart {
+  margin-top: -45px;
+}
+
+/* Column headers */
+.column-labels label {
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+.column-labels .product-image, .column-labels .product-details, .column-labels .product-removal {
+  text-indent: -9999px;
+}
+
+/* Product entries */
+.products {
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+.products .product-image {
+  text-align: center;
+}
+.products .product-image img {
+  width: 100px;
+}
+.products .product-details .product-title {
+  margin-right: 20px;
+
+}
+.products .product-details .product-description {
+  margin: 5px 20px 5px 0;
+  line-height: 1.4em;
+}
+.products .product-quantity input {
+  width: 40px;
+}
+.products .remove-product {
+  border: 0;
+  padding: 4px 8px;
+  background-color: #c66;
+  color: #fff;
+
+  font-size: 12px;
+  border-radius: 3px;
+}
+.products .remove-product:hover {
+  background-color: #a44;
+}
+
+/* Totals section */
+.totals .totals-item {
+  float: right;
+  clear: both;
+  width: 100%;
+  margin-bottom: 10px;
+}
+.totals .totals-item label {
+  float: left;
+  clear: both;
+  width: 40%;
+  text-align: right;
+  font-size: 17px;
+  color: #31708f;
+}
+.totals .totals-item .totals-value {
+  float: left;
+  width: 60%;
+  text-align: center;
+}
+.totals .totals-item-total {
+
+}
+
+.checkout {
+  float: right;
+  border: 0;
+  margin-top: 20px;
+  padding: 6px 25px;
+  background-color: #6b6;
+  color: #fff;
+  font-size: 25px;
+  border-radius: 3px;
+}
+
+.checkout:hover {
+  background-color: #494;
+}
+
+/* Make adjustments for tablet */
+@media screen and (max-width: 650px) {
+  .shopping-cart {
+    margin: 0;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+  }
+
+  .column-labels {
+    display: none;
+  }
+
+  .product-image {
+    float: right;
+    width: auto;
+  }
+  .product-image img {
+    margin: 0 0 10px 10px;
+  }
+
+  .product-details {
+    float: none;
+    margin-bottom: 10px;
+    width: auto;
+  }
+
+  .product-price {
+    clear: both;
+    width: 70px;
+  }
+
+  .product-quantity {
+    width: 100px;
+  }
+  .product-quantity input {
+    margin-left: 20px;
+  }
+
+  .product-quantity:before {
+    content: 'x';
+  }
+
+  .product-removal {
+    width: auto;
+  }
+
+  .product-line-price {
+    float: right;
+    width: 70px;
+  }
+}
+/* Make more adjustments for phone */
+@media screen and (max-width: 350px) {
+  .product-removal {
+    float: right;
+  }
+
+  .product-line-price {
+    float: right;
+    clear: left;
+    width: auto;
+    margin-top: 10px;
+  }
+
+  .products .product-line-price:before {
+    content: 'Item Total: $';
+  }
+
+  .totals .totals-item label {
+    width: 60%;
+  }
+  .totals .totals-item .totals-value {
+    width: 40%;
+  }
+
+
+
+  @-webkit-keyframes drop-in-fade-out {
+    0% {
+      opacity: 0;
+      visibility: visible;
+      -webkit-transform: translate3d(0, -200%, 0);
+      -moz-transform: translate3d(0, -200%, 0);
+      -ms-transform: translate3d(0, -200%, 0);
+      -o-transform: translate3d(0, -200%, 0);
+      transform: translate3d(0, -200%, 0);
+    }
+    12% {
+      -webkit-transform: translate3d(0, 0, 0);
+      -moz-transform: translate3d(0, 0, 0);
+      -ms-transform: translate3d(0, 0, 0);
+      -o-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0);
+    }
+    20% {
+      opacity: 1;
+    }
+    70% {
+      opacity: 1;
+      visibility: visible;
+      -webkit-transform: translate3d(0, 0, 0);
+      -moz-transform: translate3d(0, 0, 0);
+      -ms-transform: translate3d(0, 0, 0);
+      -o-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0);
+    }
+    80% {
+      opacity: 0;
+    }
+    100% {
+      visibility: hidden;
+      -webkit-transform: translate3d(75%, 0, 0);
+      -moz-transform: translate3d(75%, 0, 0);
+      -ms-transform: translate3d(75%, 0, 0);
+      -o-transform: translate3d(75%, 0, 0);
+      transform: translate3d(25%, 0, 0);
+    }
+  }
+  @-moz-keyframes drop-in-fade-out {
+    0% {
+      opacity: 0;
+      visibility: visible;
+      -webkit-transform: translate3d(0, -200%, 0);
+      -moz-transform: translate3d(0, -200%, 0);
+      -ms-transform: translate3d(0, -200%, 0);
+      -o-transform: translate3d(0, -200%, 0);
+      transform: translate3d(0, -200%, 0);
+    }
+    12% {
+      -webkit-transform: translate3d(0, 0, 0);
+      -moz-transform: translate3d(0, 0, 0);
+      -ms-transform: translate3d(0, 0, 0);
+      -o-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0);
+    }
+    20% {
+      opacity: 1;
+    }
+    70% {
+      opacity: 1;
+      visibility: visible;
+      -webkit-transform: translate3d(0, 0, 0);
+      -moz-transform: translate3d(0, 0, 0);
+      -ms-transform: translate3d(0, 0, 0);
+      -o-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0);
+    }
+    80% {
+      opacity: 0;
+    }
+    100% {
+      visibility: hidden;
+      -webkit-transform: translate3d(75%, 0, 0);
+      -moz-transform: translate3d(75%, 0, 0);
+      -ms-transform: translate3d(75%, 0, 0);
+      -o-transform: translate3d(75%, 0, 0);
+      transform: translate3d(25%, 0, 0);
+    }
+  }
+  @-o-keyframes drop-in-fade-out {
+    0% {
+      opacity: 0;
+      visibility: visible;
+      -webkit-transform: translate3d(0, -200%, 0);
+      -moz-transform: translate3d(0, -200%, 0);
+      -ms-transform: translate3d(0, -200%, 0);
+      -o-transform: translate3d(0, -200%, 0);
+      transform: translate3d(0, -200%, 0);
+    }
+    12% {
+      -webkit-transform: translate3d(0, 0, 0);
+      -moz-transform: translate3d(0, 0, 0);
+      -ms-transform: translate3d(0, 0, 0);
+      -o-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0);
+    }
+    20% {
+      opacity: 1;
+    }
+    70% {
+      opacity: 1;
+      visibility: visible;
+      -webkit-transform: translate3d(0, 0, 0);
+      -moz-transform: translate3d(0, 0, 0);
+      -ms-transform: translate3d(0, 0, 0);
+      -o-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0);
+    }
+    80% {
+      opacity: 0;
+    }
+    100% {
+      visibility: hidden;
+      -webkit-transform: translate3d(75%, 0, 0);
+      -moz-transform: translate3d(75%, 0, 0);
+      -ms-transform: translate3d(75%, 0, 0);
+      -o-transform: translate3d(75%, 0, 0);
+      transform: translate3d(25%, 0, 0);
+    }
+  }
+  @keyframes drop-in-fade-out {
+    0% {
+      opacity: 0;
+      visibility: visible;
+      -webkit-transform: translate3d(0, -200%, 0);
+      -moz-transform: translate3d(0, -200%, 0);
+      -ms-transform: translate3d(0, -200%, 0);
+      -o-transform: translate3d(0, -200%, 0);
+      transform: translate3d(0, -200%, 0);
+    }
+    12% {
+      -webkit-transform: translate3d(0, 0, 0);
+      -moz-transform: translate3d(0, 0, 0);
+      -ms-transform: translate3d(0, 0, 0);
+      -o-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0);
+    }
+    20% {
+      opacity: 1;
+    }
+    70% {
+      opacity: 1;
+      visibility: visible;
+      -webkit-transform: translate3d(0, 0, 0);
+      -moz-transform: translate3d(0, 0, 0);
+      -ms-transform: translate3d(0, 0, 0);
+      -o-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0);
+    }
+    80% {
+      opacity: 0;
+    }
+    100% {
+      visibility: hidden;
+      -webkit-transform: translate3d(75%, 0, 0);
+      -moz-transform: translate3d(75%, 0, 0);
+      -ms-transform: translate3d(75%, 0, 0);
+      -o-transform: translate3d(75%, 0, 0);
+      transform: translate3d(25%, 0, 0);
+    }
+  }
+  .animate--drop-in-fade-out {
+    -webkit-animation: drop-in-fade-out 3.5s 0.4s cubic-bezier(.32,1.75,.65,.91);
+    -moz-animation: drop-in-fade-out 3.5s 0.4s cubic-bezier(.32,1.75,.65,.91);
+    -ms-animation: drop-in-fade-out 3.5s 0.4s cubic-bezier(.32,1.75,.65,.91);
+    -o-animation: drop-in-fade-out 3.5s 0.4s cubic-bezier(.32,1.75,.65,.91);
+    animation: drop-in-fade-out 3.5s 0.4s cubic-bezier(.32,1.75,.65,.91);
+  }
+
+}
+
+
+
+
+    </style>
+
+
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/font-awesome/css/font-awesome.min.css") %>">
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/material-dashboard.css?v=1.2.0")   %>">
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/bootstrap.min.css")   %>">
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/commerce.css")   %>">
+
+    <script language="javascript" type="text/javascript">
+
+
+    function timeMsg(){
+
+    	window.setTimeout("clearMsg()",5000);//10secs
+
+    }
+
+    //
+
+    function clearMsg(){
+
+    	document.getElementById("hideMsg").innerHTML = "";
+
+    }
+</script>
+
+  </head>
+
+  <body onLoad = "timeMsg()">
+    <div id="wrapper">
+
+
+    <div id="checkout">
+    	CHECKOUT
+    </div>
+
+    <div id="info">
+      some details here
+    </div>
+
+    <div id="header" style="position: fixed;width: 100%;z-index: 10;">
+     <a href="/order">
+    	            <img  style="width:300px;margin:auto;padding: 20px;"  alt="Thamani" src ="<%= static_path(@conn, "/images/thamani_logo.png") %>">
+      </a>
+    </div>
+
+
+
+
+<div class="container" style="width:auto">
+
+  <div id ="hideMsg">
+
+  <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
+  <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
+
+</div>
+  <main role="main">
+    <%= render @view_module, @view_template, assigns %>
+  </main>
+
+</div>
+
+
+</div>
+
+    <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
+      <%= Drab.Client.run(@conn) %>
+    <!--   Core JS Files   -->
+<script src="<%= static_path(@conn, "/js/jquery-3.2.1.min.js") %>"></script>
+<script src="<%= static_path(@conn, "/js/jquery.spinner.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/bootstrap.min.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/material.min.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/perfect-scrollbar.jquery.min.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/arrive.min.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/jquery.bootstrap-wizard.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/jquery.tagsinput.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/jasny-bootstrap.min.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/jquery.validate.min.js" ) %>"></script>
+<script  src="<%= static_path(@conn, "/js/bootstrap-table.js") %>"></script>
+<script  src="<%= static_path(@conn, "/js/bootstrap-table-print.js") %>"></script>
+<script  src="<%= static_path(@conn, "/js/bootstrap-table-export.js") %>"></script>
+<script  src="<%= static_path(@conn, "/js/tableexport.js") %>"></script>
+<script src="<%= static_path(@conn, "/js/material-dashboard.js?v=1.2.1" ) %>"></script>
+<script  src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/2.1.0/jspdf.plugin.autotable.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.3/xlsx.core.min.js"></script>
+
+<script src="<%= static_path(@conn, "/js/commerce.js" ) %>"></script>
+
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+
+	$(".largeGrid").click(function(){
+    $(this).find('a').addClass('active');
+    $('.smallGrid a').removeClass('active');
+
+    $('.product').addClass('large').each(function(){
+		});
+		setTimeout(function(){
+			$('.info-large').show();
+		}, 200);
+		setTimeout(function(){
+
+			$('.view_gallery').trigger("click");
+		}, 400);
+
+		return false;
+	});
+
+	$(".smallGrid").click(function(){
+    $(this).find('a').addClass('active');
+    $('.largeGrid a').removeClass('active');
+
+		$('div.product').removeClass('large');
+		$(".make3D").removeClass('animate');
+    $('.info-large').fadeOut("fast");
+		setTimeout(function(){
+				$('div.flip-back').trigger("click");
+		}, 400);
+		return false;
+	});
+
+	$(".smallGrid").click(function(){
+		$('.product').removeClass('large');
+		return false;
+	});
+
+  $('.colors-large a').click(function(){return false;});
+
+
+	$('.product').each(function(i, el){
+
+		// Lift card and show stats on Mouseover
+		$(el).find('.make3D').hover(function(){
+				$(this).parent().css('z-index', "20");
+				$(this).addClass('animate');
+				$(this).find('div.carouselNext, div.carouselPrev').addClass('visible');
+			 }, function(){
+				$(this).removeClass('animate');
+				$(this).parent().css('z-index', "1");
+				$(this).find('div.carouselNext, div.carouselPrev').removeClass('visible');
+		});
+
+		// Flip card to the back side
+		$(el).find('.view_gallery').click(function(){
+
+			$(el).find('div.carouselNext, div.carouselPrev').removeClass('visible');
+			$(el).find('.make3D').addClass('flip-10');
+			setTimeout(function(){
+			$(el).find('.make3D').removeClass('flip-10').addClass('flip90').find('div.shadow').show().fadeTo( 80 , 1, function(){
+					$(el).find('.product-front, .product-front div.shadow').hide();
+				});
+			}, 50);
+
+			setTimeout(function(){
+				$(el).find('.make3D').removeClass('flip90').addClass('flip190');
+				$(el).find('.product-back').show().find('div.shadow').show().fadeTo( 90 , 0);
+				setTimeout(function(){
+					$(el).find('.make3D').removeClass('flip190').addClass('flip180').find('div.shadow').hide();
+					setTimeout(function(){
+						$(el).find('.make3D').css('transition', '100ms ease-out');
+						$(el).find('.cx, .cy').addClass('s1');
+						setTimeout(function(){$(el).find('.cx, .cy').addClass('s2');}, 100);
+						setTimeout(function(){$(el).find('.cx, .cy').addClass('s3');}, 200);
+						$(el).find('div.carouselNext, div.carouselPrev').addClass('visible');
+					}, 100);
+				}, 100);
+			}, 150);
+		});
+
+		// Flip card back to the front side
+		$(el).find('.flip-back').click(function(){
+
+			$(el).find('.make3D').removeClass('flip180').addClass('flip190');
+			setTimeout(function(){
+				$(el).find('.make3D').removeClass('flip190').addClass('flip90');
+
+				$(el).find('.product-back div.shadow').css('opacity', 0).fadeTo( 100 , 1, function(){
+					$(el).find('.product-back, .product-back div.shadow').hide();
+					$(el).find('.product-front, .product-front div.shadow').show();
+				});
+			}, 50);
+
+			setTimeout(function(){
+				$(el).find('.make3D').removeClass('flip90').addClass('flip-10');
+				$(el).find('.product-front div.shadow').show().fadeTo( 100 , 0);
+				setTimeout(function(){
+					$(el).find('.product-front div.shadow').hide();
+					$(el).find('.make3D').removeClass('flip-10').css('transition', '100ms ease-out');
+					$(el).find('.cx, .cy').removeClass('s1 s2 s3');
+				}, 100);
+			}, 150);
+
+		});
+
+		makeCarousel(el);
+	});
+
+
+	/* ----  Image Gallery Carousel   ---- */
+	function makeCarousel(el){
+
+
+		var carousel = $(el).find('.carousel ul');
+		var carouselSlideWidth = 315;
+		var carouselWidth = 0;
+		var isAnimating = false;
+		var currSlide = 0;
+		$(carousel).attr('rel', currSlide);
+
+		// building the width of the casousel
+		$(carousel).find('li').each(function(){
+			carouselWidth += carouselSlideWidth;
+		});
+		$(carousel).css('width', carouselWidth);
+
+		// Load Next Image
+		$(el).find('div.carouselNext').on('click', function(){
+			var currentLeft = Math.abs(parseInt($(carousel).css("left")));
+			var newLeft = currentLeft + carouselSlideWidth;
+			if(newLeft == carouselWidth || isAnimating === true){return;}
+			$(carousel).css({'left': "-" + newLeft + "px",
+								   "transition": "300ms ease-out"
+								 });
+			isAnimating = true;
+			currSlide++;
+			$(carousel).attr('rel', currSlide);
+			setTimeout(function(){isAnimating = false;}, 300);
+		});
+
+		// Load Previous Image
+		$(el).find('div.carouselPrev').on('click', function(){
+			var currentLeft = Math.abs(parseInt($(carousel).css("left")));
+			var newLeft = currentLeft - carouselSlideWidth;
+			if(newLeft < 0  || isAnimating === true){return;}
+			$(carousel).css({'left': "-" + newLeft + "px",
+								   "transition": "300ms ease-out"
+								 });
+			isAnimating = true;
+			currSlide--;
+			$(carousel).attr('rel', currSlide);
+			setTimeout(function(){isAnimating = false;}, 300);
+		});
+	}
+
+	$('.sizes a span, .categories a span').each(function(i, el){
+		$(el).append('<span class="x"></span><span class="y"></span>');
+
+		$(el).parent().on('click', function(){
+			if($(this).hasClass('checked')){
+				$(el).find('.y').removeClass('animate');
+				setTimeout(function(){
+					$(el).find('.x').removeClass('animate');
+				}, 50);
+				$(this).removeClass('checked');
+				return false;
+			}
+
+			$(el).find('.x').addClass('animate');
+			setTimeout(function(){
+				$(el).find('.y').addClass('animate');
+			}, 100);
+			$(this).addClass('checked');
+			return false;
+		});
+	});
+
+});
+
+
+
+$(document).ready(function () {
+  var user = <%= @current_user.id %>
+    $.ajax({
+        url: "http://localhost:8000/commerce/status",
+        method: "POST",
+        dataType : "json",
+        data: { user: user },   //you may use jsonp for cross origin request
+        crossDomain:true,
+        success: function(data) {
+
+          console.log(data)
+           if (data.response == "true") {
+
+
+               $("a.cart > span").addClass("counter");
+               $("a.cart > span.counter").text(data.count);
+
+
+
+           } else {
+
+             $("a.cart > span").addClass("counter");
+             $("a.cart > span.counter").text(data.count);
+
+           }
+
+
+       }
+
+     })
+
+     $('#update #slug').change( function() {
+
+          var productRow = $(this).parent();
+          var itemid = (productRow.children('#itemid').val());
+          var quantity = $(this).val();
+          console.log(productRow.children('#itemid'));
+
+        updateCart(itemid,quantity);
+    });
+
+   });
+
+
+function AddToCart(prodid) {
+
+
+  const multi_url = "http://localhost:8000/commerce/cart";
+  var user = <%= @current_user.id %>
+  var count = 0;
+
+  $(document).ready(function () {
+
+      $.ajax({
+          url: multi_url,
+          method: "POST",
+          dataType : "json",   //you may use jsonp for cross origin request
+          data: {id: prodid ,status: "active",qty: 1, user: user },
+          crossDomain:true,
+          success: function(data) {
+
+            console.log(data)
+             if (data.response == "true") {
+
+
+                 $("a.cart > span").addClass("counter");
+                 $("a.cart > span.counter").text(data.count);
+
+                 $.toast({
+       text : data.message,
+       showHideTransition : 'slide',  // It can be plain, fade or slide
+       bgColor : 'green',              // Background color for toast
+       textColor : '#eee',            // text color
+       allowToastClose : false,       // Show the close button or not
+       hideAfter : 2500,              // `false` to make it sticky or time in miliseconds to hide after
+       stack : 5,                     // `fakse` to show one stack at a time count showing the number of toasts that can be shown at once
+       textAlign : 'left',            // Alignment of text i.e. left, right, center
+       position : 'top-center'       // bottom-left or bottom-right or bottom-center or top-left or top-right or top-center or mid-center or an object representing the left, right, top, bottom values to position the toast on page
+     })
+
+             } else {
+
+               $("a.cart > span").addClass("counter");
+               $("a.cart > span.counter").text(data.count);
+
+               $.toast({
+     text : data.message,
+     showHideTransition : 'slide',  // It can be plain, fade or slide
+     bgColor : 'red',              // Background color for toast
+     textColor : '#eee',            // text color
+     allowToastClose : false,       // Show the close button or not
+     hideAfter : 2000,              // `false` to make it sticky or time in miliseconds to hide after
+     stack : 5,                     // `fakse` to show one stack at a time count showing the number of toasts that can be shown at once
+     textAlign : 'left',            // Alignment of text i.e. left, right, center
+     position : 'top-center'       // bottom-left or bottom-right or bottom-center or top-left or top-right or top-center or mid-center or an object representing the left, right, top, bottom values to position the toast on page
+   })
+             }
+
+
+
+
+         }
+
+       })
+
+     });
+
+}
+
+
+function updateCart(itemid,quantity) {
+
+
+  const multi_url = "http://localhost:8000/commerce/update";
+var user = <%= @current_user.id %>
+
+  $(document).ready(function () {
+      $.ajax({
+          url: multi_url,
+          method: "POST",
+          dataType : 'json',   //you may use jsonp for cross origin request
+            data: {id: itemid ,qty: quantity},
+          crossDomain:true,
+          success: function(data) {
+
+             if (data.response == "true") {
+
+                 location.reload();
+                 $.toast({
+                   text : data.message,
+                   showHideTransition : 'slide',  // It can be plain, fade or slide
+                   bgColor : 'green',              // Background color for toast
+                   textColor : '#eee',            // text color
+                   allowToastClose : false,       // Show the close button or not
+                   hideAfter : 2000,              // `false` to make it sticky or time in miliseconds to hide after
+                   stack : 5,                     // `fakse` to show one stack at a time count showing the number of toasts that can be shown at once
+                   textAlign : 'left',            // Alignment of text i.e. left, right, center
+                   position : 'top-center'       // bottom-left or bottom-right or bottom-center or top-left or top-right or top-center or mid-center or an object representing the left, right, top, bottom values to position the toast on page
+                 })
+
+             }else {
+               $.toast({
+                 text : data.message,
+                 showHideTransition : 'slide',  // It can be plain, fade or slide
+                 bgColor : 'red',              // Background color for toast
+                 textColor : '#eee',            // text color
+                 allowToastClose : false,       // Show the close button or not
+                 hideAfter : 2000,              // `false` to make it sticky or time in miliseconds to hide after
+                 stack : 5,                     // `fakse` to show one stack at a time count showing the number of toasts that can be shown at once
+                 textAlign : 'left',            // Alignment of text i.e. left, right, center
+                 position : 'top-center'       // bottom-left or bottom-right or bottom-center or top-left or top-right or top-center or mid-center or an object representing the left, right, top, bottom values to position the toast on page
+               })
+             }
+
+         }
+
+       })
+
+     });
+
+// console.log(ressultArray);
+
+}
+
+function DelToCart(prodid) {
+
+
+  const multi_url = "http://localhost:8000/commerce/del";
+  var user = <%= @current_user.id %>
+  var count = 0;
+
+  $(document).ready(function () {
+
+      $.ajax({
+          url: multi_url,
+          method: "POST",
+          dataType : "json",   //you may use jsonp for cross origin request
+          data: {id: prodid },
+          crossDomain:true,
+          success: function(data) {
+
+            console.log(data)
+             if (data.response == "true") {
+
+
+               location.reload();
+                 alert("Items deleted successfully");
+
+             } else {
+
+
+               alert(data.message);
+
+             }
+
+
+
+
+         }
+
+       })
+
+     });
+
+}
+</script>
+
+  </body>
+</html>

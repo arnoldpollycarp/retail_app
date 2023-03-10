@@ -1,0 +1,62 @@
+
+<%= form_for @changeset, @action, [multipart: true] , fn f -> %>
+  <%= if @changeset.action do %>
+    <div class="alert alert-danger">
+      <p>Oops, something went wrong! Please check the errors below.</p>
+    </div>
+  <% end %>
+
+  <div class="col-md-6">
+  <div class="form-group label-floating">
+    <%= label f, :"Sku Item", class: "control-label" %>
+    <%= select f, :item, @bat , class: "selectpicker", disabled: "disabled", "data-style": "btn btn-gold btn-round", title: "Choose SKU Item" %>
+      </div>
+    <%= error_tag f, :item %>
+  </div>
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= label f, :"Retailer", class: "control-label" %>
+    <%= select f, :retailer, @company, class: "selectpicker", disabled: "disabled", "data-style": "btn btn-gold btn-round", title: "Choose retailer" , required: "required"%>
+
+      </div>
+    <%= error_tag f, :retailer %>
+  </div>
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= label f, :Transporter, class: "control-label" %>
+    <%= text_input f, :transporter, class: "form-control",disabled: "disabled" %>
+      </div>
+    <%= error_tag f, :transporter %>
+  </div>
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= label f, :"Transporter details", class: "control-label" %>
+    <%= textarea f, :transporterid, class: "form-control" ,disabled: "disabled"%>
+      </div>
+    <%= error_tag f, :transporterid %>
+  </div>
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= label f, :"Extra description", class: "control-label" %>
+    <%= textarea f, :description, class: "form-control" ,disabled: "disabled"%>
+      </div>
+    <%= error_tag f, :description %>
+  </div>
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+
+    <%= label f, :"Confirm Recieved", class: "control-label" %>
+    <%= checkbox f, :active, class: "checkbox-material" %>
+      </div>
+    <%= error_tag f, :active %>
+  </div>
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= submit "Submit", class: "btn btn-gold" %>
+  </div>
+    </div>
+<% end %>

@@ -1,0 +1,9 @@
+<span class="col-md-10" style="margin-left: -25px;"> <%= link "Back", to: retail_return_path(@conn, :index),class: "btn btn-gold btn-gold"  %></span>
+
+<div class="card" style="margin:25px -10px">
+    <div class="card-header" data-background-color="gold">
+        <h4 class="title">Return</h4>
+        <p class="category"><%= link "Dashboard", to: retail_return_path(@conn, :index) %>/ Return/edit</p>
+
+    </div>
+<%= render "form.html", Map.put(assigns, :action, retail_return_path(@conn, :update, @return)) %>

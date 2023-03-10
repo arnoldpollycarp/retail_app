@@ -1,0 +1,80 @@
+
+
+<div class="row">
+                    <div class="col-md-12">
+
+
+                           <span><%= link "Back", to: dispatch_retailer_admin_path(@conn, :index), class: "btn btn-gold btn-gold" %></span>
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">dispatch</h4>
+                                   <p class="category"><%= link "Dashboard", to: manufacturer_admin_dashboard_path(@conn, :index) %>/ dispatches/ Show </p>
+
+                               </div>
+
+                               <table class="table" style="margin-left: 15px;">
+                                    <tbody>
+
+                                      <tr>
+                                        <td>Shipping Code:
+                                        <%= @dispatch.shipping %></td>
+                                      </tr>
+
+                                      <tr>
+                                        <td>Item Name:
+                                        <%= @dispatch.sku.name %></td>
+                                      </tr>
+
+                                      <tr>
+                                        <td>Quantity:
+                                        <%= @dispatch.quantity %></td>
+                                      </tr>
+
+
+
+                                      <tr>
+                                        <td>Dispatch:
+                                        <%= @dispatch.company.company %></td>
+                                      </tr>
+
+                                      <tr>
+                                        <td>Transporter:
+                                        <%= @dispatch.transporter %></td>
+                                      </tr>
+
+                                      <tr>
+                                        <td>Transporter details:
+                                        <%= @dispatch.transporterid %></td>
+                                      </tr>
+
+                                      <tr>
+                                        <td>description:
+                                        <%= @dispatch.description %></td>
+                                      </tr>
+                                      <tr>
+                                       <td>QR Code :
+                                       <img src="<%= Thamani.FileUploader.url({@dispatch.scode, @dispatch})%>.png"  style="width:150px"/>
+                                     </tr>
+                                      <tr>
+                                       <td>pdf file :
+                                       <span ><a href="<%= Thamani.FileUploader.url({@dispatch.scode, @dispatch})%>.pdf"  class = "btn btn-primary btn-primary">Download Shipping code</a></span></td>
+                                     </tr>
+
+                                      <tr>
+                                        <td>Confirmation Status:
+                                          <%= if @dispatch.active == "true" do %>
+                                            <i class="fa fa-check" style= "color:#66bb6a !important"></i>
+                                          <% else  %>
+                                          <i class="fa fa-close" style= "color:#f44336 !important"></i>
+                                          <% end %>
+                                      </tr>
+                                    </tbody>
+                              </table>
+                            </div>
+                          </div>
+
+
+<ul>
+
+</ul>
+</div>

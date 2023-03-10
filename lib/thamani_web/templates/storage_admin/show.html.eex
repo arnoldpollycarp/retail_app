@@ -1,0 +1,53 @@
+
+
+<div class="row">
+                   <div class="col-md-12">
+
+
+                         <span><%= link "Add storage", to: storage_admin_path(@conn, :new), class: "btn btn-gold btn-gold" %></span>
+                         <span><%= link "Back", to: storage_admin_path(@conn, :index), class: "btn btn-gold btn-gold" %></span>
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">Fertilisers</h4>
+                                   <p class="category"><%= link "Dashboard", to: warehouse_admin_dashboard_path(@conn, :index) %>/ storages/ Show </p>
+
+                               </div>
+
+                               <table class="table" style="margin-left: 15px;">
+                                    <tbody>
+
+
+                                    <tr>
+                                      <td>storage rack number:
+                                      <%= @storage.name %></td>
+                                    </tr>
+
+                                    <tr>
+                                      <td>Shipping Code:
+                                      <%= @storage.item %></td>
+                                    </tr>
+
+                                    <tr>
+                                      <td>description:
+                                      <%= @storage.description %></td>
+                                    </tr>
+
+                                    <tr>
+                                      <td>Active:
+                                        <%= if @storage.active == "true" do %>
+                                          <i class="fa fa-check" style= "color:#66bb6a !important"></i>
+                                        <% else  %>
+                                        <i class="fa fa-close" style= "color:#f44336 !important"></i>
+                                        <% end %>
+                                    </tr>
+                                  </tbody>
+                              </table>
+                            </div>
+                          </div>
+
+
+<ul>
+
+</ul>
+
+</div>

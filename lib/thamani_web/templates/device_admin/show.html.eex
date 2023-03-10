@@ -1,0 +1,48 @@
+<div class="row">
+                       <div class="col-md-12">
+
+                         <span><%= link "Back", to: device_admin_path(@conn, :index), class: "btn btn-gold btn-gold" %></span>
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">Device</h4>
+                                   <p class="category"><%= link "Dashboard", to: retail_admin_dashboard_path(@conn, :index) %>/ Device/ Show Device</p>
+
+                               </div>
+                               <table class="table" style="margin-left: 15px;">
+                                    <tbody>
+                                            <tr>
+                                                   <td>
+                                                          <h5>  Name: <%= @device.fullname %> </h5>
+                                                    </td>
+                                          </tr>
+                                          <tr>
+                                                    <td>
+                                                            <h5>  IMEI: <%= @device.imei %> </label>
+                                                    </td>
+                                          </tr>
+
+                                          <tr>
+                                                    <td>
+                                                            <h5>  Description: <%= @device.description %> </label>
+                                                    </td>
+                                          </tr>
+
+                                          <tr>
+                                                    <td>
+
+                                                              <%= if @device.active == "true" do %>
+                                                                <h5>Active:<i class="fa fa-check" style= "color:#66bb6a !important"></i></h5>
+                                                              <% else  %>
+                                                              <h5>Active:<i class="fa fa-close" style= "color:#f44336 !important"></i></h5>
+                                                              <% end %>
+                                                    </td>
+                                            </tr>
+                                          </tbody>
+                                      </table>
+<ul>
+
+</ul>
+
+      </div>
+      </div>
+      </div>

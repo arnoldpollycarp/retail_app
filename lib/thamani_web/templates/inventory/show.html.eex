@@ -1,0 +1,224 @@
+<% alias Thamani.Sales
+   alias Thamani.Dispatches
+   alias Thamani.Pmasters
+   alias Thamani.Inventories
+ %>
+<div class="row">
+                 <%= if @current_user.id == @user.id do %>
+                  <div class="col-md-8">
+                 <div class="col-md-12">
+                   <span><%= link "Edit inventory", to: inventory_path(@conn, :edit, @inventory) , class: "btn btn-gold btn-gold" %></span>
+                   <span><%= link "Back", to: inventory_path(@conn, :index), class: "btn btn-gold btn-gold" %></span>
+
+                   <div class="card">
+                       <div class="card-header" data-background-color="gold">
+                         <%= if is_nil(@inventory.sku) do %>
+                         <h4 class="title">Deleted</h4>
+                         <% else %>
+                           <h4 class="title"><%= @inventory.sku.name %> Price range</h4>
+                          <% end %>
+                       </div>
+                      <%= for inventories_price <- @inventories_price do %>
+
+                      <table class="table"  style="margin-left: 0px;">
+                        <thead class="text-info">
+                          <tr>
+                            <th data-field="batch" data-sortable="true"> Price Buildup</th>
+                            <th data-field="expiry" data-sortable="true">Range allowable</th>
+                            <th data-field="production" data-sortable="true">Price addition Alowable #</th>
+                           <th data-field="price" data-sortable="true">Final Price Buildup</th>
+
+                           </tr>
+                           </thead>
+                           <tbody>
+
+                 <td><span style ="background:#66bb6a !important;padding: 5px;border-radius: 5px;font-size: 13px;"> <%= Float.ceil(String.to_float(Dispatches.get_price(inventories_price.item)) + Float.ceil(Sales.get_gs1_value(),1) + (Inventories.get_item_warehouse(inventories_price.item, @current_user) ),2) %></span></td>
+
+
+
+                   <td><span style ="background:#f44336 !important;padding: 5px;border-radius: 5px;font-size: 13px;"><%= Pmasters.get_min(Dispatches.getcategoryname(inventories_price.item))%>% - <%= Pmasters.get_max(Dispatches.getcategoryname(inventories_price.item))%>%</span></td>
+
+
+
+   <td><span style ="background:gold !important;padding: 5px;border-radius: 5px;font-size: 13px;">
+     <%= Float.ceil( (Pmasters.get_min(Dispatches.getcategoryname(@inventory.item))/100) * (String.to_float(Dispatches.get_price(@inventory.item))+ Float.ceil(Sales.get_gs1_value(),1) + (Inventories.get_item_warehouse(inventories_price.item, @current_user)) ),2) %> -
+
+ <%= Float.ceil( (Pmasters.get_max(Dispatches.getcategoryname(@inventory.item))/100) * (String.to_float(Dispatches.get_price(@inventory.item))+ Float.ceil(Sales.get_gs1_value(),1) +  (Inventories.get_item_warehouse(inventories_price.item, @current_user)) ),2)%> </span></td>
+
+
+
+    <td><span style ="background:#66bb6a !important;padding: 5px;border-radius: 5px;font-size: 13px;">
+     <%= Float.ceil(Float.ceil(String.to_float(Dispatches.get_price(@inventory.item))+ Float.ceil(Sales.get_gs1_value(),1) + (Inventories.get_item_warehouse(inventories_price.item, @current_user)),2)+
+     Float.ceil( (Pmasters.get_min(Dispatches.getcategoryname(@inventory.item))/100) * (String.to_float(Dispatches.get_price(@inventory.item))+ Float.ceil(Sales.get_gs1_value(),1) + (Inventories.get_item_warehouse(inventories_price.item, @current_user)) ),2),2)%> -
+  <%= Float.ceil( Float.ceil(String.to_float(Dispatches.get_price(@inventory.item)) + Float.ceil(Sales.get_gs1_value(),1)+ (Inventories.get_item_warehouse(inventories_price.item, @current_user)) ,2)+
+  Float.ceil( (Pmasters.get_max(Dispatches.getcategoryname(@inventory.item))/100) * (String.to_float(Dispatches.get_price(@inventory.item))+ Float.ceil(Sales.get_gs1_value(),1) + (Inventories.get_item_warehouse(inventories_price.item, @current_user)) ),2),2)%> </span></td>
+
+
+                                                          </tbody>
+                                                    </table>
+                    </div>
+                        <% end %>
+                    </div>
+
+                 <div class="col-md-12">
+
+
+                             <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">Inventory</h4>
+                                   <p class="category"><%= link "Dashboard", to: retail_dashboard_path(@conn, :index) %>/ inventory/ Show </p>
+
+                               </div>
+                               
+                                 <div id="toolbar" style="margin-top: -16px;">
+                                <select class="form-control">
+                                  <option value="">Export Current page</option>
+                                  <option value="all">Export All</option>
+                                  <option value="selected">Export Selected</option>
+                                </select>
+                               </div>
+                               <table class="table" id ="fresh-table" data-toggle="table" data-toolbar="#toolbar" data-search="true"  data-pagination="true" data-show-print="true" data-show-export="true"   data-export-options='{"fileName": "reports"}'>                                 <thead class="text-info">
+                                   <tr>
+                                     <th data-field="batch" data-sortable="true">Batch #</th>
+                                     <th data-field="expiry" data-sortable="true">Days to Expiry</th>
+                                     <th data-field="production" data-sortable="true">Production #</th>
+                                    <th  data-sortable="true">Your Price</th>
+                                    <th  data-sortable="true">Total Price</th>
+				     <th data-field="available" data-sortable="true">Qty </th>
+
+                                      <th class="text-center" >Actions</th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                       <%= for inventories <- @inventories do %>
+                                    <tr>
+                                        <td><%= (inventories.batch) %> </td>
+                                        <%= if Timex.diff(Date.from_iso8601!(inventories.expiry), DateTime.utc_now(), :days) > 0 do %>
+                                            <%= if Timex.diff(Date.from_iso8601!(inventories.expiry), DateTime.utc_now(), :days) >= 60 do %>
+                                                <td >
+                                                <button type="button" class= 'btn btn-success btn-success' data-toggle="popover" data-trigger="hover" title="Date of Expiry" data-content= '<%=inventories.expiry %>' style="margin:20px;">
+                                                <%= Timex.diff(Date.from_iso8601!(inventories.expiry), DateTime.utc_now(), :days)  %>
+                                                </button>
+                                                </td>
+                                            <% else %>
+                                                <td >
+                                                  <button type="button" class= 'btn btn-success btn-danger' data-toggle="popover" data-trigger="hover" title="Date of Expiry" data-content= '<%=inventories.expiry %>' style="margin:20px;">
+                                                  <%= Timex.diff(Date.from_iso8601!(inventories.expiry), DateTime.utc_now(), :days)  %>
+                                                  </button>
+                                              </td>
+                                            <% end %>
+                                        <% else %>
+						<td>
+                                           <button class= 'btn btn-success btn-danger' data-toggle="popover" data-trigger="hover" title="Date of Expiry" data-content= '<%=inventories.expiry %>' style="margin:20px;"> 0</button>
+                                         </td>
+                                       <% end %>
+
+                                      <td><%= (inventories.production) %> </td>
+                                    <td><%= (inventories.price) %> </td>
+				      <td><%=Float.floor(String.to_float(inventories.price) + Float.ceil(Sales.get_gs1_value(),1) + (@inventory.manufacturer) + (@inventory.warehouse),2) %></td>
+
+                                    <td><%= (inventories.quantity) %> </td>
+
+
+
+
+                                    <td class="text-right">
+                                      <span  rel="tooltip" title="Delete Task" class="btn btn-danger btn-simple ">
+                                          <span><%= link "",to: inventory_path(@conn, :delete, inventories), method: :delete, data: [confirm: "Are you sure?"],  class: "fa fa-close", style: "color:#f44336 !important" %></span>
+                                      </span>
+                                    </td>
+
+                                    <% end %>
+
+
+                                    </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                          <div class="col-md-4">
+
+              <div class="card card-profile" style="background:gold;">
+
+                <div class="card-body" >
+                  <h6 class="card-category text-gray">Details for</h6>
+                  <h4 class="card-title"><%= @inventory.sku.name %></h4>
+                  <table class="table" style="margin-left: 0px;">
+                       <tbody>
+
+
+                     <tr>
+                       <td>SKU GTIN:
+                       <%= @inventory.sku.gtin %></td>
+                     </tr>
+
+                     <tr>
+                       <td>Name of inventory:
+                       <%= @inventory.sku.name %></td>
+                     </tr>
+
+		     <tr>
+			<td>Category:
+			<%= Pmasters.getname(Dispatches.getcategoryname(@inventory.item)) %></td>
+		     </tr>
+
+                     <tr>
+                       <td>My Price:
+                       <%= @inventory.price %></td>
+                     </tr>
+			 <tr>
+                       <td>Discount Price:
+                       <%= (String.to_float(@inventory.price) - (String.to_float(@inventory.price) * (@inventory.discounts.value/100))) %></td>
+                     </tr>
+		      <tr>
+                       <td>Current Total Price:
+                       <%= Float.ceil( ( String.to_float(@inventory.price) - (String.to_float(@inventory.price) * (@inventory.discounts.value/100)) )  + Float.ceil(Sales.get_gs1_value(),1) + (@inventory.manufacturer) + (@inventory.warehouse),2) %></td>
+                     </tr>
+                     <tr>
+                       <td>Discount:
+                       <%= @inventory.discounts.name %> (<%= @inventory.discounts.value %>%)</td>
+                     </tr>
+
+                     <tr>
+                       <td>Stock level threshold:
+                       <%= @inventory.reorderlevel %> </td>
+                     </tr>
+
+                     <tr>
+                       <td>Reorder stock quantity:
+                       <%= @inventory.reorderstock %> </td>
+                     </tr>
+
+
+                     <tr>
+                       <td>description:
+                       <%= @inventory.description %></td>
+                     </tr>
+
+                     <tr>
+                       <td>Active:
+                         <%= if @inventory.active == "true" do %>
+                           <i class="fa fa-check" style= "color:#66bb6a !important"></i>
+                         <% else  %>
+                         <i class="fa fa-close" style= "color:#f44336 !important"></i>
+                         <% end %>
+                     </tr>
+		     <tr>
+			<td>Image   <p> <img src="<%= Thamani.ImageUploader.url({@inventory.sku.image, @inventory})%>"  style="width:150px"></p>  </td>
+		     </tr>
+                   </tbody>
+                 </table>
+                </div>
+              </div>
+            </div>
+
+
+<ul>
+
+
+</ul>
+<% else %>
+    <h1>Not authorised to access this page</h1>
+<% end %>
+</div>

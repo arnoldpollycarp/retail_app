@@ -1,0 +1,609 @@
+<div class="row">
+  <div class="col-lg-12 col-md-12">
+        <div class="card">
+            <div class="card-header" data-background-color="gold">
+
+                <h4 class="">Gs1 Admin Dashboard </h4>
+                <script>
+                    document.write(new Date())
+                </script>
+            </div>
+            <div class="card-content table-responsive">
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+      <div class="card ">
+          <div class="card-header " style="width:150px;background:gold;">
+          <h4 class="card-title" style="text-align:center;">Sales Reports</h4>
+          </div>
+            <div class="card-body ">
+            <div class="col-md-3">
+            </div>
+            <div class="col-md-9">
+              <ul class="nav nav-pills nav-pills-warning" role="tablist" style="">
+              <li class="nav-item">
+              <a class="nav-link active" data-toggle="tab" href="#link1" role="tablist">
+                All Sales
+              </a>
+              </li>
+              <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#link2" role="tablist">
+                Today
+              </a>
+              </li>
+              <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#link3" role="tablist">
+                Search by date
+              </a>
+              </li>
+              <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#link4" role="tablist">
+                 By retailer
+              </a>
+              </li>
+              </ul>
+              </div>
+              <div class="tab-content tab-space">
+                <div class="tab-pane active" id="link1">
+
+                   <div class="row">
+                          <div class="col-lg-4 col-md-6 col-sm-6">
+
+                          </div>
+                        <div class="col-lg-3 col-md-6 col-sm-6">
+                            <div class="card card-stats">
+                                <div class="card-header" data-background-color="green">
+                                    <i class="fa fa-money"></i>
+                                </div>
+                                <div class="card-content">
+                                   <p class="category">Total Revenue</p>
+                                   <h4 class="title"><%= @count_6 %></h4>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="stats">
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-sm-6">
+                        </div>
+                     </div>
+                       <div class="row">
+                         <div class="col-lg-1 col-md-6 col-sm-6">
+                         </div>
+                        <div class="col-lg-3 col-md-6 col-sm-6">
+                            <div class="card card-stats">
+                                <div class="card-header" data-background-color="red">
+                                    <i class="fa fa-truck"></i>
+                                </div>
+                                <div class="card-content">
+
+                                  <p class="category">Manufacturer Total Revenue </p>
+                                   <h4 class="title"><%= @count_2 %></h4>
+
+
+                                </div>
+                                <div class="card-footer">
+                                    <div class="stats">
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-6 col-sm-6">
+                            <div class="card card-stats">
+                                <div class="card-header" data-background-color="red">
+                                    <i class="fa fa-truck"></i>
+                                </div>
+                                <div class="card-content">
+
+                                  <p class="category">Warehouse Total Revenue</p>
+                                  <%= if @count_3 == nil do %>
+                                       <h4 class="title"> 0 </h4>
+                                  <% else %>
+                                     <h4 class="title"> <%=@count_3  %>    </h4>
+                                 <% end %>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="stats">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-6 col-sm-6">
+                            <div class="card card-stats">
+                                <div class="card-header" data-background-color="red">
+                                    <i class="fa fa-truck"></i>
+                                </div>
+                                <div class="card-content">
+
+                                  <p class="category">Retailer Total Revenue </p>
+                                   <h4 class="title"><%= @count_4 %></h4>
+
+
+                                </div>
+                                <div class="card-footer">
+                                    <div class="stats">
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                      </div>
+                       <div class="row">
+                         <div class="col-lg-4 col-md-6 col-sm-6">
+                         </div>
+                        <div class="col-lg-3 col-md-6 col-sm-6">
+                            <div class="card card-stats">
+                                <div class="card-header" data-background-color="gold">
+                                    <i class="fa fa-inbox"></i>
+                                </div>
+                                <div class="card-content">
+
+                                  <p class="category">Thamani Total Revenue </p>
+                                   <h4 class="title"><%= @count_5 %></h4>
+
+
+                                </div>
+                                <div class="card-footer">
+                                    <div class="stats">
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 col-sm-6">
+                        </div>
+
+                    </div>
+
+                </div>
+
+               <div class="tab-pane" id="link2">
+                 <div class="row">
+                        <div class="col-lg-4 col-md-6 col-sm-6">
+
+                        </div>
+                      <div class="col-lg-3 col-md-6 col-sm-6">
+                          <div class="card card-stats">
+                              <div class="card-header" data-background-color="green">
+                                  <i class="fa fa-money"></i>
+                              </div>
+                              <div class="card-content">
+                                 <p class="category">Total Revenue</p>
+                                 <h4 class="title"><%= @count_11 %></h4>
+                              </div>
+                              <div class="card-footer">
+                                  <div class="stats">
+
+
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col-lg-3 col-md-6 col-sm-6">
+                      </div>
+                   </div>
+                     <div class="row">
+                       <div class="col-lg-1 col-md-6 col-sm-6">
+                       </div>
+                      <div class="col-lg-3 col-md-6 col-sm-6">
+                          <div class="card card-stats">
+                              <div class="card-header" data-background-color="red">
+                                  <i class="fa fa-truck"></i>
+                              </div>
+                              <div class="card-content">
+
+                                <p class="category">Manufacturer Total Revenue </p>
+                                 <h4 class="title"><%= @count_7 %></h4>
+
+
+                              </div>
+                              <div class="card-footer">
+                                  <div class="stats">
+
+
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+
+                      <div class="col-lg-3 col-md-6 col-sm-6">
+                          <div class="card card-stats">
+                              <div class="card-header" data-background-color="red">
+                                  <i class="fa fa-truck"></i>
+                              </div>
+                              <div class="card-content">
+
+                                <p class="category">Warehouse Total Revenue</p>
+                                <%= if @count_3 == nil do %>
+                                     <h4 class="title"> 0 </h4>
+                                <% else %>
+                                   <h4 class="title"> <%=@count_8  %>    </h4>
+                               <% end %>
+                              </div>
+                              <div class="card-footer">
+                                  <div class="stats">
+
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+
+                      <div class="col-lg-3 col-md-6 col-sm-6">
+                          <div class="card card-stats">
+                              <div class="card-header" data-background-color="red">
+                                  <i class="fa fa-truck"></i>
+                              </div>
+                              <div class="card-content">
+
+                                <p class="category">Retailer Total Revenue </p>
+                                 <h4 class="title"><%= @count_9 %></h4>
+
+
+                              </div>
+                              <div class="card-footer">
+                                  <div class="stats">
+
+
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                    </div>
+                     <div class="row">
+                       <div class="col-lg-4 col-md-6 col-sm-6">
+                       </div>
+                      <div class="col-lg-3 col-md-6 col-sm-6">
+                          <div class="card card-stats">
+                              <div class="card-header" data-background-color="gold">
+                                  <i class="fa fa-inbox"></i>
+                              </div>
+                              <div class="card-content">
+
+                                <p class="category">Thamani Total Revenue </p>
+                                 <h4 class="title"><%= @count_10 %></h4>
+
+
+                              </div>
+                              <div class="card-footer">
+                                  <div class="stats">
+
+
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="col-lg-3 col-md-6 col-sm-6">
+                      </div>
+
+                  </div>
+
+               </div>
+
+               <div class="tab-pane" id="link3">
+		             <div class="row">
+              <form>
+              <div class="col-md-1">
+              </div>
+		            <div class="col-md-4">
+                  <div class="form-group label">
+                    <label class= "control-label">From  date</label>
+                    <input type = "date" name="date_search" class="form-control select-with-transition" value="<%= @date_search %>"  >
+
+                  </div>
+              </div>
+              <div class="col-md-4">
+                  <div class="form-group label">
+                    <label class= "control-label">To date</label>
+                    <input type = "date" name="date_search_2" class="form-control select-with-transition" value="<%= @date_search_2 %>"  >
+
+                  </div>
+              </div>
+                  <div class="col-md-2">
+                       <button   style="margin-top:30px" drab-click="return_list_sale">Look Up</button>
+
+                   </div>
+                <div class="col-md-1">
+                     <div class="loader <%= @loader_class %>"></div>
+                 </div>
+                 </form>
+              </div>
+		<div class="row">
+                      <div class="col-lg-4 col-md-6 col-sm-6">
+
+                      </div>
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                        <div class="card card-stats">
+                            <div class="card-header" data-background-color="green">
+                                <i class="fa fa-money"></i>
+                            </div>
+                            <div class="card-content">
+                               <p class="category">Total Revenue</p>
+                               <h4 class="title"><%= @count_16 %></h4>
+                            </div>
+                            <div class="card-footer">
+                                <div class="stats">
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                    </div>
+                 </div>
+                   <div class="row">
+                     <div class="col-lg-1 col-md-6 col-sm-6">
+                     </div>
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                        <div class="card card-stats">
+                            <div class="card-header" data-background-color="red">
+                                <i class="fa fa-truck"></i>
+                            </div>
+                            <div class="card-content">
+
+                              <p class="category">Manufacturer Total Revenue </p>
+                               <h4 class="title"><%= @count_12 %></h4>
+
+
+                            </div>
+                            <div class="card-footer">
+                                <div class="stats">
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                        <div class="card card-stats">
+                            <div class="card-header" data-background-color="red">
+                                <i class="fa fa-truck"></i>
+                            </div>
+                            <div class="card-content">
+
+                              <p class="category">Warehouse Total Revenue</p>
+                              <%= if @count_13 == nil do %>
+                                   <h4 class="title"> 0 </h4>
+                              <% else %>
+                                 <h4 class="title"> <%=@count_13  %>    </h4>
+                             <% end %>
+                            </div>
+                            <div class="card-footer">
+                                <div class="stats">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                        <div class="card card-stats">
+                            <div class="card-header" data-background-color="red">
+                                <i class="fa fa-truck"></i>
+                            </div>
+                            <div class="card-content">
+
+                              <p class="category">Retailer Total Revenue </p>
+                               <h4 class="title"><%= @count_14 %></h4>
+
+
+                            </div>
+                            <div class="card-footer">
+                                <div class="stats">
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                   <div class="row">
+                     <div class="col-lg-4 col-md-6 col-sm-6">
+                     </div>
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                        <div class="card card-stats">
+                            <div class="card-header" data-background-color="gold">
+                                <i class="fa fa-inbox"></i>
+                            </div>
+                            <div class="card-content">
+
+                              <p class="category">Thamani Total Revenue </p>
+                               <h4 class="title"><%= @count_15 %></h4>
+
+
+                            </div>
+                            <div class="card-footer">
+                                <div class="stats">
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                    </div>
+
+                </div>
+
+               </div>
+ 
+               <div class="tab-pane" id="link4">
+                <div class="row">
+              <form>
+              <div class="col-md-1">
+              </div>
+               <div class="col-md-3">
+                  <div class="form-group label">
+                    <label class= "control-label">From  date</label>
+                    <input type = "date" name="date_search" class="form-control select-with-transition" value="<%= @date_search %>"  >
+
+                  </div>
+              </div>
+              <div class="col-md-3">
+                  <div class="form-group label">
+                    <label class= "control-label">To date</label>
+                    <input type = "date" name="date_search_2" class="form-control select-with-transition" value="<%= @date_search_2 %>"  >
+
+                  </div>
+              </div>
+              <div class="col-md-3">
+              <input type="text" list="retailer_1" id="retailers" placeholder= "Search Retailer here" class="form-control data">
+              <datalist  id="retailer_1" >
+              <%= for c <- @company do %>
+                 <option  data-value="<%= c.id %>"><%= c.company %></option>
+                <% end %>
+              </datalist>
+              <input type="hidden" name="retailer" id="retailers-hidden">
+
+              </div>
+                  <div class="col-md-2">
+                       <button   style="margin-top:30px" drab-click="return_list_sale_by_retailer">Look Up</button>
+
+                   </div>
+                <div class="col-md-1">
+                     <div class="loader <%= @loader_class %>"></div>
+                 </div>
+                 </form>
+              </div>
+   <div class="row">
+                      <div class="col-lg-4 col-md-6 col-sm-6">
+
+                      </div>
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                        <div class="card card-stats">
+                            <div class="card-header" data-background-color="green">
+                                <i class="fa fa-money"></i>
+                            </div>
+                            <div class="card-content">
+                               <p class="category">Total Revenue</p>
+                               <h4 class="title"><%= @count_21 %></h4>
+                            </div>
+                            <div class="card-footer">
+                                <div class="stats">
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                    </div>
+                 </div>
+                   <div class="row">
+                     <div class="col-lg-1 col-md-6 col-sm-6">
+                     </div>
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                        <div class="card card-stats">
+                            <div class="card-header" data-background-color="red">
+                                <i class="fa fa-truck"></i>
+                            </div>
+                            <div class="card-content">
+
+                              <p class="category">Manufacturer Total Revenue </p>
+                               <h4 class="title"><%= @count_17 %></h4>
+
+
+                            </div>
+                            <div class="card-footer">
+                                <div class="stats">
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                        <div class="card card-stats">
+                            <div class="card-header" data-background-color="red">
+                                <i class="fa fa-truck"></i>
+                            </div>
+                            <div class="card-content">
+
+                              <p class="category">Warehouse Total Revenue</p>
+                              <%= if @count_13 == nil do %>
+                                   <h4 class="title"> 0 </h4>
+                              <% else %>
+                                 <h4 class="title"> <%=@count_18  %>    </h4>
+                             <% end %>
+                            </div>
+                            <div class="card-footer">
+                                <div class="stats">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                        <div class="card card-stats">
+                            <div class="card-header" data-background-color="red">
+                                <i class="fa fa-truck"></i>
+                            </div>
+                            <div class="card-content">
+
+                              <p class="category">Retailer Total Revenue </p>
+                               <h4 class="title"><%= @count_19 %></h4>
+
+
+                            </div>
+                            <div class="card-footer">
+                                <div class="stats">
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                   <div class="row">
+                     <div class="col-lg-4 col-md-6 col-sm-6">
+                     </div>
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                        <div class="card card-stats">
+                            <div class="card-header" data-background-color="gold">
+                                <i class="fa fa-inbox"></i>
+                            </div>
+                            <div class="card-content">
+
+                              <p class="category">Thamani Total Revenue </p>
+                               <h4 class="title"><%= @count_20 %></h4>
+
+
+                            </div>
+                            <div class="card-footer">
+                                <div class="stats">
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                    </div>
+
+                </div>
+
+               </div>
+
+
+             </div>
+          </div>
+      </div>
+    </div>
+ </div>

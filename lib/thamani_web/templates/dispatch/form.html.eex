@@ -1,0 +1,105 @@
+
+<%= form_for @changeset, @action, [multipart: true] , fn f -> %>
+  <%= if @changeset.action do %>
+    <div class="alert alert-danger">
+      <p>Oops, something went wrong! Please check the errors below.</p>
+    </div>
+  <% end %>
+
+
+  <div class="col-md-12">
+
+    <div class='element' id='div_1'>
+      <div class="col-md-4" >
+        <div class="form-group ">
+
+        <input type="text" list="batch_1" id="listing_1" placeholder= "Search item/GTIN/Batch here" class="form-control data">
+        <datalist  id="batch_1" >
+        <%= for b <- @bat do %>
+          <option  data-value="<%= b.id %>"><%= b.sku.gtin %> (<%= b.sku.name %>) (<%= b.batch %>)</option>
+          <% end %>
+        </datalist>
+        <input type="hidden" name="item[]" id="listing_1-hidden">
+
+      </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="form-group" >
+
+        <%= number_input f, :quantity, name: "quantity[]", class: "form-control" ,"data-rule": "quantity" ,placeholder: "Enter quantity"%>
+
+     </div>
+    </div>
+    <div class="col-md-4" >
+      <div class="form-group ">
+
+      <select class="form-control" id="uom_1" name="uom[]" >
+      <option data-value="Carton/Box">Carton/Box</option>
+      <option data-value="Case">Case</option>
+      <option data-value="Tray">Tray</option>
+      <option data-value="Single Unit">Single Unit</option>
+      <option data-value="Crate">Crate</option>
+      <option data-value="Bale">Bale</option>
+      <option data-value="Packet">Packet</option>
+      <option data-value="Jar">Jar</option>
+    </select>
+
+
+    </div>
+    </div>
+
+
+
+
+      <p class='col-md-12' style="border-top: 1.5px dotted gold;"></p>
+  </div>
+  </div>
+  <div class='col-md-12'>
+   <button id="add_dispatch">Add</button>
+  </div>
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= label f, :"warehouse", class: "control-label" %>
+    <%= select f, :warehouse, @company, class: "single_select", style: "width: 100%", title: "Choose warehouse" , required: "required"%>
+
+      </div>
+    <%= error_tag f, :warehouse %>
+  </div>
+  <div class="col-md-6">
+  <div class="form-group label-floating">
+    <%= label f, :"Transporter", class: "control-label" %>
+    <%= text_input f, :transporter, class: "form-control" %>
+      </div>
+    <%= error_tag f, :transporter %>
+  </div>
+
+  <div class="col-md-6">
+  <div class="form-group label-floating">
+    <%= label f, :"Transporter Details", class: "control-label" %>
+    <%= text_input f, :transporterid,  class: "form-control" %>
+      </div>
+    <%= error_tag f, :transporterid %>
+  </div>
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= label f, :"Extra description", class: "control-label" %>
+    <%= textarea f, :description,  value: "Thamani Delivery" ,class: "form-control" %>
+      </div>
+    <%= error_tag f, :description %>
+  </div>
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+
+    <%= checkbox f, :active, class: "checkbox-material" , style: "display:none"%>
+      </div>
+    <%= error_tag f, :active %>
+  </div>
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= submit "Submit", class: "btn btn-gold" %>
+  </div>
+    </div>
+<% end %>

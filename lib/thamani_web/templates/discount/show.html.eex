@@ -1,0 +1,52 @@
+<div class="row">
+                       <div class="col-md-12">
+
+                         <span><%= link "Back", to: discount_path(@conn, :index), class: "btn btn-gold btn-gold" %></span>
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">Discount</h4>
+                                   <p class="category"><%= link "Dashboard", to: retail_dashboard_path(@conn, :index) %>/ Discount/ Show Discount</p>
+
+                               </div>
+                               <table class="table" style="margin-left: 15px;">
+                                    <tbody>
+                                            <tr>
+                                                   <td>
+                                                          <h5>  Name: <%= @discount.name %> </h5>
+                                                    </td>
+                                          </tr>
+                                          <tr>
+                                                    <td>
+                                                            <h5>  Value(%): <%= @discount.value %> </label>
+                                                    </td>
+                                          </tr>
+
+                                          <tr>
+                                                    <td>
+                                                            <h5>  Description: <%= @discount.description %> </label>
+                                                    </td>
+                                          </tr>
+
+                                          <tr>
+                                                    <td>
+
+                                                              <%= if @discount.active == "true" do %>
+                                                                <h5>Active:<i class="fa fa-check" style= "color:#66bb6a !important"></i></h5>
+                                                              <% else  %>
+                                                              <h5>Active:<i class="fa fa-close" style= "color:#f44336 !important"></i></h5>
+                                                              <% end %>
+                                                    </td>
+                                            </tr>
+                                          </tbody>
+                                      </table>
+<ul>
+
+
+        <span><%= link "Add discount", to: discount_path(@conn, :new), class: "btn btn-gold btn-gold" %></span>
+       <span><%= link "Edit", to: discount_path(@conn, :edit, @discount) , class: "btn btn-gold btn-gold" %></span>
+
+</ul>
+
+      </div>
+      </div>
+      </div>

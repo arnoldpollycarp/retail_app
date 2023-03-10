@@ -1,0 +1,111 @@
+
+<%= if @current_user.id == @user.id do %>
+
+                                            <div class="row">
+                                                                   <div class="col-md-12">
+                                                                     <div class="navbar-form navbar-right" >
+                                                                       <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#salesmanModal">
+                                                                        search
+                                                                       </button>
+
+                                                                     </div>
+                                                                       <div class="card">
+                                                                           <div class="card-header" data-background-color="gold">
+                                                                               <h4 class="title">Sales</h4>
+                                                                               <p class="category"><%= link "Dashboard", to: retail_dashboard_path(@conn, :index) %>/Sales</p>
+
+                                                                           </div>
+
+                                                                           <div class="card-content table-responsive">
+                                                                             <div id="toolbar" style="margin-top: -16px;">
+                                                                            <select class="form-control">
+                                                                              <option value="">Export current page</option>
+                                                                              <option value="all">Export All</option>
+                                                                              <option value="selected">Export Selected</option>
+                                                                            </select>
+                                                                          </div>
+                                                 <table class="table" id ="fresh-table" data-toggle="table" data-toolbar="#toolbar"   data-pagination="true" data-show-print="true" data-show-export="true"   data-export-options='{"fileName": "users"}'>
+
+                                              <thead class="text-info">
+                                                <tr>
+                                                  <th data-field="state" data-checkbox="true"></th>
+      <th data-field="sku" data-sortable="true">SKU</th>
+      <th data-field="name" data-sortable="true">Item Name</th>
+      <th data-field="quantity" data-sortable="true">Sale ID</th>
+      <th data-field="mode" data-sortable="true">Mode of Pay</th>
+      <th data-field="price" data-sortable="true">Price</th>
+      <th data-field="date" data-sortable="true">Transaction Date</th>
+      <th class="text-center"> Actions</th>
+
+    </tr>
+  </thead>
+  <tbody>
+<%= for sale <- @sale do %>
+    <tr>
+      <td></td>
+      <td><%= sale.sku.gtin %> </td>
+      <td><%= sale.sku.name %> </td>
+      <td><%= sale.sale_id %> </td>
+      <td><%= sale.mode %> </td>
+      <td><%= Float.ceil(sale.retailer,2) * sale.quantity  %> </td>
+      <td><%= String.slice(to_string(sale.inserted_at), 0..18) %> </td>
+      <td class="text-center">
+                                                  <span  rel="tooltip" title="View Task" class="btn btn-info btn-simple ">
+                                                      <span ><%= link "",  to: sale_path(@conn, :show, sale), class: "fa fa-search-plus" ,style: "color:#00bcd4 !important" %></span>
+                                                  </span>
+
+
+
+                                                 <span  rel="tooltip" title="Cannot Delete Task" class="btn btn-danger btn-simple ">
+                                                     <span class = "fa fa-ban", style = "color:#f44336 !important" ></span>
+                                                </span>
+
+</td>
+
+    </tr>
+<% end %>
+  </tbody>
+</table>
+</div>
+                                                        </div>
+                                                          <%= pagination_link(@conn, @rummage) %>
+                                                      </div>
+                                                    </div>
+                                                    <!-- Modal -->
+     <div class="modal fade" id="salesmanModal" tabindex="-1" role="dialog" aria-labelledby="salesmanModalLabel" aria-hidden="true">
+       <div class="modal-dialog" role="document">
+         <div class="modal-content">
+           <div class="modal-header">
+             <h5 class="modal-title" id="exampleModalLabel">Seacrh Functionalities</h5>
+             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+               <span aria-hidden="true">&times;</span>
+             </button>
+           </div>
+           <div class="modal-body">
+              <div class="form-group">
+
+                                          <%= search_form(@conn, @rummage,
+                                           [ fields: [
+
+                                             gtin: %{label: "Search by Barcode", search_type: "like",assoc: ["sku"]},
+                                             name: %{label: "Search by item", search_type: "like",assoc: ["sku"]},
+                                               mode: %{label: "Search by mode", search_type: "like"},
+                                                 retailer: %{label: "Search by price", search_type: "like"},
+                                                   inserted_at: %{label: "Search by date", search_type: "like"}
+                                             ]
+                                           ]
+
+                                           ) %>
+                                         </div>
+
+           </div>
+           <div class="modal-footer">
+             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+           </div>
+         </div>
+       </div>
+     </div>
+<% else %>
+<h1>Not authorised to view this panel</h1>
+<% end %>

@@ -1,0 +1,79 @@
+
+
+<div class="row">
+                 <%= if @current_user.id == @user.id do %>         <div class="col-md-12">
+
+
+                           <span><%= link "Back", to: reorder_manufacturer_path(@conn, :index), class: "btn btn-gold btn-gold" %></span>
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">Reorder</h4>
+                                   <p class="category"><%= link "Dashboard", to: manufacturer_dashboard_path(@conn, :index) %>/ reorder/ Show </p>
+
+                               </div>
+
+                               <table class="table" style="margin-left: 15px;">
+                                    <tbody>
+
+
+                                  <tr>
+                                    <td>SKU name:
+                                    <%= @received.sku.gtin %></td>
+                                  </tr>
+
+                                  <tr>
+                                    <td>Quantity:
+                                    <%= @received.quantity %></td>
+                                  </tr>
+
+                                  <tr>
+                                    <td>Type:
+                                    <%= @received.type %></td>
+                                  </tr>
+
+                                  <tr>
+                                    <td>manufacturer:
+                                    <%= @received.manufacturer.company %></td>
+                                  </tr>
+
+                                  <tr>
+                                    <%= if @received.wid == 0 do %>
+                                      <td>Warehouse: N/A</td>
+                                     <% else  %>
+                                     <td>Warehouse: <%= @received.warehouse.company %> </td>
+                                       <% end %>
+                                  </tr>
+
+
+                                  <tr>
+                                    <td>description:
+                                    <%= @received.description %></td>
+                                  </tr>
+
+                                  <tr>
+                                    <td>Date of reorder:
+				    <%= String.slice(to_string(@received.inserted_at), 0..15) %> </td>
+                                  </tr>
+
+                                  <tr>
+                                    <%= if @received.active == "true" do %>
+                                    <td><p class = "btn btn-success btn-success" >Recieved</p></td>
+                                      <% else  %>
+                                      <td><p class = "btn btn-info btn-info" >Pending</p></td>
+                                        <% end  %>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+
+
+<ul>
+
+<span><%= link "Edit", to: reorder_manufacturer_path(@conn, :edit, @received) , class: "btn btn-gold btn-gold" %></span>
+
+</ul>
+<% else %>
+    <h1>Not authorised to access this page</h1>
+<% end %>
+</div>

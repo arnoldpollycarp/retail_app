@@ -1,0 +1,52 @@
+<div class="row">
+                       <div class="col-md-12">
+
+                         <span><%= link "Back", to: shop_path(@conn, :index), class: "btn btn-gold btn-gold" %></span>
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">Shop</h4>
+                                   <p class="category"><%= link "Dashboard", to: retail_dashboard_path(@conn, :index) %>/ Shop/ Show Shop</p>
+
+                               </div>
+                               <table class="table" style="margin-left: 15px;">
+                                    <tbody>
+                                            <tr>
+                                                   <td>
+                                                          <h5>  Name: <%= @shop.fullname %> </h5>
+                                                    </td>
+                                          </tr>
+                                          <tr>
+                                                    <td>
+                                                            <h5>  Location: <%= @shop.location %> </label>
+                                                    </td>
+                                          </tr>
+
+                                          <tr>
+                                                    <td>
+                                                            <h5>  Description: <%= @shop.description %> </label>
+                                                    </td>
+                                          </tr>
+
+                                          <tr>
+                                                    <td>
+
+                                                              <%= if @shop.active == "true" do %>
+                                                                <h5>Active:<i class="fa fa-check" style= "color:#66bb6a !important"></i></h5>
+                                                              <% else  %>
+                                                              <h5>Active:<i class="fa fa-close" style= "color:#f44336 !important"></i></h5>
+                                                              <% end %>
+                                                    </td>
+                                            </tr>
+                                          </tbody>
+                                      </table>
+<ul>
+
+
+        <span><%= link "Add shop", to: shop_path(@conn, :new), class: "btn btn-gold btn-gold" %></span>
+       <span><%= link "Edit", to: shop_path(@conn, :edit, @shop) , class: "btn btn-gold btn-gold" %></span>
+
+</ul>
+
+      </div>
+      </div>
+      </div>

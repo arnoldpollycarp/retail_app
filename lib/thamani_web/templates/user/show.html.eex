@@ -1,0 +1,180 @@
+  <%= if @current_user.id == @user.id  || @current_user.userlevel do %>
+<div class="row">
+                       <div class="col-md-12">
+                           <%= if @current_user.userlevel do %>
+                         <span><%= link "Back", to: user_path(@conn, :index), class: "btn btn-gold btn-gold" %></span>
+			  <span><%= link "Add User", to: user_path(@conn, :new), class: "btn btn-gold btn-gold" %></span>
+ 			<span><%= link "Edit", to: user_path(@conn, :edit, @user) , class: "btn btn-gold btn-gold" %></span>
+
+                         <% else %>
+                           <%= link "Back to panel", to: panel_path(@conn, :index), class: "btn btn-gold btn-gold" %>
+			    <span><%= link "Edit", to: user_path(@conn, :edit, @user) , class: "btn btn-gold btn-gold" %></span>
+                          <% end %>
+                          <button type="button" class="btn btn-gold btn-gold" data-toggle="modal" data-target="#passwordModal">
+                            Change password
+                          </button>
+                          <!-- start Modal -->
+                          <div class="modal fade" id="passwordModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h3 class="modal-title text-center" style= "text-decoration: underline;"  id="exampleModalLabel">Change you current password</h3>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                </div>
+                                <div class="modal-body">
+                                  <%= form_for @changeset, change_pass_path(@conn, :update, @user), fn f -> %>
+                                    <%= if @changeset.action do %>
+                                      <div class="alert alert-danger">
+                                        <p>Oops, something went wrong! Please check the errors below.</p>
+                                      </div>
+                                    <% end %>
+                                  <div class="col-md-10">
+                                    <div class="form-group label-floating">
+                                      <%= label f, :"Current password", class: "control-label" %>
+                                      <%= password_input f, :old_password, class: "form-control" %>
+
+                                    </div>
+                                    <%= error_tag f, :old_password %>
+                                  </div>
+                                  <div class="col-md-10">
+                                    <div class="form-group label-floating">
+                                      <%= label f, :"New password", class: "control-label" %>
+                                      <%= password_input f, :password, class: "form-control" %>
+
+                                    </div>
+                                    <%= error_tag f, :password %>
+                                  </div>
+                                  <div class="col-md-10">
+                                    <div class="form-group label-floating">
+                                      <%= label f, :"Confirm password", class: "control-label" %>
+                                      <%= password_input f, :password_confirmation, class: "form-control" %>
+
+                                    </div>
+                                    <%= error_tag f, :password_confirmation %>
+                                  </div>
+                                  <div class="col-md-6">
+                                    <div class="form-group">
+                                      <%= submit "Submit", class: "btn btn-gold" %>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-6">
+                                      <div class="form-group">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                              </div>
+                            </div>
+                                <% end %>
+                                </div>
+                                <div class="modal-footer">
+
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- end Modal -->
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">System Users</h4>
+                                   <p class="category"><%= link "Dashboard", to: user_path(@conn, :index) %>/ System users/ Show User</p>
+
+                               </div>
+
+                               <table class="table" style="margin-left: 15px;width:96%;">
+                                    <tbody>
+					<%= if @current_user.userlevel do %>
+					 <tr>
+                                                   <td>
+                                                          <h5>  UserID: <%= @user.id %> </h5>
+                                                    </td>
+                                          </tr>
+					<% else %>
+					<% end %>
+                                            <tr>
+                                                   <td>
+                                                          <h5>  Firstname: <%= @user.firstname %> </h5>
+                                                    </td>
+                                          </tr>
+                                          <tr>
+                                                    <td>
+                                                            <h5>  Lastname: <%= @user.lastname %> </h5>
+                                                    </td>
+                                          </tr>
+                                          <tr>
+                                                    <td>
+                                                              <h5>  Email: <%= @user.email %> </h5>
+                                                    </td>
+                                            </tr>
+                                            <tr>
+                                                      <td>
+                                                                <h5>  Company: <%= @user.company %> </h5>
+                                                      </td>
+                                              </tr>
+                                              <tr>
+                                                        <td>
+                                                                  <h5>  Phone number: <%= @user.phone %> </h5>
+                                                        </td>
+                                                </tr>
+						<tr>
+                                                          <td>
+                                                                    <h5>  Register Code: <%= @user.registercode %> </h$
+                                                          </td>
+                                                  </tr>
+                                                <tr>
+                                                          <td>
+                                                                    <h5>  Account number: <%= @user.account_number %> </h5>
+                                                          </td>
+                                                  </tr>
+						  <tr>
+                                                            <td>
+                                                                      <h5>  Paybill number: <%= @user.paybill %> </h5>
+                                                            </td>
+                                                    </tr>
+
+                                              <tr>
+                                                    <td>
+                                                              <h5> Userlevel: <%= if @user.userlevel do %>
+                                                                admin
+                                                              <% else  %>
+                                                              user
+                                                              <% end %></h5>
+                                                    </td>
+                                          </tr>
+
+
+                                            <tr>
+                                                     <td>
+                                                               <h5>  Logo </h5>
+
+                                                              <img src="<%= Thamani.ImageUploader.url({@user.image, @user})%>" style="width:150px">
+                                                     </td>
+
+                                             </tr>
+
+                                            <tr>
+                                                    <td>
+                                                      <%= if @user.active == "true" do %>
+                                                        <h5>Active:<i class="fa fa-check" style= "color:#66bb6a !important"></i></h5>
+                                                      <% else  %>
+                                                      <h5>Active:<i class="fa fa-close" style= "color:#f44336 !important"></i></h5>
+                                                      <% end %>
+                                                    </td>
+                                            </tr>
+                                    </tbody>
+                                </table>
+
+<ul>
+     <%= if @current_user.userlevel do %>
+  <span><%= link "Add User", to: user_path(@conn, :new), class: "btn btn-gold btn-gold" %></span>
+  <% end %>
+ <span><%= link "Edit", to: user_path(@conn, :edit, @user) , class: "btn btn-gold btn-gold" %></span>
+
+</ul>
+
+
+</div>
+</div>
+</div>
+<% else %>
+  <h1>Not authorised to access this page</h1>
+<% end %>

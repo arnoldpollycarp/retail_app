@@ -1,0 +1,207 @@
+<% alias Thamani.Sales%>
+<!-- header section start -->
+<div class="row" style="background-image: url(../images/2.jpg);">
+<div class="container">
+   <div class="header_section_top">
+      <div class="row">
+         <div class="col-sm-12">
+            <div class="custom_menu">
+               <ul>
+
+                 <li> <%= link "Terms & Conditions", class: "items",to: terms_path(@conn, :index) %> </li>
+                 <li> <%= link "Privacy policy", class: "items",to: privacy_path(@conn, :index) %></li>
+                <li> <%= link "My profile",class: "items", to: user_path(@conn, :show, @current_user.slug) %></li>
+                 <li>  <%= link "Sign out", class: "items",to: login_path(@conn, :delete, @current_user),
+                                       method: "delete" %></li>
+
+
+                 <li><a href="commerce/<%= @current_user.id %>" class="cart" style="z-index: 10;"><i class="fa fa-shopping-cart" style="font-size: 35px;margin-top: -7px;color: #00d432;border-radius: 30px;border: 2px black solid;padding: 6px 11px 6px 6px;background:white;"></i><span></span></a></li>
+                 <li><a href="/panel" class="back" rel="tooltip" title="Back to panel" style="z-index: 10;margin-left: -15px;"><i class="fa fa-reply" style="font-size: 35px;margin-top: 0px;color: #fb0000;"></i></a></li>
+                 <li><a href="#" class="searches" data-toggle="modal" data-target="#searchModal" rel="tooltip" title="Search" style="z-index: 10;">
+                   <i class="fa fa-search" style="font-size: 35px;margin-top: 0px;color: #718ed3;"></i>
+                 </a></li>
+                  <li> <a href="/completed" class="orders" rel="tooltip" title="Completed Orders" style="z-index: 10;"><i class="fa fa-folder-open" style="font-size: 35px;margin-top: 0px;margin-left: 10px;color: #f26522;"></i></a></li>
+                   </ul>
+
+               </div>
+            </div>
+
+         </div>
+      </div>
+   </div>
+
+   <div class="modal fade" id="searchModal" tabindex="-1" role="dialog" aria-labelledby="Label" aria-hidden="true">
+   <div class="modal-dialog" role="document">
+   <div class="modal-content">
+   <div class="modal-header">
+   <h5 class="modal-title" id="exampleModalLabel">Seacrh Functionalities</h5>
+   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+   <span aria-hidden="true">&times;</span>
+   </button>
+   </div>
+   <div class="modal-body">
+   <div class="form-group">
+
+   <%= search_form(@conn, @rummage,
+   [ fields: [
+
+   gtin: %{label: "Search by Barcode", search_type: "like"},
+   name: %{label: "Search by item", search_type: "like"},
+   company: %{label: "Search by company", search_type: "like",assoc: ["user"]},
+   names: %{label: "Search by category", search_type: "like",assoc: ["pmaster"]}
+
+   ]
+   ]
+
+   ) %>
+   </div>
+
+   </div>
+   <div class="modal-footer">
+   <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+   </div>
+   </div>
+   </div>
+   </div>
+<!-- logo section start -->
+<div class="logo_section">
+   <div class="container">
+      <div class="row">
+         <div class="col-sm-12">
+            <div class="logo"><a href="index.html"><img src="<%= static_path(@conn, "/images/thamani_logo.png")   %>"></a></div>
+         </div>
+      </div>
+   </div>
+</div>
+
+<!-- logo section end -->
+<!-- <div class="header_section">
+   <div class="container">
+      <div class="containt_main">
+         <div id="mySidenav" class="sidenav">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+            <a href="index.html">Home</a>
+            <a href="fashion.html">Fashion</a>
+            <a href="electronic.html">Electronic</a>
+            <a href="jewellery.html">Jewellery</a>
+         </div>
+         <span class="toggle_icon" onclick="openNav()"><img src="images/toggle-icon.png"></span>
+         <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">All Category
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+               <a class="dropdown-item" href="#">Action</a>
+               <a class="dropdown-item" href="#">Another action</a>
+               <a class="dropdown-item" href="#">Something else here</a>
+            </div>
+         </div>
+         <div class="main">
+
+            <div class="input-group">
+               <input type="text" class="form-control" placeholder="Search this blog">
+               <div class="input-group-append">
+                  <button class="btn btn-secondary" type="button" style="background-color: #f26522; border-color:#f26522 ">
+                  <i class="fa fa-search"></i>
+                  </button>
+               </div>
+            </div>
+         </div>
+         <div class="header_box">
+
+
+            <div class="login_menu">
+
+               <ul>
+                  <li><a href="#">
+                     <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+                     <span class="padding_10">Cart</span></a>
+                  </li>
+                  <li><a href="#">
+                     <i class="fa fa-user" aria-hidden="true"></i>
+                     <span class="padding_10">Cart</span></a>
+                  </li>
+               </ul>
+            </div>
+         </div>
+      </div>
+   </div>
+</div> -->
+<!-- header section end -->
+<!-- banner section start -->
+<div class="banner_section layout_padding">
+   <div class="container">
+      <div id="my_slider" class="carousel slide" data-ride="carousel" style="background-color: rgba(0, 212, 50, 0.72);">
+         <div class="carousel-inner">
+            <div class="carousel-item active">
+               <div class="row">
+                  <div class="col-sm-12">
+                     <h1 class="banner_taital">Get Started by <br>Ordering your Items</h1>
+                     <!-- <div class="buynow_bt"><a href="#">Buy Now</a></div> -->
+                  </div>
+               </div>
+            </div>
+
+         </div>
+
+      </div>
+   </div>
+</div>
+<!-- banner section end -->
+</div>
+<!-- banner bg main end -->
+<!-- Pwani section start -->
+<div class="fashion_section">
+<div id="main_slider" class="carousel slide" data-ride="carousel">
+   <div class="carousel-inner">
+      <div class="carousel-item active">
+         <div class="container">
+            <h1 class="fashion_taital">Browse Products</h1>
+            <div class="fashion_section_2">
+
+               <div class="row">
+
+                 <%= if @sku == [] do %>
+                 <div class="col-md-10">
+                   <h4>No item found in that search criteria</h4>
+                 	<span ><%= link "Continue shopping",  to: comms_path(@conn, :index), class: "fa fa-tags btn btn-info"  %></span>
+                 </div>
+                 <% else %>
+                 	<%= for item <- @sku do %>
+
+                  <%
+                  item_price =
+                  	case item.price do
+                  		"1" -> "1.0"
+                  		"" -> "0.0"
+                  		_ -> item.price
+                  	end
+                  %>
+                  <div class="col-lg-3 col-sm-4">
+                     <div class="box_main">
+                        <h4 class="shirt_text"><%= item.name%></h4>
+                        <p class="price_text">Price  <span style="color: #262626;">KSh <%= String.to_float(item_price) + item.markup + Sales.get_gs1_value() %></span></p>
+                        <p class="price_text">Barcode  <span style="color: #262626;"> <%= item.gtin %></span></p>
+                        <p class="price_text">Category  <span style="color: #262626;"> <%=  item.pmaster.names %></span></p>
+                        <div class="tshirt_img"><img src="<%= Thamani.ImageUploader.url({item.image, item})%>"></div>
+
+                     </div>
+                     <div class="btn_main">
+                           <button class="btn btn-success" onclick="AddToCart(<%= item.id %>)">Add to cart</button>
+
+                     </div>
+                  </div>
+                  <% end %>
+
+                    <% end %>
+               </div>
+            </div>
+         </div>
+      </div>
+
+
+   </div>
+
+</div>
+</div>
+<!-- Pwani  section end -->

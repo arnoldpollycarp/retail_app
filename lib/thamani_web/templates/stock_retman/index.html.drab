@@ -1,0 +1,81 @@
+
+<div class="row">
+           <div class="col-md-12">
+
+                         <div class="navbar-form navbar-right" >
+
+
+
+                         </div>
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">Stock Sheet in Retail store</h4>
+                                   <p class="category"><%= link "Dashboard", to: manufacturer_dashboard_path(@conn, :index) %>/stock/</p>
+
+                               </div>
+
+                               <div class="card-content table-responsive">
+                               <form>
+
+                               <div class="col-md-12" >
+                                  <p class="message  <%= @message_class %>" role="alert"><%= @long_process_button_text %></p>
+                               </div>
+                                 <div class='element' id='div_1'>
+                                 <div class="col-md-4" >
+                                   <input type="text" list="item_1" id="items_1" placeholder= "Search Retailer here" class="form-control data">
+                                   <datalist  id="item_1" >
+                                   <%= for c <- @company do %>
+                                      <option  data-value="<%= c.id %>"><%= c.company %></option>
+                                     <% end %>
+                                   </datalist>
+                                   <input type="hidden" name="retailer" id="items_1-hidden">
+                                    <p class="message  <%= @alert_class %>" role="alert"><%= @retailer_text %></p>
+                                    <input name="current_user" id="slug" type = "hidden" class="form-control select-with-transition"  value=<%= @current_user.id %> />
+
+                                 </div>
+                               </div>
+                               <div class='col-md-4' style="margin-top: 35px;">
+                                 <select class="single_select" name="item">
+                                 <%= for b <- @bat do %>
+                                    <option  value="<%= b.id %>"><%= b.gtin %> (<%= b.name %>)</option>
+                                   <% end %>
+                                  </select>
+                                    <p class="message  <%= @alert_class %>" role="alert"><%= @item_text %></p>
+                               </div>
+                               <div class="col-md-3">
+                                 <div class="form-group" style="float:right;margin-top: 20px;">
+                                   <%= submit "Fetch stock", class: "btn btn-gold", "drab-click": "fetch_stock" %>
+
+
+
+                                 </div>
+                               </div>
+
+                                <div class="col-md-12" style="<%= @field_class %>">
+
+                                 <div class='col-md-8' >
+                                 <h4 style="color: red !important;" >Stock available: <%= @available - @sold %></h4>
+                                 </div>
+
+                                 <div class='col-md-8' >
+                                 <h4 style="color: orange !important;">Quantities received by retail store : <%= @received %> </h4>
+                                 </div>
+                                 <div class='col-md-8' >
+                                 <h4 style="color: orange !important;">Quantities in retailers inventory  : <%= @available %>  </h4>
+                                 </div>
+                                 <div class='col-md-8' >
+                                 <h4 style="color: green !important;">Quantities sold in store: <%= @sold %> </h4>
+                                 </div>
+                                </div>
+
+
+
+                                <div class="col-md-1">
+                                     <div class="loader2 <%= @loader_class %>"></div>
+                                 </div>
+                                </form>
+                               </div>
+                             </div>
+
+                           </div>
+                    </div>

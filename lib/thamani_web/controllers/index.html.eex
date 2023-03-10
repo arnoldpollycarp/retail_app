@@ -1,0 +1,92 @@
+<% alias Thamani.Sales
+   alias Thamani.Dispatches
+ %>
+<%= if @current_user.id == @user.id do %>
+
+                                            <div class="row">
+                                                                   <div class="col-md-12">
+                                                                     <span><%= link "Add inventory", to: user_inventory_path(@conn, :new, @current_user), class: "btn btn-gold btn-gold" %></span>
+
+                                                                       <div class="card">
+                                                                           <div class="card-header" data-background-color="gold">
+                                                                               <h4 class="title">Inventory</h4>
+                                                                               <p class="category"><%= link "Dashboard", to: user_retail_dashboard_path(@conn, :index,@current_user) %>/Inventory</p>
+
+                                                                           </div>
+
+                                                                           <div class="card-content table-responsive">
+                                          <table id ="fresh-table" class="table">
+                                              <thead class="text-info">
+                                                <tr>
+      <th data-field="sku" data-sortable="true">SKU</th>
+      <th data-field="name" data-sortable="true">Item name</th>
+      <th data-field="price" data-sortable="true">Price</th>
+      <th  data-sortable="true">Category</th>
+      <th data-field="available" data-sortable="true">Qty Available</th>
+      <th data-field="sold" data-sortable="true">Sold</th>
+      <th data-field="remaining" data-sortable="true">Remain</th>
+
+      <th class="text-center" >Active</th>
+      <th class="text-center"> Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for inventory <- @inventory do %>
+    <tr>
+      <td><%= inventory.sku.gtin %> </td>
+        <td><%= inventory.sku.name %> </td>
+      <td><%= inventory.price %> </td>
+      <td><%= inventory.category %> </td>
+      <td><%= inventory.quantity %></td>
+      <%= if is_nil(Sales.get_count_quantity_item(@current_user.id,inventory.item)) do %>
+      <td>0</td>
+      <%= else %>
+      <td><%= Decimal.to_integer(Sales.get_count_quantity_item(@current_user.id,inventory.item))%></td>
+      <% end %>
+
+      <%= if is_nil(Sales.get_count_quantity_item(@current_user.id,inventory.item)) do %>
+      <%= if (inventory.quantity  )> 10 do %>
+          <td class= 'btn btn-success btn-success'><%= inventory.quantity  %></td>
+      <% else %>
+          <td class= 'btn btn-danger btn-danger'><%= inventory.quantity  %></td>
+      <% end %>
+      <%= else %>
+      <%= if (inventory.quantity - Decimal.to_integer(Sales.get_count_quantity_item(@current_user.id,inventory.item)) )> 10 do %>
+          <td class= 'btn btn-success btn-success'><%= inventory.quantity - Decimal.to_integer(Sales.get_count_quantity_item(@current_user.id,inventory.item)) %></td>
+      <% else %>
+          <td class= 'btn btn-danger btn-danger'><%= inventory.quantity - Decimal.to_integer(Sales.get_count_quantity_item(@current_user.id,inventory.item)) %></td>
+      <% end %>
+      <% end %>
+
+    
+
+      <%= if inventory.active == "true" do %>
+        <td><i class="fa fa-check" style= "color:#66bb6a !important"></i></td>
+      <% else  %>
+      <td><i class="fa fa-close" style= "color:#f44336 !important"></i></td>
+      <% end %>
+      <td class="text-right">
+                                                  <span  rel="tooltip" title="View Task" class="btn btn-info btn-simple ">
+                                                      <span ><%= link "",  to: user_inventory_path(@conn, :show, @current_user, inventory), class: "fa fa-search-plus" ,style: "color:#00bcd4 !important" %></span>
+                                                  </span>
+
+                                                   <span  rel="tooltip" title="Edit Task" class="btn btn-primary btn-simple ">
+                                                      <span ><%= link "", to: user_inventory_path(@conn, :edit, @current_user, inventory), class: "fa fa-pencil" ,style: "color:#66bb6a !important" %></span>
+                                                  </span>
+                                                  <span  rel="tooltip" title="Delete Task" class="btn btn-danger btn-simple ">
+                                                      <span><%= link "",to: user_inventory_path(@conn, :delete, @current_user, inventory), method: :delete, data: [confirm: "Are you sure?"],  class: "fa fa-close", style: "color:#f44336 !important" %></span>
+                                                 </span>
+
+</td>
+
+    </tr>
+<% end %>
+  </tbody>
+</table>
+</div>
+                                                        </div>
+                                                      </div>
+                                                    </div>
+<% else %>
+<h1>Not authorised to view this panel</h1>
+<% end %>

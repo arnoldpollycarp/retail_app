@@ -1,0 +1,67 @@
+
+<%= form_for @changeset, @action, [multipart: true] , fn f -> %>
+  <%= if @changeset.action do %>
+    <div class="alert alert-danger">
+      <p>Oops, something went wrong! Please check the errors below.</p>
+    </div>
+  <% end %>
+
+  <div class="col-md-6">
+  <div class="form-group label-floating">
+    <%= label f, :"Break Bulk Code", class: "control-label" %>
+    <%= select f, :item, @code , class: "single_select", style: "width: 100%", "data-style": "btn btn-gold btn-round", title: "Choose code" , required: "required"%>
+      </div>
+    <%= error_tag f, :item %>
+  </div>
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= label f, :"Retailer", class: "control-label" %>
+    <%= select f, :retailer, @company, class: "single_select", style: "width: 100%","data-style": "btn btn-gold btn-round", title: "Choose retailer" , required: "required"%>
+
+      </div>
+    <%= error_tag f, :retailer %>
+  </div>
+
+
+
+
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= label f, :"Transporter Name", class: "control-label" %>
+    <%= text_input f, :transporter, class: "form-control" %>
+      </div>
+    <%= error_tag f, :transporter %>
+  </div>
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= label f, :"Transporter details", class: "control-label" %>
+    <%= textarea f, :transporterid, class: "form-control" %>
+      </div>
+    <%= error_tag f, :transporterid %>
+  </div>
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= label f, :"Extra description", class: "control-label" %>
+    <%= textarea f, :description, class: "form-control" %>
+      </div>
+    <%= error_tag f, :description %>
+  </div>
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+
+
+
+    <%= checkbox f, :active, class: "checkbox-material" , style: "display:none"%>
+      </div>
+    <%= error_tag f, :active %>
+  </div>
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= submit "Submit", class: "btn btn-gold" %>
+  </div>
+    </div>
+<% end %>

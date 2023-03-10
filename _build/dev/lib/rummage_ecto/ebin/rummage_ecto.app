@@ -1,0 +1,13 @@
+{application,rummage_ecto,
+             [{applications,[kernel,stdlib,elixir,logger,ecto,postgrex]},
+              {description,"A library that allows us to search, sort and paginate ecto queries\n"},
+              {modules,['Elixir.Rummage.Ecto','Elixir.Rummage.Ecto.Config',
+                        'Elixir.Rummage.Ecto.CustomHooks.SimpleSearch',
+                        'Elixir.Rummage.Ecto.CustomHooks.SimpleSort',
+                        'Elixir.Rummage.Ecto.Hook',
+                        'Elixir.Rummage.Ecto.Hooks.Paginate',
+                        'Elixir.Rummage.Ecto.Hooks.Search',
+                        'Elixir.Rummage.Ecto.Hooks.Sort',
+                        'Elixir.Rummage.Ecto.Services.BuildSearchQuery']},
+              {registered,[]},
+              {vsn,"1.0.0"}]}.

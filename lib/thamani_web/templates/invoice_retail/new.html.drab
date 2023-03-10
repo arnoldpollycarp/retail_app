@@ -1,0 +1,126 @@
+<%
+alias Thamani.Sales
+%>
+<span class="col-md-10" style="margin-left: -25px;"> <%= link "Back", to: invoice_retail_path(@conn, :index),class: "btn btn-gold btn-gold"  %></span>
+
+<div class="card" style="margin:25px -10px">
+    <div class="card-header" data-background-color="gold">
+        <h4 class="title">Invoice</h4>
+        <p class="category"><%= link "Dashboard", to: invoice_retail_path(@conn, :index) %>/ Invoice /add</p>
+
+    </div>
+    <div class="container-fluid">
+      <div class="row">
+        <form>
+
+          <div class="col-md-12">
+              <div class="col-md-1">
+
+               </div>
+               <div class="col-md-4">
+                   <div class="form-group label">
+                     <label class= "control-label">From  date</label>
+                     <input type = "date" name="date" class="form-control select-with-transition" value="<%= @date %>"  >
+                       <input type = "hidden" name="date_0" value="<%= @date_0 %>"  >
+                   </div>
+               </div>
+               <div class="col-md-4">
+                   <div class="form-group label">
+                     <label class= "control-label">To date</label>
+                     <input type = "date" name="date_1" class="form-control select-with-transition" value="<%= @date_1 %>"  >
+                      <input type = "hidden" name="date_01"  value="<%= @date_01 %>"  >
+                   </div>
+               </div>
+               <div class="col-md-2">
+                    <button style="margin-top:30px" drab-click="fetch_list">Look Up</button>
+
+                </div>
+             <div class="col-md-1">
+                  <div class="loader <%= @loader_class %>"></div>
+              </div>
+          </div>
+          <div class="col-md-12">
+          <div class="col-md-1">
+
+           </div>
+            <div class="col-md-4">
+              <div class="form-group label-floating">
+                    <label class= "control-label">Total sales for that Range</label>
+
+
+                    <input name="count_sales" id="count_sales" value="<%= @count_sales %>" disabled class="form-control select-with-transition" />
+
+
+              </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group label-floating">
+                      <label class= "control-label">Total amount of sales for that Range</label>
+
+
+                      <input name="sum_sales" id="sum_sales" value="<%= :erlang.float_to_binary(@sum_sales, decimals: 2) %>" disabled class="form-control select-with-transition" />
+
+
+                </div>
+                </div>
+          </div>
+          <div class="col-md-12">
+          <div class="col-md-1">
+
+           </div>
+           <div class="col-md-9">
+
+
+            <table class="table">
+                <thead class="text-info">
+                  <tr>
+                  <th data-field="name" data-sortable="true">Item</th>
+                  <th data-field="quantity" data-sortable="true">quantity</th>
+
+                  <th data-field="price" data-sortable="true">Total Price</th>
+
+
+                </tr>
+              </thead>
+                <tbody>
+                  <%= for sale <- @list_sales_uniq do %>
+                  <tr>
+                  <td><%= Sales.get_name_sale_uniq(sale) %> </td>
+                  <td><%= Sales.get_quantity_sale_uniq_retailer(@current_user.id,sale,@date_0,@date_01) %> </td>
+
+                  <td><%= :erlang.float_to_binary(Sales.get_price_sale_uniq_retailer(@current_user.id,sale,@date_0,@date_01), decimals: 2) %> </td>
+
+                  </tr>
+                  <% end %>
+                  </tbody>
+            </table>
+            </div>
+            <div class="col-md-2">
+
+             </div>
+          </div>
+
+          <div class="col-md-12">
+
+          <div class="col-md-2">
+          <input name="current_user" id="current_user" type = "hidden" class="form-control select-with-transition"  value=<%= @current_user.id %> />
+
+          </div>
+            <div class="col-md-8">
+              <div class="form-group">
+                <%= submit "Generate invoice", class: "btn btn-gold", "drab-click": "generate_invoice" %>
+                  <%= link "Close",  class: "btn btn-danger", to: invoice_retail_path(@conn, :index) %>
+                  <p class="message  <%= @message_class %>" role="alert"><%= @long_process_button_text %></p>
+              </div>
+            </div>
+            <div class="col-md-1" syle="margin-left:-180px;">
+                 <div class="loader <%= @loader_class2 %>"></div>
+             </div>
+
+          </div>
+
+        </form>
+      </div>
+    </div>
+
+  </div>

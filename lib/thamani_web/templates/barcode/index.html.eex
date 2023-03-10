@@ -1,0 +1,104 @@
+<div class="row">
+           <div class="col-md-12">
+                         <span><%= link "Add Barcode", to: barcode_path(@conn, :new), class: "btn gold btn-gold" %></span>
+
+                         <div class="navbar-form navbar-right" >
+                           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                            search
+                           </button>
+
+                         </div>
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">Barcode</h4>
+                                   <p class="category"><%= link "Dashboard", to: manufacturer_dashboard_path(@conn, :index) %>/Barcode/</p>
+
+                               </div>
+
+                               <div class="card-content table-responsive">
+<table id ="" class="table">
+  <thead class="text-info">
+    <tr>                            
+      <th data-field="state" data-checkbox="true"></th>
+      <th data-field="code" data-sortable="true">Code</th>
+      <th data-field="code" data-sortable="true">MN</th>
+      <th data-field="carton" data-sortable="true">Carton</th>
+      <th data-field="name" data-sortable="true">Name</th>
+      <th data-field="description" data-sortable="true">Description</th>
+      <th>Active</th>
+
+      <th class="text-center">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for barcode <- @barcode do %>
+    <tr>
+      <td></td>
+      <td><%= barcode.code %></td>
+      <td><%= barcode.mn %></td>
+      <td><%= barcode.carton %></td>
+      <td><%= barcode.name %></td>
+      <td><%= barcode.description %></td>
+      <%= if barcode.active == "true" do %>
+      <td><i class="fa fa-check" style= "color:#66bb6a !important"></i></td>
+      <% else  %>
+      <td><i class="fa fa-close" style= "color:#f44336 !important"></i></td>
+      <% end %>
+
+      <td class="text-center">
+        <span  rel="tooltip" title="View Task" class="btn btn-info btn-simple ">
+            <span ><%= link "", to: barcode_path(@conn, :show, barcode),  "data-toggle": "tooltip", title: "View Data", class: "fa fa-search-plus ",style: "color:#00bcd4 !important" %></span>
+        </span>
+
+         <span  rel="tooltip" title="Edit Task" class="btn btn-primary btn-simple ">
+             <span><%= link "", to: barcode_path(@conn, :edit, barcode),  "data-toggle": "tooltip", title: "Edit Data", class: "fa fa-pencil", style: "color:#66bb6a !important" %></span>
+        </span>
+        <span  rel="tooltip" title="Delete Task" class="btn btn-danger btn-simple ">
+            <span><%= link "", to: barcode_path(@conn, :delete, barcode), method: :delete, data: [confirm: "Are you sure?"],  "data-toggle": "tooltip", title: "Delete Data", class: "fa fa-close", style: "color:#f44336 !important" %></span>
+       </span>
+
+
+      </td>
+    </tr>
+<% end %>
+</tbody>
+</table>
+                </div>
+              </div>
+              <%= pagination_link(@conn, @rummage) %>
+            </div>
+          </div>
+
+          <!-- Modal -->
+      <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Seacrh Functionalities</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+
+                                           <%= search_form(@conn, @rummage,
+                                            [ fields: [
+                                              code: %{label: "Search by barcode", search_type: "like"}  ,
+                                                mn: %{label: "Search by Member #", search_type: "like"},
+                                                  name: %{label: "Search by Name", search_type: "like"},
+                                                    description: %{label: "Search by description", search_type: "like"}
+                                              ]
+                                            ]
+
+                                            ) %>
+                                          </div>
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+            </div>
+          </div>
+        </div>
+      </div>

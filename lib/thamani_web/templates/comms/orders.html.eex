@@ -1,0 +1,105 @@
+<div class="container">
+   <div class="header_section_top">
+      <div class="row">
+         <div class="col-sm-12">
+            <div class="custom_menu">
+               <ul>
+
+                 <li> <%= link "Terms & Conditions", class: "items",to: terms_path(@conn, :index) %> </li>
+                 <li> <%= link "Privacy policy", class: "items",to: privacy_path(@conn, :index) %></li>
+                <li> <%= link "My profile", class: "items",to: user_path(@conn, :show, @current_user.slug) %></li>
+                 <li>  <%= link "Sign out",class: "items", to: login_path(@conn, :delete, @current_user),
+                                       method: "delete" %></li>
+
+
+                 <li><a href="commerce/<%= @current_user.id %>" class="cart" style="z-index: 10;"><i class="fa fa-shopping-cart" style="font-size: 45px;margin-top: -10px;color: #00d432;border-radius: 30px;border: 2px black solid;padding: 6px 11px 6px 6px;background:white;"></i><span></span></a></li>
+                 <li><a href="/commerce" class="back" rel="tooltip" title="Back to ordering" style="z-index: 10;;right: 260px;"><i class="fa fa-reply" style="font-size: 45px;margin-top: -10px;color: #fb0000;"></i></a></li>
+                   </ul>
+
+               </div>
+            </div>
+
+         </div>
+      </div>
+   </div>
+
+
+
+<div class="row" style= "margin-top: 125px;margin-bottom: 20px;overflow:auto;">
+   <div class="col-md-1"></div>
+           <div class="col-md-10">
+
+           <div class="navbar-form navbar-right" >
+
+
+
+                         </div>
+                           <div class="card">
+
+
+                               <div class="card-content table-responsive">
+
+                              </div>
+     <table class="table" id ="fresh-table" style="overflow:scroll" data-toggle="table" data-toolbar="#toolbar" data-search="true"  data-pagination="true" data-show-print="true" data-show-export="true"   data-export-options='{"fileName": "users"}'>
+
+  <thead class="text-info">
+    <tr>
+     <th data-field="state" data-checkbox="true"></th>
+      <th data-field="code" data-sortable="true">Category</th>
+      <th data-field="carton" data-sortable="true">Brand</th>
+      <th data-field="qty" data-sortable="true">quantity</th>
+      <th data-field="description" data-sortable="true">Description</th>
+      <th data-field="name" data-sortable="true">Order ID</th>
+      <th data-field="city" data-sortable="true">City</th>
+
+      <th>Status</th>
+      <th class="text-center">Actions</th>
+    </tr>
+  </thead>
+
+
+  <tbody>
+<%= for warehouse_order <- @warehouse_order do %>
+    <tr>
+    <td></td>
+      <td><%= warehouse_order.pmaster.names %></td>
+      <%= if is_nil(warehouse_order.sku) do %>
+        <td>N/A</td>
+        <td>N/A</td>
+     <% else %>
+      <td><%= warehouse_order.sku.name  %>(<%= warehouse_order.sku.gtin %>)</td>
+        <td><%= warehouse_order.quantity %></td>
+      <td><%= warehouse_order.sku.description %></td>
+
+     <% end %>
+      <td><%= warehouse_order.order_id %></td>
+      <td><%= warehouse_order.kcity.city %></td>
+
+      <%= if warehouse_order.active == "true" do %>
+
+       <td><p class = "btn btn-success btn-success" >Recieved</p></td>
+       <% else  %>
+        <td><p class = "btn btn-info btn-info" >Processing</p></td>
+      <% end %>
+
+      <td class="text-center">
+
+        <%= if warehouse_order.active == "true" do %>
+
+        <% else %>
+        <span  rel="tooltip" title="Delete Task" class="btn btn-danger btn-simple ">
+            <span><%= link "", to: comms_path(@conn, :delete, warehouse_order), method: :delete, data: [confirm: "Are you sure?"],  "data-toggle": "tooltip", title: "Delete Data", class: "fa fa-close", style: "color: white !important" %></span>
+       </span>
+       <% end %>
+
+      </td>
+    </tr>
+<% end %>
+</tbody>
+</table>
+                </div>
+              </div>
+
+            </div>
+            <div class="col-md-1"></div>
+          </div>

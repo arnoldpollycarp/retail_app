@@ -1,0 +1,69 @@
+    <div class="row">
+                                                                   <div class="col-md-12">
+
+                                                                       <div class="card">
+                                                                           <div class="card-header" data-background-color="gold">
+                                                                               <h4 class="title">Orders</h4>
+                                                                               <p class="category"><%= link "Dashboard", to: orders_adm_warehouse_path(@conn, :index) %>/Orders</p>
+
+                                                                           </div>
+
+                                                                           <div class="card-content table-responsive">
+                                                                             <div id="toolbar" style="margin-top: -16px;">
+                                                                            <select class="form-control">
+                                                                              <option value="">Export Current page</option>
+                                                                              <option value="all">Export All</option>
+                                                                              <option value="selected">Export Selected</option>
+                                                                            </select>
+                                                                          </div>
+                                          <table class="table" id ="fresh-table" data-toggle="table" data-toolbar="#toolbar" data-search="true"  data-pagination="true" data-show-print="true" data-show-export="true"   data-export-options='{"fileName": "reports"}'>
+                                              <thead class="text-info">
+                                                <tr>
+                                                  <th data-field="state" data-checkbox="true"></th>
+                                                  <th data-field="code" data-sortable="true">Category</th>
+                                                  <th data-field="carton" data-sortable="true">Brand</th>
+                                                  <th data-field="name" data-sortable="true">Delivery Date</th>
+                                                  <th data-field="city" data-sortable="true">City/county</th>
+                                                  <th data-field="description" data-sortable="true">Quantity</th>
+                                                  <th data-field="warehouse" data-sortable="true">Warehouse</th>
+                                                  <th>Status</th>
+
+                                                  <th class="text-center">Actions</th>
+                                                </tr>
+                                              </thead>
+                                              <tbody>
+                                            <%= for warehouse_order <- @warehouse_order do %>
+                                                <tr>
+                                                  <td></td>
+                                                  <td><%= warehouse_order.pmaster.names %></td>
+                                                  <td><%= warehouse_order.sku.name  %>(<%= warehouse_order.sku.gtin %>)</td>
+                                                  <td><%= warehouse_order.delivery %></td>
+                                                  <td><%= warehouse_order.kcity.city %>/<%= warehouse_order.kcity.county %></td>
+						  <%= if is_nil(warehouse_order.sku) do %>
+                                                  <td>Deleted</td>
+                                                  <% else %>
+                                                  <td><%= warehouse_order.quantity %> <%= warehouse_order.sku.quantity %></td>
+                                                    <% end %>
+                                                    <td><%= warehouse_order.user.company %></td>
+                                                  <%= if warehouse_order.active == "true" do %>
+                                                  <td><i class="fa fa-check" style= "color:#66bb6a !important"></i></td>
+                                                  <% else  %>
+                                                  <td><i class="fa fa-close" style= "color:#f44336 !important"></i></td>
+                                                  <% end %>
+
+                                                  <td class="text-center">
+                                                    <span  rel="tooltip" title="View Task" class="btn btn-info btn-simple ">
+                                                        <span ><%= link "", to: orders_adm_warehouse_path(@conn, :show, warehouse_order),  "data-toggle": "tooltip", title: "View Data", class: "fa fa-search-plus ",style: "color:#00bcd4 !important" %></span>
+                                                    </span>
+
+
+
+                                                  </td>
+                                                </tr>
+                                            <% end %>
+                                            </tbody>
+</table>
+</div>
+                                                        </div>
+                                                      </div>
+                                                    </div>

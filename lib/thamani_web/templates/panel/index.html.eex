@@ -1,0 +1,276 @@
+   <%= if @current_user.verified == 0  do %>
+<p class="alert alert-warning" role="alert">Kindly verify your account to continue...  <%= link "Verify", style: "margin-top:-5px;" ,to: verify_path(@conn, :edit, @current_user) , class: "btn btn-gold btn-gold" %></p>
+
+
+    <% end %>
+<div class="row">
+  <div class="col-lg-12 col-md-12">
+        <div class="card">
+            <div class="card-header" data-background-color="gold">
+
+                <h4 style="color:#f70000">Choose A Panel </h4>
+
+            </div>
+            <div class="card-content table-responsive">
+            Welcome <%= @current_user.firstname %> <%= @current_user.lastname %> .Kindly select your business area of expertise to kickstart your business
+          </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="wrapper">
+      <div class="col-lg-4 col-md-6 col-sm-6" style="margin-bottom: 200px;">
+        <div class="hover panelz">
+          <div class="front">
+            <div class="box1">
+              <div class="card" style="margin-top:-5px;background-image: url(/images/gs1bg2.png);background-position:100% 50%; ">
+                  <div class="card-header" data-background-color="gold">
+
+                      <h4 style="color:#f70000">Manufacturer/Supplier </h4>
+
+                  </div>
+                  <div class="card-content table-responsive" >
+                    <h3 style="margin-bottom:200px"></h3>
+                  </div>
+
+              </div>
+            </div>
+          </div>
+          <div class="backz">
+            <div class="box2" style="margin:0px">
+              <p>A portal for manufacturers to maintain records of
+                essential information related to the production of their
+                product:-
+                 Global trade item number (GTIN),
+                 Goods,
+                 Sales of their goods,
+                Dispatch and monitoring of their goods
+                 </p>
+              <div class="footer text-center openz" >
+
+                    <%= if @current_user.userlevel  do %>
+                    <%= link "Select", to: manufacturer_admin_dashboard_path(@conn, :index), class: "open_panel" %>
+                      <% else %>
+                      <%= if @current_user.verified == 0  do %>
+                   <h4><%= link "Verify Account", style: "margin-top:-5px;" ,to: verify_path(@conn, :edit, @current_user)  %></h4>
+
+
+                        <% else %>
+                        <%= link "Select", to: manufacturer_dashboard_path(@conn, :index), class: "open_panel" %>
+                      <% end %>
+                    <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+		</div>
+
+
+        <%= if @current_user.email == "warehouse@gs1kenya.org" do %>
+		    <div class="col-lg-4 col-md-6 col-sm-6" style="margin-bottom: 200px;">
+        <div class="hover panelz">
+          <div class="front">
+            <div class="box1">
+              <div class="card" style="margin-top:-5px;background-image: url(/images/inventory1.jpg);background-position: 61% 0%; ">
+                  <div class="card-header" data-background-color="gold">
+
+                      <h4 style="color:#f70000">Warehouse/Distributor </h4>
+
+                  </div>
+                  <div class="card-content table-responsive" >
+                    <h3 style="margin-bottom:200px"></h3>
+                  </div>
+
+
+
+              </div>
+            </div>
+          </div>
+          <div class="backz">
+            <div class="box2 ">
+              <p> A portal for warehouses to maintain records of
+                 Goods recievables,
+                 Breaking bulk of goods,
+                 Safe storage and logistics,
+                 Sales management of goods they have stored</p>
+              <div class="footer text-center openz">
+                  <%= if @current_user.userlevel  do %>
+                      <%= link "Select", to: warehouse_admin_dashboard_path(@conn, :index), class: "open_panel" %>
+                  <% else %>
+                  <%= if @current_user.verified == 0  do %>
+                     <h4><%= link "Verify Account", style: "margin-top:-5px;" ,to: verify_path(@conn, :edit, @current_user)  %></h4>
+
+
+                    <% else %>
+                      <%= link "Select", to: warehouse_dashboard_path(@conn, :index), class: "open_panel" %>
+                  <% end %>
+                  <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+		</div>
+    <% else %>
+    <% end %>
+
+		    <div class="col-lg-4 col-md-6 col-sm-6" style="margin-bottom: 200px;">
+        <div class="hover panelz">
+          <div class="front">
+            <div class="box1">
+              <div class="card" style="margin-top:-5px;background-image: url(/images/3.jpg) ;background-position:95% 50%; ">
+                  <div class="card-header" data-background-color="gold">
+
+                      <h4 style="color:#f70000">Distribution centers </h4>
+
+                  </div>
+                  <div class="card-content table-responsive" >
+                    <h3 style="margin-bottom:200px"></h3>
+                  </div>
+
+              </div>
+            </div>
+          </div>
+          <div class="backz">
+            <div class="box2">
+              <p>A portal for retailers to maintain records of
+                essential information related to the sales of goods:-
+              </p>
+              <div class="footer text-center openz">
+                <%= if @current_user.userlevel  do %>
+                <%= link "Select", to: retail_admin_dashboard_path(@conn, :index), class: "open_panel" %>
+                <% else %>
+                <%= if @current_user.verified == 0  do %>
+                    <h4><%= link "Verify Account", style: "margin-top:-5px;" ,to: verify_path(@conn, :edit, @current_user)  %></h4>
+
+
+                  <% else %>
+                  <%= link "Select", to: retail_dashboard_path(@conn, :index), class: "open_panel" %>
+                <% end %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6 col-sm-6" style="margin-bottom: 200px;">
+      <div class="hover panelz">
+        <div class="front">
+          <div class="box1">
+            <div class="card" style="margin-top:-5px;background-image: url(/images/sidebar-3.jpg) ;background-position:95% 50%; ">
+                <div class="card-header" data-background-color="gold">
+
+                    <h4 style="color:#f70000">Order portal </h4>
+
+                </div>
+                <div class="card-content table-responsive" >
+                  <h3 style="margin-bottom:200px"></h3>
+                </div>
+
+            </div>
+          </div>
+        </div>
+        <div class="backz">
+          <div class="box2">
+            <p>A portal for retailers to order goods from selected distribution centers-
+            </p>
+            <div class="footer text-center openz">
+              <%= if @current_user.userlevel  do %>
+              <%= link "Select", to: commerce_path(@conn, :index), class: "open_panel" %>
+              <% else %>
+              <%= if @current_user.verified == 0  do %>
+                  <h4><%= link "Verify Account", style: "margin-top:-5px;" ,to: verify_path(@conn, :edit, @current_user)  %></h4>
+
+
+                <% else %>
+                <%= link "Select", to: commerce_path(@conn, :index), class: "open_panel" %>
+              <% end %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+   <!--
+      <div class="col-lg-4 col-md-6 col-sm-6" style="margin-bottom: 200px;">
+      <div class="hover panelz">
+        <div class="front">
+          <div class="box1">
+            <div class="card" style="margin-top:-5px;background-image: url(/images/float.png);background-position: 61% 0%; ">
+                <div class="card-header" data-background-color="gold">
+
+                    <h4 style="color:#f70000">Float  </h4>
+
+                </div>
+                <div class="card-content table-responsive" >
+                  <h3 style="margin-bottom:200px"></h3>
+                </div>
+
+
+
+            </div>
+          </div>
+        </div>
+        <div class="backz">
+          <div class="box2 ">
+            <p> A portal for Retailers to debit and credit their money in mpesa float </p>
+            <div class="footer text-center openz">
+                <%= if @current_user.userlevel  do %>
+                    <%= link "Select", to: float_admin_dashboard_path(@conn, :index), class: "open_panel" %>
+                <% else %>
+                <%= if @current_user.verified == 0  do %>
+                     <h4><%= link "Verify Account", style: "margin-top:-5px;" ,to: verify_path(@conn, :edit, @current_user)  %></h4>
+
+
+                  <% else %>
+                    <%= link "Select", to: float_dashboard_path(@conn, :index), class: "open_panel" %>
+                <% end %>
+                <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+-->
+
+      <div class="col-lg-4 col-md-6 col-sm-6" style="margin-bottom: 200px;">
+      <div class="hover panelz">
+        <div class="front">
+          <div class="box1">
+            <div class="card" style="margin-top:-5px;background-image: url(/images/money2.png) ;background-position: 10px 60px;background-size: 300px 220px;background-repeat: no-repeat; ">
+                <div class="card-header" data-background-color="gold">
+
+                    <h4 style="color:#f70000">Sales</h4>
+
+                </div>
+                <div class="card-content table-responsive" >
+                  <h3 style="margin-bottom:200px"></h3>
+                </div>
+
+            </div>
+          </div>
+        </div>
+        <div class="backz">
+          <div class="box2">
+            <p>This portal enables user to track and view sales and other critical operations within the system
+            </p>
+            <div class="footer text-center openz">
+              <%= if @current_user.userlevel  do %>
+               <%= link "Select", to: gs1_dashboard_path(@conn, :index), class: "open_panel" %>
+               <% else %>
+                 <%= if @current_user.verified == 0  do %>
+                   <h4><%= link "Verify Account", style: "margin-top:-5px;" ,to: verify_path(@conn, :edit, @current_user)  %></h4>
+
+                   <% else %>
+                 <%= link "Select", to: sale_dashboard_path(@conn, :index), class: "open_panel" %>
+                   <% end %>
+                 <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+	 </div>

@@ -1,0 +1,104 @@
+<%= if @current_user.id == @user.id do %>
+
+                                            <div class="row">
+                                                                   <div class="col-md-12">
+                                                                     <div class="navbar-form navbar-right" >
+                                                                       <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#salesmanModal">
+                                                                        search
+                                                                       </button>
+
+                                                                     </div>
+                                                                       <div class="card">
+                                                                           <div class="card-header" data-background-color="gold">
+                                                                               <h4 class="title">Sales</h4>
+                                                                               <p class="category"><%= link "Dashboard", to: sales_warehouse_path(@conn, :index) %>/Sales</p>
+
+                                                                           </div>
+
+                                                                           <div class="card-content table-responsive">
+                                                                             <div id="toolbar" style="margin-top: -16px;">
+                                                                            <select class="form-control">
+                                                                              <option value="">Export current page</option>
+                                                                              <option value="all">Export All</option>
+                                                                              <option value="selected">Export Selected</option>
+                                                                            </select>
+                                                                          </div>
+                                                 <table class="table" id ="fresh-table" data-toggle="table" data-toolbar="#toolbar"  data-pagination="true" data-show-print="true" data-show-export="true"   data-export-options='{"fileName": "users"}'>
+
+                                              <thead class="text-info">
+                                                <tr>
+                                                  <th data-field="state" data-checkbox="true"></th>
+      <th data-field="gtin" data-sortable="true">GTIN</th>
+      <th data-field="name" data-sortable="true">Item</th>
+      <th data-field="quantity" data-sortable="true"><%= sort_link @conn, @rummage, [field: :sale_id] %>ID</th>
+      <th data-field="price" data-sortable="true"><%= sort_link @conn, @rummage, [field: :price] %></th>
+      <th data-field="retailer" data-sortable="true"><%= sort_link @conn, @rummage, [field: :retailer] %></th>
+      <th data-field="date" data-sortable="true"><%= sort_link @conn, @rummage, [field: :inserted_at] %></th>
+      <th class="text-center"> </th>
+
+    </tr>
+  </thead>
+  <tbody>
+<%= for sale <- @sales do %>
+    <tr>
+      <td></td>
+      <td><%= sale.sku.gtin %> </td>
+      <td><%= sale.sku.name %> </td>
+      <td><%= sale.sale_id %> </td>
+      <td><%= sale.warehouse * sale.quantity %> </td>
+      <td><%= sale.user.company %> </td>
+      <td><%= String.slice(to_string(sale.inserted_at), 0..18) %> </td>
+      <td class="text-right">
+
+
+
+</td>
+
+    </tr>
+<% end %>
+  </tbody>
+</table>
+</div>
+                                                        </div>
+                                                         <%= pagination_link(@conn, @rummage) %>
+                                                      </div>
+                                                    </div>
+                                                    <!-- Modal -->
+     <div class="modal fade" id="salesmanModal" tabindex="-1" role="dialog" aria-labelledby="salesmanModalLabel" aria-hidden="true">
+       <div class="modal-dialog" role="document">
+         <div class="modal-content">
+           <div class="modal-header">
+             <h5 class="modal-title" id="exampleModalLabel">Seacrh Functionalities</h5>
+             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+               <span aria-hidden="true">&times;</span>
+             </button>
+           </div>
+           <div class="modal-body">
+              <div class="form-group">
+
+                                          <%= search_form(@conn, @rummage,
+                                           [ fields: [
+                                             gtin: %{label: "Search by barcode", search_type: "like",assoc: ["sku"]},
+                                             name: %{label: "Search by item", search_type: "like",assoc: ["sku"]},
+                                               manufacturer: %{label: "Search by price", search_type: "like"},
+                                                 company: %{label: "Search by retailer", search_type: "like",assoc: ["user"]},
+                                                   inserted_at: %{label: "Search by date", search_type: "like"}
+                                             ]
+                                           ]
+
+                                           ) %>
+                                         </div>
+
+           </div>
+           <div class="modal-footer">
+             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+           </div>
+         </div>
+
+       </div>
+     </div>
+
+<% else %>
+<h1>Not authorised to view this panel</h1>
+<% end %>

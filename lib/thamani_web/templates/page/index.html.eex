@@ -1,0 +1,202 @@
+<div class="main-wrapper">
+  <div class="active-banner-slider">
+    <div class="item d-flex align-items-center">
+      <div class="container">
+        <div class="content">
+          <h1 class="text-white ">Welcome to Thamani Online  <br>The seamless retail platform</h1>
+
+        </div>
+      </div>
+    </div>
+    <div class="item-2 d-flex align-items-center">
+      <div class="container">
+        <div class="content">
+          <h1 class="text-white ">A portal for Manufacturers, </br> Warehousing & Retailers </h1>
+
+        </div>
+      </div>
+    </div>
+    <div class="item-3 d-flex align-items-center">
+      <div class="container">
+        <div class="content">
+          <h1 class="text-white ">Where There is Realtime payment <br> Tracking of Goods within the supply chain <br> and Bookeeping & Reconciliation is digitised </h1>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="main-wrapper">
+  <!-- Start Feature Area -->
+  <section class="featured-area">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="single-feature">
+            <div class="icon">
+              <span class="fa fa-barcode"></span>
+            </div>
+            <div class="desc text-center">
+              <h6 class="title text-uppercase">Manufacturers Portal</h6>
+              <p></p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="single-feature">
+            <div class="icon">
+              <span class="fa fa-briefcase"></span>
+            </div>
+            <div class="desc text-center">
+              <h6 class="title text-uppercase">Warehouse Portal</h6>
+              <p></p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="single-feature">
+            <div class="icon">
+              <span class="fa fa-line-chart"></span>
+            </div>
+            <div class="desc text-center">
+              <h6 class="title text-uppercase">Retailer Portal</h6>
+              <p></p>
+            </div>
+          </div>
+        </div>
+         <div class="col-md-12" style="border: 1px solid rgba(198, 186, 186, 0.2);border-radius: 50%;"></div>
+
+        <div class="col-md-4">
+          <div class="single-feature">
+            <div class="icon">
+              <span class="fa fa-money"></span>
+            </div>
+            <div class="desc text-center">
+              <h6 class="title text-uppercase">Realtime payment</h6>
+              <p></p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="single-feature">
+            <div class="icon">
+              <span class="fa fa-history"></span>
+            </div>
+            <div class="desc text-center">
+              <h6 class="title text-uppercase">Synchronisation of data</h6>
+              <p> </p>
+            </div>
+          </div>
+        </div>
+      
+      <div class="col-md-4">
+          <div class="single-feature">
+            <div class="icon">
+              <span class="fa fa-book"></span>
+            </div>
+            <div class="desc text-center">
+              <h6 class="title text-uppercase">Bookeeping & Reconciliation is digitised</h6>
+              <p></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- End Feature Area -->
+  <!-- Start Story Area -->
+  <section class="story-area">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-3">
+          <div class="story-title">
+            <h3 class="text-white">Why</h3>
+            <span class="text-uppercase text-white">Thamani Online</span>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="story-box">
+            <h6 class="text-uppercase">Why Thamani Online</h6>
+            <p>- Realtime Settlement and data capture along the supply chain</p>
+            <p>- Cashless system of buying goods</p>
+            <p>- Reduced risk along the supply chain</p>
+            <p>- Online reorder of stocks</p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- End Story Area -->
+
+  <!-- Start Story Area -->
+  <section class="story-area-2">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-3">
+          <div class="story-title sm-show text-center">
+            <h3 class="text-white">How</h3>
+            <span class="text-uppercase text-white">Thamani Online</span>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="story-box">
+            <h6 class="text-uppercase">Benefits of thamani Online</h6>
+            <p>- Delivery of goods is simplified</p>
+            <p>- Supplier Payment is digitised and real time</p>
+            <p>- Stock shrinkage is captured real time and compensated</p>
+            <p>- No need of book keeping and reconcciliation</p>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="story-title sm-hide text-right">
+            <h3 class="text-white">Benefits </h3>
+            <span class="text-uppercase text-white">Of The supply chain Works</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- End Story Area -->
+
+  <div class="brand-area">
+    <div class="container">
+        <h3 style="color:#fff;" class="title text-center text-uppercase">Our Partners</h3>
+      <div class="row">
+
+      <div class="col-md-2" >
+        <div class="total-brand d-flex flex-wrap justify-content-between">
+          <div class="icon d-flex align-items-center justify-content-center">
+            <img style="width: 180px;height: 110px;margin-top: 5px;"src="<%= static_path(@conn, "/images/logogs1.png") %>"  alt="">
+          </div>
+
+        </div>
+      </div>
+      <div class="col-md-4" style="margin-left: 0px;">
+        <div class="total-brand d-flex flex-wrap justify-content-between">
+          <div class="icon d-flex align-items-center justify-content-center">
+          <img style="width: 310px;height:65px;margin-bottom:8px;" src="<%= static_path(@conn, "/images/kcb.jpg") %>" alt="">
+          </div>
+
+        </div>
+      </div>
+      <div class="col-md-3" style="margin-left: 0px;">
+        <div class="total-brand d-flex flex-wrap justify-content-between">
+          <div class="icon d-flex align-items-center justify-content-center">
+          <img style =" width: 115px;height: 130px;margin-left:40px;margin-top: 0px;"src="<%= static_path(@conn, "/images/csdigital.png") %>" alt="">
+          </div>
+
+        </div>
+      </div>
+      <div class="col-md-3" style="max-width:20%;">
+        <div class="total-brand d-flex flex-wrap justify-content-between">
+          <div class="icon d-flex align-items-center justify-content-center">
+          <img src="<%= static_path(@conn, "/images/bus.png") %>" alt="">
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+  </div>

@@ -1,0 +1,27 @@
+<%= form_for @conn, sms_api_path(@conn, :create),   fn _f -> %>
+<div class="card-content">
+
+
+  <div class="footer text-center">
+
+        <div class="col-md-3">
+             <input name="phone" class="form-control select-with-transition"  placeholder="Enter phone #" >
+
+         </div>
+         <div class="col-md-3">
+              <input name="message" class="form-control select-with-transition"  placeholder="Enter message" >
+
+          </div>
+         <div class="col-md-3">
+           <div class="form-group">
+
+               <input type="submit" class="btn btn-simple btn-wd btn-lg" style="color:#f70000;" value="Submit">
+           </div>
+         </div>
+
+
+  </div>
+
+</div>
+
+<% end %>

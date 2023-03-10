@@ -1,0 +1,150 @@
+
+<% alias Thamani.Sales
+   alias Thamani.Dispatches
+   alias Thamani.Pmasters
+   alias Thamani.Inventories
+   alias Thamani.Sales
+ %>
+<div class="col-md-12">
+  <span><%= link "Back", to: inventory_path(@conn, :index), class: "btn btn-gold btn-gold" %></span>
+
+  <div class="card">
+      <div class="card-header" data-background-color="gold">
+          <h4 class="title"><%=@inventory.sku.name %> Price range</h4>
+
+      </div>
+
+     <table class="table"  style="margin-left: 0px;">
+       <thead class="text-info">
+         <tr>
+           <th data-field="batch" data-sortable="true"> Price Buildup</th>
+           <th data-field="expiry" data-sortable="true">Range allowable</th>
+           <th data-field="production" data-sortable="true">Price addition Alowable #</th>
+          <th data-field="price" data-sortable="true">Final Price Buildup</th>
+
+          </tr>
+          </thead>
+          <tbody>
+
+<td><span style ="background:#66bb6a !important;padding: 5px;border-radius: 5px;font-size: 13px;"> <%= Float.ceil(String.to_float(Dispatches.get_price(@inventory.item)) + Float.ceil(Sales.get_gs1_value(),1) + (Inventories.get_item_warehouse(@inventory.item, @current_user)) ,2) %></span></td>
+
+
+
+  <td><span style ="background:#f44336 !important;padding: 5px;border-radius: 5px;font-size: 13px;"><%= Pmasters.get_min(Dispatches.getcategoryname(@inventory.item))%>% - <%= Pmasters.get_max(Dispatches.getcategoryname(@inventory.item))%>%</span></td>
+
+
+
+
+   <td><span style ="background:gold !important;padding: 5px;border-radius: 5px;font-size: 13px;">
+     <%= Float.ceil( (Pmasters.get_min(Dispatches.getcategoryname(@inventory.item))/100) * (String.to_float(Dispatches.get_price(@inventory.item)) + Float.ceil(Sales.get_gs1_value(),1) + (Inventories.get_item_warehouse(@inventory.item, @current_user)) ),2)%> -
+
+ <%= Float.ceil( (Pmasters.get_max(Dispatches.getcategoryname(@inventory.item))/100) * (String.to_float(Dispatches.get_price(@inventory.item))+ Float.ceil(Sales.get_gs1_value(),1) + (Inventories.get_item_warehouse(@inventory.item, @current_user)) ),2)%> </span></td>
+
+
+
+    <td><span style ="background:#66bb6a !important;padding: 5px;border-radius: 5px;font-size: 13px;">
+     <%= Float.ceil(Float.ceil(String.to_float(Dispatches.get_price(@inventory.item)) + Float.ceil(Sales.get_gs1_value(),1) + (Inventories.get_item_warehouse(@inventory.item, @current_user)) ,2) +
+     Float.ceil( (Pmasters.get_min(Dispatches.getcategoryname(@inventory.item))/100) * (String.to_float(Dispatches.get_price(@inventory.item)) + Float.ceil(Sales.get_gs1_value(),1) + (Inventories.get_item_warehouse(@inventory.item, @current_user)) ) ,2),2)%> -
+    <%= Float.ceil(Float.ceil(String.to_float(Dispatches.get_price(@inventory.item)) + Float.ceil(Sales.get_gs1_value(),1) + (Inventories.get_item_warehouse(@inventory.item, @current_user)) ,2) +
+    Float.ceil( (Pmasters.get_max(Dispatches.getcategoryname(@inventory.item))/100) * (String.to_float(Dispatches.get_price(@inventory.item)) + Float.ceil(Sales.get_gs1_value(),1) + (Inventories.get_item_warehouse(@inventory.item, @current_user)) ) ,2),2)%> </span></td>
+
+
+
+                                         </tbody>
+                                   </table>
+   </div>
+
+   </div>
+<div class="card" style="margin:25px -10px">
+    <div class="card-header" data-background-color="gold">
+        <h4 class="title">Inventory</h4>
+        <p class="category"><%= link "Dashboard", to: inventory_path(@conn, :index) %>/ inventory/edit</p>
+
+    </div>
+    <%= form_for @changeset, inventory_path(@conn, :update, @inventory), [multipart: true] , fn f -> %>
+      <%= if @changeset.action do %>
+        <div class="alert alert-danger">
+          <p>Oops, something went wrong! Please check the errors below.</p>
+        </div>
+      <% end %>
+
+      <div class="col-md-6">
+        <div class="form-group label-floating">
+        <%= label f, :item, class: "control-label" %>
+        <input  class="form-control select-with-transition"  value="<%= @inventory.sku.name %>" disabled="disabled"/>
+          <%= text_input f, :item, class: "form-control" ,type: "hidden" %>
+    </div>
+
+        <%= error_tag f, :item %>
+      </div>
+
+
+      <div class="col-md-5">
+        <div class="form-group label-floating spinner" data-trigger="spinner">
+        <%= label f, :"price format i.e 100.00 or 100.5 0r 100.25", class: "control-label" %>
+        <%= text_input f, :price, class: "form-control" , "data-rule": "currency"%>
+        <button type="button" data-spin="up">+</button>
+      <button type="button" data-spin="down">-</button>
+          </div>
+
+
+        <%= error_tag f, :price %>
+      </div>
+
+        <div class="col-md-6">
+      <div class="form-group label-floating">
+        <%= label f, :"Discount", class: "control-label" %>
+        <%= select f, :discount, @discount, class: "single_select", style: "width: 100%", title: "Choose item" %>
+          </div>
+        <%= error_tag f, :discount %>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group label-floating spinner" data-trigger="spinner">
+        <%= label f, :"reorder level threshold", class: "control-label" %>
+        <%= text_input f, :reorderlevel, class: "form-control" , "data-rule": "quantity" , "data-max": "null" %>
+        <button type="button" data-spin="up">+</button>
+      <button type="button" data-spin="down">-</button>
+          </div>
+
+        <%= error_tag f, :reorderlevel %>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group label-floating spinner" data-trigger="spinner">
+        <%= label f, :"reorder stock", class: "control-label" %>
+        <%= text_input f, :reorderstock, class: "form-control" , "data-rule": "quantity" , "data-max": "null" %>
+        <button type="button" data-spin="up">+</button>
+      <button type="button" data-spin="down">-</button>
+          </div>
+
+        <%= error_tag f, :reorderstock %>
+      </div>
+
+
+
+      <div class="col-md-10">
+        <div class="form-group label-floating">
+        <%= label f, :description, class: "control-label" %>
+        <%= textarea f, :description, class: "form-control" %>
+          </div>
+        <%= error_tag f, :description %>
+      </div>
+
+
+
+
+
+      <div class="col-md-10">
+        <div class="form-group label-floating">
+
+        <%= label f, :active, class: "control-label" %>
+        <%= checkbox f, :active, class: "checkbox-material" %>
+          </div>
+        <%= error_tag f, :active %>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group label-floating">
+        <%= submit "Submit", class: "btn btn-gold" %>
+      </div>
+        </div>
+    <% end %>

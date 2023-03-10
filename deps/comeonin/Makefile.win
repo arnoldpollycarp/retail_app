@@ -1,0 +1,17 @@
+BCRYPT_PATH = c_src
+
+NMAKE = nmake /$(MAKEFLAGS)
+MIX = mix
+CFLAGS = /O2 /EHsc /I"$(BCRYPT_PATH)"
+
+NIF_SRC=\
+	c_src\bcrypt_nif.c\
+	c_src\blowfish.c
+
+all: comeonin
+
+comeonin:
+	$(MIX) compile
+
+priv\bcrypt_nif.dll:
+	$(CC) $(CFLAGS) /I"$(ERTS_INCLUDE_PATH)" /LD /MD /Fe$@ $(NIF_SRC)

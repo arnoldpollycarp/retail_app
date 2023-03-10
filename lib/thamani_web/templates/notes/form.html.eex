@@ -1,0 +1,77 @@
+<%= form_for @changeset, @action, fn f -> %>
+  <%= if @changeset.action do %>
+    <div class="alert alert-danger">
+      <p>Oops, something went wrong! Please check the errors below.</p>
+    </div>
+  <% end %>
+
+
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= label f, :"Receipt Number", class: "control-label" %>
+    <%= text_input f, :receipt_number, class: "form-control" %>
+
+        <%= text_input f, :note_number, type: "hidden", class: "form-control", value: "THO"<>SecureRandom.urlsafe_base64(8)<>String.slice(to_string(DateTime.utc_now), 0..9) |>String.replace("-", "")  %>
+        <%= text_input f, :staff, type: "hidden", class: "form-control", value: "0" %>
+
+  </div>
+    <%= error_tag f, :receipt_number %>
+  </div>
+
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= label f, :"item code", class: "control-label" %>
+    <%= number_input f, :item, class: "form-control" %>
+  </div>
+    <%= error_tag f, :item %>
+  </div>
+
+
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= label f, :"Quantity", class: "control-label" %>
+    <%= number_input f, :quantity, class: "form-control" %>
+  </div>
+    <%= error_tag f, :quantity %>
+  </div>
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= label f, :"Customer details", class: "control-label" %>
+    <%= textarea f, :customer, class: "form-control" %>
+  </div>
+    <%= error_tag f, :customer %>
+  </div>
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= label f, :"Customer Phone", class: "control-label" %>
+    <%= number_input f, :phone, class: "form-control" %>
+  </div>
+    <%= error_tag f, :phone %>
+  </div>
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= label f, :"Notes about return", class: "control-label" %>
+    <%= textarea  f, :description, class: "form-control" %>
+  </div>
+    <%= error_tag f, :description %>
+  </div>
+
+  <div class="col-md-12">
+    <div class="form-group label-floating">
+      <%= label f, :active, class: "control-label" %>
+      <%= checkbox f, :active , class: "checkbox-material"%>
+    </div>
+  <%= error_tag f, :active %>
+  </div>
+
+<div class="col-md-12">
+  <div class="form-group">
+    <%= submit "Submit", class: "btn btn-gold" %>
+  </div>
+</div>
+<% end %>

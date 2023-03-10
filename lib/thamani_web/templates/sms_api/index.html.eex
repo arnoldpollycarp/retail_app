@@ -1,0 +1,12 @@
+
+<div class="card-content">
+
+
+  <div class="footer text-center">
+
+
+    <p><%= @params %></p>
+      
+
+</div>
+</div>

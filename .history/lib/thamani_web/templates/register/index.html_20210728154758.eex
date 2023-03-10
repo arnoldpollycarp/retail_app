@@ -1,0 +1,133 @@
+
+
+	<div class="wrapper wrapper-full-page">
+         <div class="full-page login-page" >
+             <!--   you can change the color of the filter page using: data-color="blue | purple | green | orange | red | rose " -->
+             <div class="content">
+                 <div class="container">
+                     <div class="row">
+                         <div class="col-md-6 col-sm-5 col-md-offset-3 col-sm-offset-4" style="margin-top:-70px" >
+
+                                 <div class="card card-login ">
+                                     <div class="card-header text-center" data-background-color="gold">
+                                         <h4 class="card-title">  <img  style="width:165px" alt="Thamani Online" src ="<%= static_path(@conn, "/images/thamani_logo.png") %>"></h4>
+                                         <p class="category text-center">
+                                         Register
+                                     </p>
+                                     </div>
+
+																		   <%= form_for @changeset, register_path(@conn, :create),[as: :session], fn f -> %>
+																			 <%= if f.errors != [] do %>
+																		     <div class="alert alert-danger">
+																		       <p>Oops, something went wrong! Please check the errors below:</p>
+																		     </div>
+																		   <% end %>
+                                     <div class="card-content">
+																			  <div class="input-group">
+																					<span class="input-group-addon">
+
+																					</span>
+																			 <div class="form-group label-floating">
+																					 <label class="control-label">First Name</label>
+																						 <%= text_input f, :firstname, class: "form-control" , required: "required"%>
+																						 <%= error_tag f, :firstname %>
+																			 </div>
+																		 </div>
+																		 <div class="input-group">
+																			 <span class="input-group-addon">
+
+																			 </span>
+
+																		<div class="form-group label-floating">
+																				<label class="control-label">last Name</label>
+																					<%= text_input f, :lastname, class: "form-control" %>
+																					<%= error_tag f, :lastname %>
+																		</div>
+																	</div>
+																	<div class="input-group">
+																		<span class="input-group-addon">
+
+																		</span>
+																			<div class="form-group label-floating">
+																					<label class="control-label">Company Name</label>
+																						<%= text_input f, :company,class: "form-control" , required: "required"%>
+																						<div class="alert alert-danger"><%= error_tag f, :company %></div>
+																			</div>
+																	</div>
+
+																	<div class="input-group">
+																		<span class="input-group-addon">
+
+																		</span>
+																			<div class="form-group label-floating">
+																					<label class="control-label">Phone Number (254XXXXXXXX)</label>
+																						<%= number_input f, :phone,class: "form-control" , required: "required"%>
+																						<div class="alert alert-danger"><%= error_tag f, :phone %></div>
+																			</div>
+																	</div>
+
+
+																	<div class="col-lg-12" style="margin-left: 14px;">
+																		<div class="form-group label-floating">
+																		<%= label f, :" Location ", class: "control-label" %>
+																		<%= select f, :location, @list_city, class: "single_select", style: "width:100%;", title: "Choose item" , required: "required"%>
+																			</div>
+																		<%= error_tag f, :location %>
+																	</div>
+
+                                         <div class="input-group">
+																					 <span class="input-group-addon">
+
+																					 </span>
+                                             <div class="form-group label-floating">
+                                                 <label class="control-label">Email address e.g example@mail.com</label>
+                                                   <%= text_input f, :email,class: "form-control" ,type: "email", required: "required"%>
+																									 <div class="alert alert-danger"><%= error_tag f, :email %></div>
+																						 </div>
+                                         </div>
+
+                                         <div class="input-group">
+                                             <span class="input-group-addon">
+
+                                             </span>
+                                             <div class="form-group label-floating">
+                                                 <label class="control-label">Create Password i.e atleast 7 characters</label>
+                                               <%= password_input f, :password,class: "form-control" ,required: "required" %>
+																							 <div class="alert alert-danger"><%= error_tag f, :password %></div>
+																							  <div class="alert alert-danger"><%= error_tag f, :slug %></div>
+																						 </div>
+                                         </div>
+
+																				 <div class="input-group">
+																						 <span class="input-group-addon">
+
+																						 </span>
+																						 <div class="form-group label-floating">
+																								 <label class="control-label">Confirm Password</label>
+																							 <%= password_input f, :password_confirmation,class: "form-control" ,required: "required" %>
+																							<div class="alert alert-danger"><%= error_tag f, :password_confirmation %></div>
+																						</div>
+																				 </div>
+																				 <div class="footer text-center">
+																						 <input type="submit" class="btn btn-simple btn-wd btn-lg" style="color:#f70000;" value="Register">
+																				 </div>
+																				 <div class="footer text-center">
+																						 <p  ><%= link "Already have an account? Login", to: login_path(@conn, :index), style: "color:#5ec22d;" %></p>
+																				 </div>
+																				 <div class="footer text-center">
+																					<label class="control-label"  style= "font-size:14px;">  <%= checkbox f, :active, class: "checkbox-material",required: "required"  %> I accept the <%= link "Terms and conditions", to: terms_path(@conn, :index), style: "color:#5ec22d;" %> and have read the <%= link "privacy policy", to: privacy_path(@conn, :index), style: "color:#5ec22d;" %></label>
+																				</div>
+                                     </div>
+
+
+																		 <% end %>
+                                 </div>
+				<p style="text-align:center;"><%= link "Back to Thamani Online site", to: page_path(@conn, :index), style: "color:grey;font-weight:600;;" %></p>
+
+                         </div>
+                     </div>
+                 </div>
+             </div>
+
+         </div>
+     </div>

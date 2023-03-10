@@ -1,0 +1,301 @@
+<% alias Thamani.Sales
+   alias Thamani.Dispatches
+   alias Thamani.Pmasters
+   alias Thamani.Inventories
+ %>
+<%= if @current_user.id == @user.id do %>
+
+                                            <div class="row">
+                                                                   <div class="col-md-12">
+                                                                                                                                           <!-- Button trigger modal -->
+                                                                      <button type="button" class="btn btn-gold btn-gold" data-toggle="modal" data-target="#InventoryModal">
+                                                                        Add Inventory
+                                                                      </button>
+
+                                                                      <!-- start Modal -->
+                                                                      <div class="modal fade" id="InventoryModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                                        <div class="modal-dialog" role="document">
+                                                                          <div class="modal-content">
+                                                                            <div class="modal-header">
+                                                                              <h3 class="modal-title text-center" style= "text-decoration: underline;"  id="exampleModalLabel">Choose mode of adding below</h3>
+                                                                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                <span aria-hidden="true">&times;</span>
+                                                                              </button>
+                                                                            </div>
+                                                                            <div class="modal-body">
+                                                                              <span><%= link "Add inventory received from warehouse", to: inventory_path(@conn, :new), class: "btn btn-gold " %></span>
+                                                                              <span><%= link "Add inventory received from manufacturer", to: inventory2_path(@conn, :new), class: "btn btn-gold btn-gold" %></span>
+
+                                                                            </div>
+                                                                            <div class="modal-footer">
+                                                                              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+
+                                                                            </div>
+                                                                          </div>
+                                                                        </div>
+                                                                      </div>
+                                                                      <!-- end Modal -->
+
+                                                                       <div class="card">
+                                                                           <div class="card-header" data-background-color="gold">
+                                                                               <h4 class="title">Inventory</h4>
+                                                                               <p class="category"><%= link "Dashboard", to: retail_dashboard_path(@conn, :index) %>/Inventory</p>
+
+                                                                           </div>
+
+                                                                           <div class="card-content table-responsive">
+                                                                             <div id="toolbar" style="margin-top: -16px;">
+                                                                            <select class="form-control">
+                                                                              <option value="">Export Current page</option>
+                                                                              <option value="all">Export All</option>
+                                                                              <option value="selected">Export Selected</option>
+                                                                            </select>
+                                                                          </div>
+                                          <table class="table" id ="fresh-table" data-toggle="table" data-toolbar="#toolbar" data-search="true"  data-pagination="true" data-show-print="true" data-show-export="true"   data-export-options='{"fileName": "reports"}'>
+                                              <thead class="text-info">
+                                                <tr>
+                                                <th data-field="state" data-checkbox="true"></th>
+      <th data-field="sku" data-sortable="true">SKU</th>
+      <th data-field="name" data-sortable="true">Item name</th>
+
+      <th  data-sortable="true">Category</th>
+      <th data-field="available" data-sortable="true">Qty Available</th>
+      <th data-field="sold" data-sortable="true">Sold</th>
+      <th data-field="remaining" data-sortable="true">Remain</th>
+      <th data-field="price" data-sortable="true">Your Price</th>
+      <th data-field="price2" data-sortable="true">Total Price</th>
+      <th data-field="stv" data-sortable="true">Stock Value </th>
+
+
+      <th class="text-center"> Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= if is_nil(@inventory) do %>
+      <tr>
+      <td>No items in your inventory</td>
+    </tr>
+    <% else %>
+
+    <%= for inventory <- @inventory do %>
+
+    <tr>
+    <td></td>
+        <%= if is_nil(Inventories.get_item_gtin(inventory)) do %>
+        <td>Deleted</td>
+        <% else %>
+        <td><%= Inventories.get_item_gtin(inventory) %> </td>
+        <% end %>
+        <%= if is_nil(Inventories.get_item_name(inventory)) do %>
+        <td>Deleted</td>
+        <% else %>
+        <td><%= Inventories.get_item_name(inventory) %> </td>
+        <% end %>
+        <%= if is_nil((Dispatches.getcategoryname(inventory))) do %>
+        <td>Deleted</td>
+        <% else %>
+        <td><%= Pmasters.getname(Dispatches.getcategoryname(inventory)) %></td>
+        <% end %>
+      <td> <%= Inventories.get_item_count_quantity(inventory, @current_user) %></td>
+      <% one = Decimal.to_integer(Inventories.get_item_count_quantity(inventory, @current_user))
+         two = (Sales.get_count_quantity_item(@current_user,inventory))
+	       three = (Sales.get_sum_quantity_sales(@current_user,inventory))
+        four = Inventories.get_sum_inventory_price_item(@current_user,inventory)
+        name = Inventories.get_item_name(inventory)
+        gtin =  Inventories.get_item_gtin(inventory)
+        type = Inventories.get_item_order_type(inventory,@current_user)
+        warehouse_id = Inventories.get_item_warehouse_id(inventory,@current_user)
+        warehouse_name =
+         case (Inventories.get_warehouse_id_name(warehouse_id)) do
+           nil -> "N/A"
+           _ -> Inventories.get_warehouse_id_name(warehouse_id)
+
+         end
+         warehouse_phone =
+          case (Inventories.get_warehouse_id_phone(warehouse_id)) do
+            nil -> "N/A"
+            _ -> Inventories.get_warehouse_id_phone(warehouse_id)
+
+          end
+        manufacturer_id = Inventories.get_item_manufacturer_id(inventory,@current_user)
+          manufacturer_name =
+         case (Inventories.get_manufacturer_id_name(manufacturer_id)) do
+           nil -> "N/A"
+           _ -> Inventories.get_manufacturer_id_name(manufacturer_id)
+
+         end
+
+         manufacturer_phone =
+          case (Inventories.get_manufacturer_id_phone(manufacturer_id)) do
+            nil -> "N/A"
+            _ -> Inventories.get_manufacturer_id_phone(manufacturer_id)
+
+          end
+        quantity = Inventories.get_item_reorderstock(inventory,@current_user)
+        %>
+
+     <%= if is_nil(two) do %>
+     <td>0</td>
+     <% else %>
+     <td><%= two%></td>
+     <% end %>
+
+     <%= if is_nil(Inventories.get_item_gtin(inventory)) do %>
+     <td>Deleted</td>
+     <% else %>
+          <!--start of remaining quantity -->
+     <%= if is_nil(two) do %>
+         <%= if one > Inventories.get_item_reorderlevel(inventory, @current_user) do %>
+             <td class= 'btn btn-success btn-success' data-toggle="popover" data-trigger="hover" title="Reorder level" data-content= '<%=Inventories.get_item_reorderlevel(inventory, @current_user)%>'><%= one  %></td>
+         <% else %>
+             <td class= 'btn btn-danger btn-danger' data-toggle="popover" data-trigger="hover" title="Reorder level" data-content= '<%=Inventories.get_item_reorderlevel(inventory, @current_user)%>'><%= one  %> | <%= link "reorder",  to: "#ReorderModal", "data-toggle": "modal" ,"data-id": inventory , "data-name-id": name , "data-gtin-id": gtin  , "data-type-id": type  ,"data-wn-id": warehouse_name,"data-wn-phone": warehouse_phone,"data-w-id": warehouse_id ,"data-m-id": manufacturer_id,"data-mn-id": manufacturer_name,"data-mn-phone": manufacturer_phone,"data-quantity-id": quantity, style: "color:#f5f5f5 !important"%></td>
+         <% end %>
+     <% else %>
+         <%= if is_nil(one) do %>
+           <%= if Decimal.to_integer(two) > Inventories.get_item_reorderlevel(inventory, @current_user)  do %>
+               <td class= 'btn btn-success btn-success' data-toggle="popover" data-trigger="hover" title="Reorder level " data-content= '<%=Inventories.get_item_reorderlevel(inventory, @current_user)%>'><%= 0 -Decimal.to_integer(two) %></td>
+           <% else %>
+               <td class= 'btn btn-danger btn-danger' data-toggle="popover" data-trigger="hover" title="Reorder level " data-content= '<%=Inventories.get_item_reorderlevel(inventory, @current_user)%> '><%= 0 - Decimal.to_integer(two) %> | <%= link "reorder",  to: "#ReorderModal", "data-toggle": "modal" ,"data-id": inventory , "data-name-id": name , "data-gtin-id": gtin  , "data-type-id": type  ,"data-wn-id": warehouse_name,"data-wn-phone": warehouse_phone,"data-w-id": warehouse_id ,"data-m-id": manufacturer_id  ,"data-mn-id": manufacturer_name  ,"data-mn-phone": manufacturer_phone,"data-quantity-id": quantity, style: "color:#f5f5f5 !important"%></td>
+           <% end %>
+         <% else %>
+           <%= if (one  - Decimal.to_integer(two)) > Inventories.get_item_reorderlevel(inventory, @current_user)  do %>
+               <td class= 'btn btn-success btn-success' data-toggle="popover" data-trigger="hover" title="Reorder level " data-content= '<%=Inventories.get_item_reorderlevel(inventory, @current_user)%>'><%= one  - Decimal.to_integer(two) %></td>
+           <% else %>
+
+               <td  class= 'btn btn-danger btn-danger' data-toggle="popover" data-trigger="hover" title="Reorder level " data-content= '<%=Inventories.get_item_reorderlevel(inventory, @current_user)%>' >  <%= one  - Decimal.to_integer(two) %> | <%= link "reorder",  to: "#ReorderModal", "data-toggle": "modal" ,"data-id": inventory , "data-name-id": name , "data-gtin-id": gtin  , "data-type-id": type  ,"data-wn-id": warehouse_name,"data-wn-phone": warehouse_phone,"data-w-id": warehouse_id ,"data-m-id": manufacturer_id  ,"data-mn-id": manufacturer_name  ,"data-mn-phone": manufacturer_phone ,"data-quantity-id": quantity, style: "color:#f5f5f5 !important"%></td>
+
+
+           <% end %>
+         <% end %>
+     <% end %>
+        <!--end of remaining quantity -->
+        <% end %>
+
+     <%= if Inventories.get_price(inventory, @current_user) == "0.00"   do %>
+       <td><%= link "Add Price ", to: inventory_path(@conn, :edit, Inventories.get_item_id(inventory,@current_user)), class: "fa fa-pencil" ,style: "color:#66bb6a !important" %></td>
+     <% else %>
+       <td><%=Float.ceil( String.to_float(Inventories.get_price(inventory, @current_user)) - (String.to_float(Inventories.get_price(inventory, @current_user)) * (Inventories.get_item_discount_value(Inventories.get_item_discount(inventory, @current_user))/100) ) ,2) %> </td>
+
+     <% end %>
+
+
+     <td><%= Float.ceil((String.to_float(Inventories.get_price(inventory, @current_user)) - (String.to_float(Inventories.get_price(inventory, @current_user)) * (Inventories.get_item_discount_value(Inventories.get_item_discount(inventory, @current_user))/100))) + Sales.get_gs1_value() + Inventories.get_item_manufacturer(inventory, @current_user) + Inventories.get_item_warehouse(inventory, @current_user) ,2) %></td>
+
+   <!--start of stock value -->
+    <%= if is_nil(two) do %>
+
+            <td ><%= Float.floor(four,2) %></td>
+
+    <% else %>
+        <%= if is_nil(one) do %>
+
+            <td ><%= Float.floor( (0) - (three),2) %></td>
+
+        <% else %>
+          <td ><%= Float.floor( (four) - (three),2)  %></td>
+        <% end %>
+    <% end %>
+       <!--end of stock value -->
+
+      <td class="text-right">
+        <%= if is_nil(Inventories.get_item_gtin(inventory)) do %>
+
+        <% else %>
+            <span  rel="tooltip" title="View Task" class="btn btn-info btn-simple ">
+                <span ><%= link "",  to: inventory_path(@conn, :show, Inventories.get_item_id(inventory,@current_user)), class: "fa fa-search-plus" ,style: "color:#00bcd4 !important" %></span>
+            </span>
+            <span  rel="tooltip" title="Edit Task" class="btn btn-primary btn-simple ">
+                <span ><%= link "", to: inventory_path(@conn, :edit, Inventories.get_item_id(inventory,@current_user)), class: "fa fa-pencil" ,style: "color:#66bb6a !important" %></span>
+            </span>
+
+        <% end %>
+          </td>
+           <% end %>
+
+    </tr>
+
+  <% end %>
+
+  </tbody>
+
+</table>
+
+</div>
+                                                        </div>
+                                                      </div>
+                                                    </div>
+
+<% else %>
+<h1>Not authorised to view this panel</h1>
+<% end %>
+<!-- start reorder Modal -->
+<div class="modal fade bd-example-modal" id="ReorderModal" tabindex="1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog ">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h3 class="modal-title text-center" style= "text-decoration: underline;" id="exampleModalLabel">Confirm Reorder before submitting</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="container-fluid">
+        <div class="row" style="margin-left: 15px !important;">
+          <form >
+
+        <h4><span style= "color:#66bb6a;float: left;display: inline-block;">Item Name: </span>
+         <input type="text" class="form-control" style="width: 50%;float: left;display: inline-block;margin-top: -10px;font-size: 16px;font-weight: 500;" name="nameId" id="nameId" disabled /></h4>
+
+         <input type="hidden" id="inventory_item" name="inventory_item" disabled /></h4>
+
+        <h4><span style= "color:#66bb6a;float: left;display: inline-block;">Item Code: </span>
+         <input type="text" class="form-control" style="width: 50%;float: left;display: inline-block;margin-top: -10px;font-size: 16px;font-weight: 500;" name="gtinId" value="" disabled/></h4>
+
+        <h4><span style= "color:#66bb6a;float: left;display: inline-block;">Order From: </span>
+        <input type="text" class="form-control" style="width: 50%;float: left;display: inline-block;margin-top: -10px;font-size: 16px;font-weight: 500;" name="typeId" value="" disabled/></h4>
+
+
+        <input type="hidden"  name="mId" value="" disabled/></h4>
+
+	<h4><span style= "color:#66bb6a;float: left;display: inline-block;">Manufacturer: </span>
+         <input type="text" class="form-control" style="width: 50%;float: left;display: inline-block;margin-top: -10px;font-size: 16px;font-weight: 500;" name="mnId" value="" disabled/></h4>
+         <span style= "margin-top: 8px;float: left;display: inline-block;">Phone: </span><h4><input type="text" class="form-control" style="width: 50%;float: left;display: inline-block;margin-top: -10px;font-size: 16px;font-weight: 500;" name="mnPhone" value="" disabled/></h4>
+
+
+
+        <input type="hidden"  name="wId" value="" disabled/></h4>
+
+	<h4><span style= "color:#66bb6a;float: left;display: inline-block;">Warehouse: </span>
+         <input type="text" class="form-control" style="width: 50%;float: left;display: inline-block;margin-top: -10px;font-size: 16px;font-weight: 500;" name="wnId" value="" disabled/></h4>
+         <span style= "margin-top: 8px;float: left;display: inline-block;">Phone: </span><h4><input type="text" class="form-control" style="width: 50%;float: left;display: inline-block;margin-top: -10px;font-size: 16px;font-weight: 500;" name="wnPhone" value="" disabled/></h4>
+
+
+         <div class="form-group label-floating spinner" data-trigger="spinner">
+            <h4 style="width:50%"><span style= "color:#66bb6a">Reorder stock quantity: </span><input  type= "text"  id="quantity" name="quantity"  data-rule= "quantity" data-max= "null" class="form-control"  value=""/></h4>
+            <button type="button" data-spin="up">+</button>
+            <button type="button" data-spin="down">-</button>
+         </div>
+
+       <h4 style="width:90%"><span style= "color:#66bb6a">Extra comments: </span> <input name="description" id="description"  class="form-control"  type= "text" /></h4>
+       <div class="col-md-10">
+         <div class="form-group">
+           <%= submit "Submit", class: "btn btn-gold", "drab-click": "add_reorder" %>
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+             <p class="message  <%= @message_class %>" role="alert"><%= @long_process_button_text %></p>
+         </div>
+       </div>
+       <div class="col-md-1">
+            <div class="loader2 <%= @loader_class %>"></div>
+        </div>
+
+
+
+        </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<!-- end reorder Modal -->

@@ -1,0 +1,784 @@
+<html lang="en">
+   <head>
+      <!-- basic -->
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <!-- mobile metas -->
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+      <!-- site metas -->
+      <title>Thamani online</title>
+      <meta name="keywords" content="">
+      <meta name="description" content="">
+      <meta name="author" content="">
+      <!-- bootstrap css -->
+      <link rel="stylesheet" type="text/css" href="<%= static_path(@conn, "/css/bootstrap.min.css") %>">
+      <!-- style css -->
+      <link rel="stylesheet" type="text/css" href="<%= static_path(@conn, "/css/style.css") %>">
+      <!-- Responsive-->
+      <link rel="stylesheet" href="<%= static_path(@conn, "/css/responsive.css") %>">
+      <!-- fevicon -->
+      <link rel="shortcut icon" href="<%= static_path(@conn, "/images/fav.ico") %>">
+      <!-- Scrollbar Custom CSS -->
+      <link rel="stylesheet" href="<%= static_path(@conn, "/css/jquery.mCustomScrollbar.min.css") %>">
+      <!-- Tweaks for older IEs-->
+      <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+      <!-- fonts -->
+      <link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
+      <!-- font awesome -->
+      <link rel="stylesheet" href="<%= static_path(@conn, "/css/font-awesome/css/font-awesome.min.css") %>">  <!--  -->
+      <!-- owl stylesheets -->
+      <link href="https://fonts.googleapis.com/css?family=Great+Vibes|Poppins:400,700&display=swap&subset=latin-ext" rel="stylesheet">
+      <link rel="stylesheet" href="<%= static_path(@conn, "/css/owl.carousel.min.css") %>">
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
+
+<style>
+
+
+
+    a.cart > span {
+    	width: 24px;
+    	height: 24px;
+    	font-size: 16px;
+    	color: #fff;
+    	line-height: 24px;
+    	position: relative;
+    	-moz-border-radius: 12px;
+    	-webkit-border-radius: 12px;
+    	border-radius: 12px;
+    	display: inline-block;
+    	transform: scale(0);
+    	-o-transform: scale(0);
+    	-ms-transform: scale(0);
+    	-moz-transform: scale(0);
+    	-webkit-transform: scale(0);
+    	top: 0;
+    	right: 0;
+    	bottom: 0;
+    	left: 0;
+    	margin: auto;
+    	background: #ffab00;
+    	box-shadow: 0 3px 6px rgba(255, 171, 0, 0.16), 0 3px 6px rgba(255, 171, 0, 0.23);
+    	-moz-box-shadow: 0 3px 6px rgba(255, 171, 0, 0.16), 0 3px 6px rgba(255, 171, 0, 0.23);
+    	-webkit-box-shadow: 0 3px 6px rgba(255, 171, 0, 0.16), 0 3px 6px rgba(255, 171, 0, 0.23);
+    }
+
+    a.cart > span.counter {
+      margin-left: -10px;
+  margin-top: -50px;
+    	-webkit-transition: .2s linear;
+    	-moz-transition: .2s linear;
+    	-ms-transition: .2s linear;
+    	-o-transition: .2s linear;
+    	transition: .2s linear;
+    	transform: scale(1);
+    	-o-transform: scale(1);
+    	-ms-transform: scale(1);
+    	-moz-transform: scale(1);
+    	-webkit-transform: scale(1);
+    }
+
+        .product-image {
+      float: left;
+      width: 20%;
+    }
+
+    .product-details {
+      float: left;
+      width: 37%;
+    }
+
+    .product-price {
+      float: left;
+      width: 12%;
+    }
+
+    .product-quantity {
+      float: left;
+      width: 10%;
+    }
+
+    .product-removal {
+      float: left;
+      width: 9%;
+    }
+
+    .product-line-price {
+      float: left;
+      width: 12%;
+      text-align: right;
+    }
+
+    /* This is used as the traditional .clearfix class */
+    .group:before, .shopping-cart:before, .column-labels:before, .product:before, .totals-item:before,
+    .group:after,
+    .shopping-cart:after,
+    .column-labels:after,
+    .product:after,
+    .totals-item:after {
+      content: '';
+      display: table;
+    }
+
+    .group:after, .shopping-cart:after, .column-labels:after, .product:after, .totals-item:after {
+      clear: both;
+    }
+
+    .group, .shopping-cart, .column-labels, .product, .totals-item {
+      zoom: 1;
+    }
+
+    /* Apply clearfix in a few places */
+    /* Apply dollar signs */
+    .product .product-price:before, .product .product-line-price:before, .totals-value:before {
+      content: 'Ksh ';
+    }
+
+
+    .shopping-cart {
+      margin-top: -45px;
+    }
+
+    /* Column headers */
+    .column-labels label {
+      padding-bottom: 15px;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #eee;
+    }
+    .column-labels .product-image, .column-labels .product-details, .column-labels .product-removal {
+      text-indent: -9999px;
+    }
+
+    /* Product entries */
+    .products {
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    .products .product-image {
+      text-align: center;
+    }
+    .products .product-image img {
+      width: 100px;
+    }
+    .products .product-details .product-title {
+      margin-right: 20px;
+
+    }
+    .products .product-details .product-description {
+      margin: 5px 20px 5px 0;
+      line-height: 1.4em;
+    }
+    .products .product-quantity input {
+      width: 40px;
+    }
+    .products .remove-product {
+      border: 0;
+      padding: 4px 8px;
+      background-color: #c66;
+      color: #fff;
+
+      font-size: 12px;
+      border-radius: 3px;
+    }
+    .products .remove-product:hover {
+      background-color: #a44;
+    }
+
+    /* Totals section */
+    .totals .totals-item {
+      float: right;
+      clear: both;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    .totals .totals-item label {
+      float: left;
+      clear: both;
+      width: 40%;
+      text-align: right;
+      font-size: 17px;
+      color: #31708f;
+    }
+    .totals .totals-item .totals-value {
+      float: left;
+      width: 60%;
+      text-align: center;
+    }
+    .totals .totals-item-total {
+
+    }
+
+    .checkout {
+      float: right;
+      border: 0;
+      margin-top: 20px;
+      padding: 6px 25px;
+      background-color: #6b6;
+      color: #fff;
+      font-size: 25px;
+      border-radius: 3px;
+    }
+
+    .checkout:hover {
+      background-color: #494;
+    }
+
+    /* Make adjustments for tablet */
+    @media screen and (max-width: 650px) {
+      .shopping-cart {
+        margin: 0;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+      }
+
+      .column-labels {
+        display: none;
+      }
+
+      .product-image {
+        float: right;
+        width: auto;
+      }
+      .product-image img {
+        margin: 0 0 10px 10px;
+      }
+
+      .product-details {
+        float: none;
+        margin-bottom: 10px;
+        width: auto;
+      }
+
+      .product-price {
+        clear: both;
+        width: 70px;
+      }
+
+      .product-quantity {
+        width: 100px;
+      }
+      .product-quantity input {
+        margin-left: 20px;
+      }
+
+      .product-quantity:before {
+        content: 'x';
+      }
+
+      .product-removal {
+        width: auto;
+      }
+
+      .product-line-price {
+        float: right;
+        width: 70px;
+      }
+    }
+    /* Make more adjustments for phone */
+    @media screen and (max-width: 350px) {
+      .product-removal {
+        float: right;
+      }
+
+      .product-line-price {
+        float: right;
+        clear: left;
+        width: auto;
+        margin-top: 10px;
+      }
+
+      .products .product-line-price:before {
+        content: 'Item Total: $';
+      }
+
+      .totals .totals-item label {
+        width: 60%;
+      }
+      .totals .totals-item .totals-value {
+        width: 40%;
+      }
+
+
+
+      @-webkit-keyframes drop-in-fade-out {
+        0% {
+          opacity: 0;
+          visibility: visible;
+          -webkit-transform: translate3d(0, -200%, 0);
+          -moz-transform: translate3d(0, -200%, 0);
+          -ms-transform: translate3d(0, -200%, 0);
+          -o-transform: translate3d(0, -200%, 0);
+          transform: translate3d(0, -200%, 0);
+        }
+        12% {
+          -webkit-transform: translate3d(0, 0, 0);
+          -moz-transform: translate3d(0, 0, 0);
+          -ms-transform: translate3d(0, 0, 0);
+          -o-transform: translate3d(0, 0, 0);
+          transform: translate3d(0, 0, 0);
+        }
+        20% {
+          opacity: 1;
+        }
+        70% {
+          opacity: 1;
+          visibility: visible;
+          -webkit-transform: translate3d(0, 0, 0);
+          -moz-transform: translate3d(0, 0, 0);
+          -ms-transform: translate3d(0, 0, 0);
+          -o-transform: translate3d(0, 0, 0);
+          transform: translate3d(0, 0, 0);
+        }
+        80% {
+          opacity: 0;
+        }
+        100% {
+          visibility: hidden;
+          -webkit-transform: translate3d(75%, 0, 0);
+          -moz-transform: translate3d(75%, 0, 0);
+          -ms-transform: translate3d(75%, 0, 0);
+          -o-transform: translate3d(75%, 0, 0);
+          transform: translate3d(25%, 0, 0);
+        }
+      }
+      @-moz-keyframes drop-in-fade-out {
+        0% {
+          opacity: 0;
+          visibility: visible;
+          -webkit-transform: translate3d(0, -200%, 0);
+          -moz-transform: translate3d(0, -200%, 0);
+          -ms-transform: translate3d(0, -200%, 0);
+          -o-transform: translate3d(0, -200%, 0);
+          transform: translate3d(0, -200%, 0);
+        }
+        12% {
+          -webkit-transform: translate3d(0, 0, 0);
+          -moz-transform: translate3d(0, 0, 0);
+          -ms-transform: translate3d(0, 0, 0);
+          -o-transform: translate3d(0, 0, 0);
+          transform: translate3d(0, 0, 0);
+        }
+        20% {
+          opacity: 1;
+        }
+        70% {
+          opacity: 1;
+          visibility: visible;
+          -webkit-transform: translate3d(0, 0, 0);
+          -moz-transform: translate3d(0, 0, 0);
+          -ms-transform: translate3d(0, 0, 0);
+          -o-transform: translate3d(0, 0, 0);
+          transform: translate3d(0, 0, 0);
+        }
+        80% {
+          opacity: 0;
+        }
+        100% {
+          visibility: hidden;
+          -webkit-transform: translate3d(75%, 0, 0);
+          -moz-transform: translate3d(75%, 0, 0);
+          -ms-transform: translate3d(75%, 0, 0);
+          -o-transform: translate3d(75%, 0, 0);
+          transform: translate3d(25%, 0, 0);
+        }
+      }
+      @-o-keyframes drop-in-fade-out {
+        0% {
+          opacity: 0;
+          visibility: visible;
+          -webkit-transform: translate3d(0, -200%, 0);
+          -moz-transform: translate3d(0, -200%, 0);
+          -ms-transform: translate3d(0, -200%, 0);
+          -o-transform: translate3d(0, -200%, 0);
+          transform: translate3d(0, -200%, 0);
+        }
+        12% {
+          -webkit-transform: translate3d(0, 0, 0);
+          -moz-transform: translate3d(0, 0, 0);
+          -ms-transform: translate3d(0, 0, 0);
+          -o-transform: translate3d(0, 0, 0);
+          transform: translate3d(0, 0, 0);
+        }
+        20% {
+          opacity: 1;
+        }
+        70% {
+          opacity: 1;
+          visibility: visible;
+          -webkit-transform: translate3d(0, 0, 0);
+          -moz-transform: translate3d(0, 0, 0);
+          -ms-transform: translate3d(0, 0, 0);
+          -o-transform: translate3d(0, 0, 0);
+          transform: translate3d(0, 0, 0);
+        }
+        80% {
+          opacity: 0;
+        }
+        100% {
+          visibility: hidden;
+          -webkit-transform: translate3d(75%, 0, 0);
+          -moz-transform: translate3d(75%, 0, 0);
+          -ms-transform: translate3d(75%, 0, 0);
+          -o-transform: translate3d(75%, 0, 0);
+          transform: translate3d(25%, 0, 0);
+        }
+      }
+      @keyframes drop-in-fade-out {
+        0% {
+          opacity: 0;
+          visibility: visible;
+          -webkit-transform: translate3d(0, -200%, 0);
+          -moz-transform: translate3d(0, -200%, 0);
+          -ms-transform: translate3d(0, -200%, 0);
+          -o-transform: translate3d(0, -200%, 0);
+          transform: translate3d(0, -200%, 0);
+        }
+        12% {
+          -webkit-transform: translate3d(0, 0, 0);
+          -moz-transform: translate3d(0, 0, 0);
+          -ms-transform: translate3d(0, 0, 0);
+          -o-transform: translate3d(0, 0, 0);
+          transform: translate3d(0, 0, 0);
+        }
+        20% {
+          opacity: 1;
+        }
+        70% {
+          opacity: 1;
+          visibility: visible;
+          -webkit-transform: translate3d(0, 0, 0);
+          -moz-transform: translate3d(0, 0, 0);
+          -ms-transform: translate3d(0, 0, 0);
+          -o-transform: translate3d(0, 0, 0);
+          transform: translate3d(0, 0, 0);
+        }
+        80% {
+          opacity: 0;
+        }
+        100% {
+          visibility: hidden;
+          -webkit-transform: translate3d(75%, 0, 0);
+          -moz-transform: translate3d(75%, 0, 0);
+          -ms-transform: translate3d(75%, 0, 0);
+          -o-transform: translate3d(75%, 0, 0);
+          transform: translate3d(25%, 0, 0);
+        }
+      }
+      .animate--drop-in-fade-out {
+        -webkit-animation: drop-in-fade-out 3.5s 0.4s cubic-bezier(.32,1.75,.65,.91);
+        -moz-animation: drop-in-fade-out 3.5s 0.4s cubic-bezier(.32,1.75,.65,.91);
+        -ms-animation: drop-in-fade-out 3.5s 0.4s cubic-bezier(.32,1.75,.65,.91);
+        -o-animation: drop-in-fade-out 3.5s 0.4s cubic-bezier(.32,1.75,.65,.91);
+        animation: drop-in-fade-out 3.5s 0.4s cubic-bezier(.32,1.75,.65,.91);
+      }
+
+    }
+
+
+
+</style>
+<script language="javascript" type="text/javascript">
+
+
+function timeMsg(){
+
+  window.setTimeout("clearMsg()",2000);//10secs
+
+}
+
+//
+
+function clearMsg(){
+
+  document.getElementById("hideMsg").innerHTML = "";
+
+}
+</script>
+   </head>
+
+   <body onLoad = "timeMsg()">
+
+         <!-- header top section start -->
+
+         <!-- header top section start -->
+
+
+    <div class="container" style="width:auto">
+
+
+      <main role="main">
+        <div id ="hideMsg">
+
+        <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
+        <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
+
+      </div>
+        <%= render @view_module, @view_template, assigns %>
+      </main>
+
+    </div> <!-- /container -->
+    <!-- footer section start -->
+    <div class="footer_section layout_padding">
+       <div class="container">
+          <div class="footer_logo"><a href="index.html"><img src="<%= static_path(@conn, "/images/thamani_logo.png") %>"></a></div>
+          <!-- <div class="input_bt">
+             <input type="text" class="mail_bt" placeholder="Your Email" name="Your Email">
+             <span class="subscribe_bt" id="basic-addon2"><a href="#">Subscribe</a></span>
+          </div> -->
+          <div class="footer_menu">
+            <ul>
+               <li><%= link "Website", to: page_path(@conn, :index) %></li>
+               <li> <%= link "Terms & Conditions", to: terms_path(@conn, :index) %> </li>
+               <li> <%= link "Privacy policy", to: privacy_path(@conn, :index) %></li>
+               <li> <%= link "My profile", to: user_path(@conn, :show, @current_user.slug) %></li>
+               <li>  <%= link "Sign out", to: login_path(@conn, :delete, @current_user.id),
+                                     method: "delete" %></li>
+            </ul>
+          </div>
+          <div class="location_main">Contact Number: <a href="#">+1 1800 1200 1200</a></div>
+       </div>
+    </div>
+    <!-- footer section end -->
+    <!-- copyright section start -->
+    <div class="copyright_section">
+       <div class="container">
+          <p class="copyright_text">© 2020 All Rights Reserved</a></p>
+       </div>
+    </div>
+    <!-- copyright section end -->
+    <!-- Javascript files-->
+
+
+    <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
+      <%= Drab.Client.run(@conn) %>
+    <!--   Core JS Files   -->
+    <script src="<%= static_path(@conn, "/js/jquery-3.2.1.min.js") %>"></script>
+        <script src="<%= static_path(@conn, "/js/popper.min.js" ) %>"></script>
+        <script src="<%= static_path(@conn, "/js/bootstrap.min.js" ) %>"></script>
+
+        <script src="<%= static_path(@conn, "/js/plugin.js" ) %>"></script>
+    <!-- sidebar -->
+    <script src="<%= static_path(@conn, "/js/jquery.mCustomScrollbar.concat.min.js" ) %>"></script>
+    <script src="<%= static_path(@conn, "/js/custom.js" ) %>"></script>
+    <script src="<%= static_path(@conn, "/js/commerce.js" ) %>"></script>
+    <script>
+       function openNav() {
+         document.getElementById("mySidenav").style.width = "250px";
+       }
+
+       function closeNav() {
+         document.getElementById("mySidenav").style.width = "0";
+       }
+
+
+       $(document).ready(function () {
+         var user = <%= @current_user.id %>
+           $.ajax({
+               url: "http://41.90.105.110:8000/commerce/status",
+               method: "POST",
+               dataType : "json",
+               data: {user: user},   //you may use jsonp for cross origin request
+               success: function(data) {
+
+                 console.log(data)
+                  if (data.response == "true") {
+
+
+                      $("a.cart > span").addClass("counter");
+                      $("a.cart > span.counter").text(data.count);
+
+
+
+                  } else {
+
+                    $("a.cart > span").addClass("counter");
+                    $("a.cart > span.counter").text(data.count);
+
+                  }
+
+
+              }
+
+            })
+
+            $('#update #slug').change( function() {
+
+                 var productRow = $(this).parent();
+                 var itemid = (productRow.children('#itemid').val());
+                 var quantity = $(this).val();
+                 console.log(productRow.children('#itemid'));
+
+               updateCart(itemid,quantity);
+           });
+
+          });
+
+
+       function AddToCart(prodid) {
+
+
+         const multi_url = "http://41.90.105.110:8000/commerce/cart";
+         var user = <%= @current_user.id %>
+         var count = 0;
+
+         $(document).ready(function () {
+
+             $.ajax({
+                 url: multi_url,
+                 method: "POST",
+                 dataType : "json",   //you may use jsonp for cross origin request
+                 data: {id: prodid ,status: "active",qty: 1, user: user },
+                 crossDomain:true,
+                 success: function(data) {
+
+                   console.log(data)
+                    if (data.response == "true") {
+
+
+                        $("a.cart > span").addClass("counter");
+                        $("a.cart > span.counter").text(data.count);
+
+                        $.toast({
+              text : data.message,
+              showHideTransition : 'slide',  // It can be plain, fade or slide
+              bgColor : 'green',              // Background color for toast
+              textColor : '#eee',            // text color
+              allowToastClose : false,       // Show the close button or not
+              hideAfter : 2500,              // `false` to make it sticky or time in miliseconds to hide after
+              stack : 5,                     // `fakse` to show one stack at a time count showing the number of toasts that can be shown at once
+              textAlign : 'left',            // Alignment of text i.e. left, right, center
+              position : 'top-center'       // bottom-left or bottom-right or bottom-center or top-left or top-right or top-center or mid-center or an object representing the left, right, top, bottom values to position the toast on page
+            })
+
+                    } else {
+
+                      $("a.cart > span").addClass("counter");
+                      $("a.cart > span.counter").text(data.count);
+
+                      $.toast({
+            text : data.message,
+            showHideTransition : 'slide',  // It can be plain, fade or slide
+            bgColor : 'red',              // Background color for toast
+            textColor : '#eee',            // text color
+            allowToastClose : false,       // Show the close button or not
+            hideAfter : 2000,              // `false` to make it sticky or time in miliseconds to hide after
+            stack : 5,                     // `fakse` to show one stack at a time count showing the number of toasts that can be shown at once
+            textAlign : 'left',            // Alignment of text i.e. left, right, center
+            position : 'top-center'       // bottom-left or bottom-right or bottom-center or top-left or top-right or top-center or mid-center or an object representing the left, right, top, bottom values to position the toast on page
+          })
+                    }
+
+
+
+
+                }
+
+              })
+
+            });
+
+       }
+
+
+       function updateCart(itemid,quantity) {
+
+
+         const multi_url = "http://41.90.105.110:8000/commerce/update";
+       var user = <%= @current_user.id %>
+
+         $(document).ready(function () {
+             $.ajax({
+                 url: multi_url,
+                 method: "POST",
+                 dataType : 'json',   //you may use jsonp for cross origin request
+                   data: {id: itemid ,qty: quantity},
+                 crossDomain:true,
+                 success: function(data) {
+
+                    if (data.response == "true") {
+
+                        location.reload();
+                        $.toast({
+                          text : data.message,
+                          showHideTransition : 'slide',  // It can be plain, fade or slide
+                          bgColor : 'green',              // Background color for toast
+                          textColor : '#eee',            // text color
+                          allowToastClose : false,       // Show the close button or not
+                          hideAfter : 2000,              // `false` to make it sticky or time in miliseconds to hide after
+                          stack : 5,                     // `fakse` to show one stack at a time count showing the number of toasts that can be shown at once
+                          textAlign : 'left',            // Alignment of text i.e. left, right, center
+                          position : 'top-center'       // bottom-left or bottom-right or bottom-center or top-left or top-right or top-center or mid-center or an object representing the left, right, top, bottom values to position the toast on page
+                        })
+
+                    }else {
+                      $.toast({
+                        text : data.message,
+                        showHideTransition : 'slide',  // It can be plain, fade or slide
+                        bgColor : 'red',              // Background color for toast
+                        textColor : '#eee',            // text color
+                        allowToastClose : false,       // Show the close button or not
+                        hideAfter : 2000,              // `false` to make it sticky or time in miliseconds to hide after
+                        stack : 5,                     // `fakse` to show one stack at a time count showing the number of toasts that can be shown at once
+                        textAlign : 'left',            // Alignment of text i.e. left, right, center
+                        position : 'top-center'       // bottom-left or bottom-right or bottom-center or top-left or top-right or top-center or mid-center or an object representing the left, right, top, bottom values to position the toast on page
+                      })
+                    }
+
+                }
+
+              })
+
+            });
+
+       // console.log(ressultArray);
+
+       }
+
+       function DelToCart(prodid) {
+
+
+         const multi_url = "http://41.90.105.110:8000/commerce/del";
+         var user = <%= @current_user.id %>
+         var count = 0;
+
+         $(document).ready(function () {
+
+             $.ajax({
+                 url: multi_url,
+                 method: "POST",
+                 dataType : "json",   //you may use jsonp for cross origin request
+                 data: {id: prodid },
+                 crossDomain:true,
+                 success: function(data) {
+
+                   console.log(data)
+                    if (data.response == "true") {
+
+
+                      location.reload();
+                        alert("Items deleted successfully");
+
+                    } else {
+
+
+                      alert(data.message);
+
+                    }
+
+
+
+
+                }
+
+              })
+
+            });
+
+       }
+
+    </script>
+ </body>
+</html>

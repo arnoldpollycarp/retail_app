@@ -1,0 +1,112 @@
+<%
+ alias Thamani.Breakbulks
+ %>
+<%= if @current_user.id == @user.id do %>
+
+                                            <div class="row">
+                                                                   <div class="col-md-12">
+                                                                     <span><%= link "Add breakbulk", to: breakbulk_path(@conn, :new), class: "btn btn-gold btn-gold" %></span>
+
+                                                                       <div class="card">
+                                                                           <div class="card-header" data-background-color="gold">
+                                                                               <h4 class="title">Break Bulk</h4>
+                                                                               <p class="category"><%= link "Dashboard", to: manufacturer_dashboard_path(@conn, :index) %>/Break Bulk</p>
+
+                                                                           </div>
+
+                                                                           <div class="card-content table-responsive">
+                                          <table id ="fresh-table" class="table">
+                                              <thead class="text-info">
+                                                <tr>
+                                                  <th data-field="item" data-sortable="true">Code</th>
+                                                  <th class="text-center" >Expand</th>
+
+                                                </tr>
+                                              </thead>
+                                              <tbody>
+                                                  <%= for code <- @code do %>
+                                                <tr>
+                                                  <td><%= code %> </td>
+
+                                                  <td>
+
+                                                  <div class="tab">
+                                                    <input id="<%= code %> " type="checkbox" name="tabs">
+                                                    <label for="<%= code %> ">Total Price : Total Units : <%= Breakbulks.list_breakbulk_units(code) %> &nbsp;&nbsp;Total Qty : <%= Breakbulks.list_breakbulk_quantity(code) %>&nbsp;&nbsp; Expand to see all</label>
+                                                    <div class="tab-content">
+
+                                                        <table >
+                                                            <thead class="text-info">
+                                                              <tr>
+                                                                <th data-field="item" data-sortable="true">Item</th>
+                                                                <th>  &nbsp;&nbsp;&nbsp;   </th>
+                                                                <th data-field="breakbulk" data-sortable="true" col="2">Quantity</th>
+                                                                  <th>  &nbsp;&nbsp;&nbsp;   </th>
+                                                                  <th data-field="price" data-sortable="true" col="2">Price</th>
+                                                                    <th>  &nbsp;&nbsp;&nbsp;   </th>
+                                                                <th style="text-align: center;">Actions</th>
+                                                                </tr>
+                                                            </thead>
+
+                                                              <tbody>
+                                                          <%= for sub <- Breakbulks.list_breakbulk_code(code) do %>
+                                                                <tr>
+
+                                                							        <%= if is_nil(sub.dispatch) do %>
+                                                								  <td> N/A</td>
+                                                								      <% else %>
+                                                                  <td style="font-size: 12px;"><%= Breakbulks.get_sku_name(sub.dispatch.item) %>(<%= Breakbulks.get_sku_gtin(sub.dispatch.item) %>)(<%= Breakbulks.get_sku_batch(sub.dispatch.id) %>)</td>
+                                                                      <% end %>
+                                                                      <td> &nbsp;&nbsp;&nbsp;  </td>
+                                                                    <%= if (sub.uom)== "" do %>
+                                                                    <td style="text-align: center;"><%= sub.quantity %> Single unit</td>
+                                                                    <% else %>
+								                                                   <td style="text-align: center;"><%= sub.quantity %> <%= sub.uom %></td>
+
+                                                                    <% end %>
+                                                                    <td> &nbsp;&nbsp;&nbsp;  </td>
+                                                                      <%= if is_nil((sub.dispatch)) || is_nil(sub.quantity) do %>
+                                                                      <td style="text-align: center;">NIL ></td>
+                                                                      <% else %>
+                                                                    <td style="text-align: center;"><%= :erlang.float_to_binary(String.to_float(Breakbulks.get_sku_price(sub.dispatch.item)) * sub.quantity, decimals: 2) %> </td>
+                                                                    <% end %>
+                                                                    <td> &nbsp;&nbsp;&nbsp;  </td>
+                                                                  <td style="text-align: center;">
+                                                                  <span  rel="tooltip" style="padding: 2px;" title="View Task" class="btn btn-info btn-simple ">
+                                                                      <span ><%= link "",  to: breakbulk_path(@conn, :show, sub), class: "fa fa-search-plus" ,style: "color:#00bcd4 !important" %></span>
+                                                                  </span>
+
+                                                                   <span  rel="tooltip" style="padding: 2px;"title="Edit Task" class="btn btn-primary btn-simple ">
+                                                                      <span ><%= link "", to: breakbulk_path(@conn, :edit, sub), class: "fa fa-pencil" ,style: "color:#66bb6a !important" %></span>
+                                                                  </span>
+
+                                                                  <span rel="tooltip" style="padding: 2px;" title="Delete Task" class="btn btn-danger btn-simple ">
+                                                                      <span><%= link "",to: breakbulk_path(@conn, :delete, sub), method: :delete, data: [confirm: "Are you sure?"],  class: "fa fa-close", style: "color:#f44336 !important" %></span>
+                                                                 </span>
+
+                                                                </td>
+                                                                </tr>
+                                                      <% end %>
+                                                    </tbody>
+                                                  </table>
+
+                                                    </div>
+                                                  </div>
+
+                                               </td>
+                                                </tr>
+                                                <% end %>
+
+
+
+
+
+  </tbody>
+</table>
+</div>
+                                                        </div>
+                                                      </div>
+                                                    </div>
+<% else %>
+<h1>Not authorised to view this panel</h1>
+<% end %>

@@ -1,0 +1,45 @@
+
+<div class="card" style="margin:25px -10px">
+<div class="card-header" data-background-color="gold">
+		<h4 class="title">Reset Account</h4>
+	<h5>Kindly enter your email address </h5>
+
+
+</div>
+
+<%= form_for @changeset, reset_path(@conn, :create), fn f -> %>
+	<%= if @changeset.action do %>
+		<div class="alert alert-danger">
+			<p>Oops, something went wrong! Please check the errors below.</p>
+		</div>
+	<% end %>
+
+	<div class="col-md-3">
+
+	</div>
+
+	<div class="col-md-6">
+		<div class="form-group label-floating">
+				<%= label f, :"Enter Email address", class: "control-label" %>
+			<%= text_input f, :email, class: "form-control"%>
+		</div>
+		<%= error_tag f, :email %>
+		</div>
+
+		<div class="col-md-3">
+
+		</div>
+
+		<div class="col-md-5">
+
+		</div>
+
+<div class="col-md-6">
+	<div class="form-group">
+		<%= submit "Submit", class: "btn btn-gold" %>
+	</div>
+</div>
+<% end %>
+
+
+</div>

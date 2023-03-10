@@ -1,0 +1,61 @@
+      <div class="row">
+                                                                   <div class="col-md-12">
+                                                                          <div class="card">
+                                                                           <div class="card-header" data-background-color="gold">
+                                                                               <h4 class="title">storages</h4>
+                                                                               <p class="category"><%= link "Dashboard", to: warehouse_admin_dashboard_path(@conn, :index) %>/storages</p>
+
+                                                                           </div>
+
+                                                                           <div class="card-content table-responsive">
+                                                                             <div id="toolbar" style="margin-top: -16px;">
+                                                                            <select class="form-control">
+                                                                              <option value="">Export Current page</option>
+                                                                              <option value="all">Export All</option>
+                                                                              <option value="selected">Export Selected</option>
+                                                                            </select>
+                                                                          </div>
+                                          <table class="table" id ="fresh-table" data-toggle="table" data-toolbar="#toolbar" data-search="true"  data-pagination="true" data-show-print="true" data-show-export="true"   data-export-options='{"fileName": "reports"}'>
+                                              <thead class="text-info">
+                                                <tr>
+                                                  <th data-field="state" data-checkbox="true"></th>
+      <th data-field="name" data-sortable="true">Storage Rack #</th>
+      <th data-field="shipping" class="text-center" >Shipping Code</th>
+      <th data-field="item" class="text-center" >Item</th>
+      <th data-field="warehouse" class="text-center" >Warehouse</th>
+      <th data-field="description" data-sortable="true">description</th>
+      <th class="text-center" >Active</th>
+      <th class="text-center"> Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for storage <- @storage do %>
+    <tr>
+     <td></td>
+      <td><%= storage.name %> </td>
+      <td><%= storage.dispatch.scode %> </td>
+        <td><%= storage.sku.name %> </td>
+      <td><%= storage.user.company %></td>
+      <td><%= storage.description %></td>
+
+      <%= if storage.active == "true" do %>
+        <td><i class="fa fa-check" style= "color:#66bb6a !important"></i></td>
+      <% else  %>
+      <td><i class="fa fa-close" style= "color:#f44336 !important"></i></td>
+      <% end %>
+      <td class="text-right">
+                                                  <span  rel="tooltip" title="View Task" class="btn btn-info btn-simple ">
+                                                      <span ><%= link "",  to: storage_admin_path(@conn, :show, storage), class: "fa fa-search-plus" ,style: "color:#00bcd4 !important" %></span>
+                                                  </span>
+
+
+</td>
+
+    </tr>
+<% end %>
+  </tbody>
+</table>
+</div>
+                                                        </div>
+                                                      </div>
+                                                    </div>

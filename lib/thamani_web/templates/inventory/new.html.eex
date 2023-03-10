@@ -1,0 +1,9 @@
+<span class="col-md-10" style="margin-left: -25px;"> <%= link "Back", to: inventory_path(@conn, :index),class: "btn btn-gold btn-gold"  %></span>
+
+<div class="card" style="margin:25px -10px">
+    <div class="card-header" data-background-color="gold">
+        <h4 class="title">inventory</h4>
+        <p class="category"><%= link "Dashboard", to: inventory_path(@conn, :index) %>/inventory/add</p>
+
+    </div>
+<%= render "form.html", Map.put(assigns, :action, inventory_path(@conn, :create)) %>

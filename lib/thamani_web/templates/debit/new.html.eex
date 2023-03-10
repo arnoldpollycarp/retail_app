@@ -1,0 +1,9 @@
+<span class="col-md-10" style="margin-left: -25px;"> <%= link "Back", to: user_debit_path(@conn, :index,@current_user),class: "btn btn-gold btn-gold"  %></span>
+
+<div class="card" style="margin:25px -10px">
+    <div class="card-header" data-background-color="gold">
+        <h4 class="title">debit</h4>
+        <p class="category"><%= link "Dashboard", to: user_debit_path(@conn, :index, @current_user) %>/debit/add</p>
+
+    </div>
+<%= render "form.html", Map.put(assigns, :action, user_debit_path(@conn, :create, @current_user)) %>

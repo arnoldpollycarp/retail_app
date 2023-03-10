@@ -1,0 +1,9 @@
+{application, edeliver,
+ [
+  {description, "erlang remote build and deploy tool"},
+  {vsn, "1.0"},
+  {registered, []},
+  {applications, []},
+  {modules, []},
+  {env, []}
+ ]}.

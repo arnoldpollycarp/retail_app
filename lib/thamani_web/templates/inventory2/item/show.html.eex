@@ -1,0 +1,142 @@
+<div class="row">
+                      <div class="col-md-6">
+                       <div class="col-md-12">
+
+                         <span><%= link "Back", to: item_path(@conn, :index), class: "btn btn-gold btn-gold" %></span>
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">Items</h4>
+                                   <p class="category"><%= link "Dashboard", to: item_path(@conn, :index) %>/ Item/ Show item</p>
+
+                               </div>
+                               <%= if @current_user.id == @user.id do %>
+                               <table class="table" style="margin-left: 15px;">
+                                    <tbody>
+                                            <tr>
+                                                   <td>
+                                                          <h5>  Gtin: <%= @item.gtin %></h5>
+                                                    </td>
+                                          </tr>
+
+                                          <tr>
+                                                 <td>
+                                                        <h5>  Item Name: <%= @item.name %></h5>
+                                                  </td>
+                                        </tr>
+                                        <tr>
+                                               <td>
+                                                      <h5>  Ex-Factory Price: <%= @item.price %></h5>
+                                                </td>
+                                      </tr>
+                                      <tr>
+                                             <td>
+                                                    <h5>  Estimated Delivery Time: <%= @item.delivery %></h5>
+                                              </td>
+                                    </tr>
+
+                                      <tr>
+                                             <td>
+                                                    <h5>  Category: <%= @item.pmaster.names %></h5>
+                                              </td>
+                                    </tr>
+
+                                        <tr>
+                                               <td>
+                                                      <h5>  Weight: <%= @item.weight %> </h5>
+                                                </td>
+                                      </tr>
+
+				     <tr>
+                                   <td>
+                                          <h5>  Min Quantity Units: <%= @item.min_quantity %></h5>
+                                    </td>
+                          	  </tr>
+			           <tr>
+                                             <td>
+                                                    <h5>  Type of unit: <%= @item.quantity %> </h5>
+                                              </td>
+                                    </tr>
+
+				    <tr>
+                                   <td>
+                                          <h5>  Quantity Units in carton/crate/box/case/tray: <%= @item.quantity_unit %></h5>
+                                    </td>
+                                   </tr>
+				    <tr>
+                                             <td>
+                                                    <h5> Unit of measure: <%= @item.weight2 %></h5>
+                                              </td>
+                                    </tr>
+                                    <tr>
+                                           <td>
+                                                  <h5>  Length: <%= @item.length %></h5>
+                                            </td>
+                                  </tr>
+                                  <tr>
+                                         <td>
+                                                <h5>  Width: <%= @item.width %></h5>
+                                          </td>
+                                </tr>
+                                <tr>
+                                       <td>
+                                              <h5>  Radius: <%= @item.radius %></h5>
+                                        </td>
+                              </tr>
+                              <tr>
+                                     <td>
+                                            <h5>  Height: <%= @item.height %></h5>
+                                      </td>
+                            </tr>
+                            <tr>
+                                   <td>
+                                          <h5>  Description: <%= @item.description %></h5>
+                                    </td>
+                          </tr>
+
+                                            <tr>
+                                                    <td>
+                                                      <%= if @item.active == "true" do %>
+                                                        <h5>Active:<i class="fa fa-check" style= "color:#66bb6a !important"></i></h5>
+                                                      <% else  %>
+                                                      <h5>Active:<i class="fa fa-close" style= "color:#f44336 !important"></i></h5>
+                                                      <% end %>
+                                                    </td>
+                                            </tr>
+                                    </tbody>
+                                </table>
+				                              </div>
+                            </div>
+                          </div>
+                              <div class="col-md-4">
+                                <div class="card card-profile" style="background:gold;">
+
+                                  <div class="card-body" >
+                                    <h6 class="card-category text-gray">Image for</h6>
+                                    <h4 class="card-title"><%= @item.name %></h4>
+                                    <table class="table" style="margin-left: 0px;">
+                                         <tbody>
+
+
+                                       <tr>
+                                         <td>
+
+                                             <img src="<%= Thamani.ImageUploader.url({@item.image, @item})%>"  style="width:300px">  </h5>
+                                       </tr>
+
+
+
+                                     </tbody>
+                                   </table>
+                                  </div>
+                                </div>
+                              </div>
+                                  </div>
+                                <% else %>
+                                    <h1>Not authorised to access this page</h1>
+                                <% end %>
+
+<ul>
+  <span><%= link "Add Item", to: item_path(@conn, :new), class: "btn btn-gold btn-gold" %></span>
+ <span><%= link "Edit", to: item_path(@conn, :edit, @item) , class: "btn btn-gold btn-gold" %></span>
+
+</ul>

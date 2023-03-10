@@ -1,0 +1,8 @@
+<span class="col-md-10" style="margin-left: -25px;"> <%= link "Back", to: recieved_retailer_path(@conn, :index),class: "btn btn-gold btn-gold"  %></span>
+
+<div class="card" style="margin:25px -10px">
+    <div class="card-header" data-background-color="gold">
+        <h4 class="title">recieved</h4>
+
+    </div>
+<%= render "form.html", Map.put(assigns, :action, recieved_retailer_path(@conn, :update, @recieved)) %>

@@ -1,0 +1,87 @@
+
+<%= form_for @changeset, @action, [multipart: true] , fn f -> %>
+  <%= if @changeset.action do %>
+    <div class="alert alert-danger">
+      <p>Oops, something went wrong! Please check the errors below.</p>
+    </div>
+  <% end %>
+
+ <div class="col-md-12" style= "margin-bottom: -75px;margin-top: -40px;">
+  <div class="col-md-4">
+  <div class="form-group ">
+    <h4 style="text-align: center;" class= "btn btn-gold btn-gold">Choose Shipping Code</h4></br>
+    <small style="text-align: center;" class= "form-group">Barcode | item | batch #</small>
+
+  </div>
+ </div>
+
+
+ <div class="col-md-3">
+ <div class="form-group ">
+
+   <h4 style="text-align: center;"  class= "btn btn-gold btn-gold">Enter corresponding quantity as single units </h4>
+ </div>
+ </div>
+ </div>
+
+
+ <div class="col-md-12">
+
+  <div class='element' id='div_1'>
+    <div class="col-md-4" >
+
+      <input type="text" list="brow_1" id="listing_1" placeholder= "Search Batch/item here" class="form-control data">
+      <datalist  id="brow_1" >
+      <%= for b <- @bat do %>
+        <option  data-value="<%= b.id %>"><%= b.sku.gtin %> (<%= b.sku.name %>) (<%= b.batch %>)</option>
+        <% end %>
+      </datalist>
+      <input type="hidden" name="scode[]" id="listing_1-hidden">
+
+    </div>
+      <div class="col-md-3">
+      <%= text_input f, :quantity, type: "text", class: "form-control",name: "quantity[]",placeholder: "Quantity" %>
+    </div>
+    <div class="col-md-4" >
+      <div class="form-group ">
+
+      <select class="form-control" id="uom_1" name="uom[]" >
+      <option data-value="Carton/Box">Carton/Box</option>
+      <option data-value="Case">Case</option>
+      <option data-value="Tray">Tray</option>
+      <option data-value="Single Unit">Single Unit</option>
+      <option data-value="Crate">Crate</option>
+      <option data-value="Bale">Bale</option>
+      <option data-value="Packet">Packet</option>
+      <option data-value="Jar">Jar</option>
+    </select>
+
+
+    </div>
+    </div>
+
+  </div>
+  <div class='col-md-6'>
+   <button id="add">Add</button>
+ </div>
+ </div>
+
+<div class="col-md-12">
+
+  <div class="col-md-10">
+    <div class="form-group label-floating">
+
+    <%= label f, :active, class: "control-label" %>
+    <%= checkbox f, :active, class: "checkbox-material" %>
+      </div>
+    <%= error_tag f, :active %>
+
+  </div>
+</div>
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= submit "Submit", class: "btn btn-gold" %>
+  </div>
+    </div>
+
+<% end %>

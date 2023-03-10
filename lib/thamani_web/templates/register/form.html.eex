@@ -1,0 +1,102 @@
+<div class="wrapper wrapper-full-page">
+       <div class="full-page login-page" >
+             <!--   you can change the color of the filter page using: data-color="blue | purple | green | orange | red | rose " -->
+             <div class="content">
+                 <div class="container">
+                     <div class="row">
+                         <div class="col-md-6 col-sm-5 col-md-offset-3 col-sm-offset-4" style="margin-top:-70px" >
+
+                                 <div class="card card-login ">
+                                     <div class="card-header text-center" data-background-color="blue">
+                                         <h4 class="card-title">  <img  style="width:165px" alt="Crop trace" src ="<%= static_path(@conn, "/images/logo2.png") %>"></h4>
+                                         <p class="category text-center">
+                                         Register
+                                     </p>
+                                     </div>
+
+																		   <%= form_for @changeset, @action, [as: :session], fn f -> %>
+
+                                     <div class="card-content">
+																			  <div class="input-group">
+																					<span class="input-group-addon">
+
+																					</span>
+																			 <div class="form-group label-floating">
+																					 <label class="control-label">First Name</label>
+																						 <%= text_input f, :firstname, class: "form-control" , required: "required"%>
+																						 <%= error_tag f, :firstname %>
+																			 </div>
+																		 </div>
+																		 <div class="input-group">
+																			 <span class="input-group-addon">
+
+																			 </span>
+
+																		<div class="form-group label-floating">
+																				<label class="control-label">last Name</label>
+																					<%= text_input f, :lastname, class: "form-control" %>
+																					<%= error_tag f, :lastname %>
+																		</div>
+																	</div>
+																	<div class="input-group">
+																		<span class="input-group-addon">
+
+																		</span>
+																			<div class="form-group label-floating">
+																					<label class="control-label">Company Name</label>
+																						<%= text_input f, :company,class: "form-control" , required: "required"%>
+																						<%= error_tag f, :company %>
+																			</div>
+																	</div>
+
+                                         <div class="input-group">
+																					 <span class="input-group-addon">
+
+																					 </span>
+                                             <div class="form-group label-floating">
+                                                 <label class="control-label">Email address</label>
+                                                   <%= text_input f, :email,class: "form-control" ,type: "email", required: "required"%>
+																										  <div class="alert alert-danger"><%= error_tag f, :email %></div>
+																						 </div>
+                                         </div>
+
+                                         <div class="input-group">
+                                             <span class="input-group-addon">
+
+                                             </span>
+                                             <div class="form-group label-floating">
+                                                 <label class="control-label">Create Password</label>
+                                               <%= password_input f, :password,class: "form-control" ,required: "required" %>
+																							 <%= error_tag f, :password %>
+																						 </div>
+                                         </div>
+
+																				 <div class="input-group">
+																						 <span class="input-group-addon">
+
+																						 </span>
+																						 <div class="form-group label-floating">
+																								 <label class="control-label">Confirm Password</label>
+																							 <%= password_input f, :password_confirmation,class: "form-control" ,required: "required" %>
+																							<%= error_tag f, :password_confirmation %>
+																						</div>
+																				 </div>
+																				 <div class="footer text-center">
+																						 <input type="submit" class="btn btn-simple btn-wd btn-lg" style="color:coral;" value="Register">
+																				 </div>
+																				 <div class="footer text-center">
+																						 <p  ><%= link "Already have an account? Login", to: page_path(@conn, :index), style: "color:#26c6da;" %></p>
+																				 </div>
+                                     </div>
+
+
+																		 <% end %>
+                                 </div>
+
+                         </div>
+                     </div>
+                 </div>
+             </div>
+
+         </div>
+     </div>

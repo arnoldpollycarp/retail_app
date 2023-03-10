@@ -1,0 +1,813 @@
+<% alias Thamani.Accounts
+   alias Thamani.Dispatches
+    bat = Dispatches.get_recieved_select_all(@current_user.id)
+%>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Mobile Specific Meta -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Favicon-->
+    <link rel="shortcut icon" href="<%= static_path(@conn, "/images/fav.ico") %>">
+    <!-- Author Meta -->
+    <meta name="author" content="CS Digital">
+    <!-- Meta Description -->
+    <meta name="description" content="">
+    <!-- Meta Keyword -->
+    <meta name="keywords" content="">
+    <!-- meta character set -->
+    <meta charset="UTF-8">
+
+    <title>Thamani online</title>
+
+      <link href='https://fonts.googleapis.com/css?family=Muli:400,300' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/font-awesome/css/font-awesome.min.css") %>">
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/material-dashboard.css?v=1.2.0")   %>">
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/bootstrap.min.css")   %>">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.10.0/css/lightbox.css" />
+    <style>
+      .loader-show {
+        border: 16px solid #f3f3f3;
+        border-top: 16px solid #ffd700;
+        border-right: 16px solid #ef001d;
+        border-bottom: 16px solid #00bf48;
+        border-radius: 50%;
+        margin-top: 30px;
+        width: 20px;
+        height: 20px;
+        -webkit-animation: spin 5s linear ; /* Safari */
+        animation: spin 5s linear ;
+      }
+       .dt-button, .buttons-print {
+        margin-left:-170px;
+      }
+      .buttons-html5 {
+       margin-left:0px;
+     }
+
+
+      .loader-hide {
+        display:none;
+      }
+      .field-show {
+        width: 100%;
+        display:inline-block;
+        float: left;
+        position: relative;
+        min-height: 1px;
+        padding-right: 15px;
+        padding-left: 15px;
+      }
+      .field-hide {
+        display:none !important;
+      }
+      /* Safari */
+      @-webkit-keyframes spin {
+        0% { -webkit-transform: rotate(0deg); }
+        100% { -webkit-transform: rotate(360deg); }
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      .tab {
+  position: relative;
+  margin-bottom: 1px;
+  width: 100%;
+  color: #fff;
+  overflow: hidden;
+}
+.tab input {
+  position: absolute;
+  opacity: 0;
+  z-index: -1;
+}
+
+.tab-content {
+  max-height: 0;
+  overflow: hidden;
+
+  -webkit-transition: max-height .35s;
+  -o-transition: max-height .35s;
+  transition: max-height .35s;
+  color: #000;
+}
+
+/* :checked */
+input:checked ~ .tab-content {
+  max-height: 50em;
+}
+/* Icon */
+.tab label::after {
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: block;
+  width: 3em;
+  height: 3em;
+  line-height: 3;
+  text-align: center;
+  -webkit-transition: all .35s;
+  -o-transition: all .35s;
+  transition: all .35s;
+}
+.tab input[type=checkbox] + label::after {
+  content: "+";
+}
+.tab input[type=radio] + label::after {
+  content: "\25BC";
+}
+.tab input[type=checkbox]:checked + label::after {
+  transform: rotate(315deg);
+}
+.tab input[type=radio]:checked + label::after {
+  transform: rotateX(180deg);
+}
+.tab-content p {
+  margin: 1em;
+}
+.tab label {
+  position: relative;
+  display: block;
+  padding: 0 0 0 1em;
+  background: gold;
+  font-weight: bold;
+  line-height: 3;
+  cursor: pointer;
+  color: #31708f;
+}
+</style>
+<style type="text/css" media="screen">
+      #map_canvas, #map { float: right;
+width: 100%;
+height: 300px; }
+
+    </style>
+    <script language="javascript" type="text/javascript">
+
+    function timeMsg(){
+
+    	window.setTimeout("clearMsg()",5000);//10secs
+
+    }
+
+    //
+
+    function clearMsg(){
+
+    	document.getElementById("hideMsg").innerHTML = "";
+
+    }
+</script>
+
+
+  </head>
+
+  <body onLoad = "timeMsg()">
+    <div class="wrapper" style="background:#f5f5f5">
+	<%=if @current_user.verified == 1 do %>
+        <div class="sidebar" data-color="blue" data-image="<%= static_path(@conn, "/images/inventory1.jpg")  %>">
+            <!--
+        Tip 1: You can change the color of the sidebar using: data-color="purple | blue | green | orange | red"
+
+        Tip 2: you can also add an image using data-image tag
+    -->
+            <div class="logo">
+
+            <img  style="width:165px;margin:auto;padding: 10px;"  alt="Thamani" src ="<%= static_path(@conn, "/images/thamani_logo.png") %>">
+            <h4 style="margin-left: 40px;color: #666666;margin-top: -5px;">Warehouse</h4>
+            </div>
+
+            <div class="sidebar-wrapper" data-color="blue">
+
+                <ul class="nav">
+                    <%= if @current_user.userlevel do %>
+                  <li>
+                    <i class="fa fa-th-large"></i>
+                          <%= link "Dashboard", to: warehouse_admin_dashboard_path(@conn, :index) %>
+                  </li>
+                  <% else %>
+                  <li>
+                    <i class="fa fa-th-large"></i>
+                          <%= link "Dashboard", to: warehouse_dashboard_path(@conn, :index) %>
+                  </li>
+                  <% end %>
+
+                    <%= if @current_user.userlevel do %>
+                  <li>
+                  <i class="fa fa-inbox"></i>
+                        <%= link "Recieved", to: recieved_admin_path(@conn, :index) %>
+                        <%= if @count_7== 0 do %>
+
+                        <% else %>
+                        <span class = "notification"><%= @count_7 %></span>
+                        <% end %>
+                </li>
+                <% else %>
+                <li>
+                <i class="fa fa-inbox"></i>
+                      <%= link "Recieved", to: recieved_path(@conn, :index) %>
+                      <%= if @count_7== 0 do %>
+
+                      <% else %>
+                      <span class = "notification"><%= @count_7 %></span>
+                      <% end %>
+              </li>
+                <% end %>
+
+                  <%= if @current_user.userlevel do %>
+                <li>
+                  <i class="fa fa-database"></i>
+                     <%= link "Storage(Put Away)", to: storage_admin_path(@conn, :index) %>
+                </li>
+                  <% else %>
+                  <li>
+                    <i class="fa fa-database"></i>
+                       <%= link "Storage(Put Away)", to: storage_path(@conn, :index) %>
+                  </li>
+                  <% end %>
+
+                  <%= if @current_user.userlevel do %>
+                <li>
+                  <i class="fa fa-sitemap"></i>
+                     <%= link "Break bulk", to: breakbulk_admin_path(@conn, :index) %>
+                </li>
+                  <% else %>
+                  <li>
+                    <i class="fa fa-sitemap"></i>
+                       <%= link "Break bulk", to: breakbulk_path(@conn, :index) %>
+                  </li>
+                  <% end %>
+
+                  <%= if @current_user.userlevel do %>
+               <li>
+                 <i class="fa fa-truck"></i>
+                    <%= link "Dispatch", to: dispatch_admin_warehouse_path(@conn, :index) %>
+               </li>
+                <% else %>
+                <li>
+                  <i class="fa fa-truck"></i>
+                     <%= link "Dispatch", to: dispatch_warehouse_path(@conn, :index) %>
+                </li>
+                <% end %>
+
+                  <%= if @current_user.userlevel do %>
+                <li>
+                  <i class="fa fa-sliders"></i>
+                     <%= link "New Orders", to: orders_adm_warehouse_path(@conn, :index) %>
+                     <%= if @count_order == 0 do %>
+
+                     <% else %>
+                     <span class = "notification"><%= @count_order %></span>
+                     <% end %>
+                </li>
+                <% else %>
+                <li>
+                  <i class="fa fa-sliders"></i>
+                     <%= link "New Orders", to: orders_warehouse_path(@conn, :index) %>
+                     <%= if @count_order == 0 do %>
+
+                     <% else %>
+                     <span class = "notification"><%= @count_order %></span>
+                     <% end %>
+                </li>
+                <% end %>
+                <%= if @current_user.userlevel do %>
+                <li>
+                      <i class="fa fa-sliders"></i>
+                   <%= link "Manufacturer Orders", to: manufacturer_adm_orders_path(@conn, :index) %>
+                 </li>
+                 <% else %>
+                 <li>
+                       <i class="fa fa-sliders"></i>
+                    <%= link "Manufacturer Orders", to: manufacturer_orders_path(@conn, :index) %>
+                  </li>
+
+                 <% end %>
+
+                <%= if @current_user.userlevel do %>
+                <li>
+                  <i class="fa fa-reply"></i>
+                     <%= link "Returns", to: return_admin_path(@conn, :index) %>
+                </li>
+                <% else %>
+                <li>
+                  <i class="fa fa-reply"></i>
+                     <%= link "Returns", to: return_path(@conn, :index) %>
+                </li>
+                <% end %>
+		  <%= if @current_user.userlevel do %>
+
+                  <% else %>
+		  <li>
+                <i class="fa fa-refresh"></i>
+                      <%= link "Reorders", to: reorder_warehouse_path(@conn, :index) %>
+			  <%= if @count_stock == 0 do %>
+
+                      <% else %>
+                      <span class = "notification"><%= @count_stock %></span>
+                      <% end %>
+              </li>
+		<% end %>
+
+ 	   	    <%= if @current_user.userlevel do %>
+
+              <% else %>
+              <li>
+                <a data-toggle="collapse" style="margin-left: -15px;" href="#sales">
+                    <i class="fa fa-money"></i>
+                      <p> Sales
+                          <b class="caret"></b>
+                      </p>
+                </a>
+                <div class="collapse" id="sales">
+                    <ul class="nav" style="font-size:13px;">
+                     <li>
+
+                   <%= link "Sales", to: sales_warehouse_path(@conn, :index) %>
+                    </li>
+                    <li>
+
+                  <%= link "Generate Invoice", to: invoice_warehouse_path(@conn, :index) %>
+                   </li>
+                 </ul>
+               </div>
+             </li>
+
+              <% end %>
+
+                  <li>
+                    <i class="fa fa-cubes"></i>
+                      <%= link "Stock", to: stock_warehouse_path(@conn, :index) %>
+                  </li>
+
+                  <li>
+                    <i class="fa fa-cubes"></i>
+                      <%= link "Back to panel", to: panel_path(@conn, :index) %>
+                  </li>
+
+                </ul>
+            </div>
+        </div>
+        <div class="main-panel">
+            <nav class="navbar navbar-transparent navbar-absolute">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+
+                    </div>
+                    <div class="collapse navbar-collapse">
+                        <ul class="nav navbar-nav navbar-right" style="margin-top:-10px">
+
+
+                            <li style="margin-left:0px;">
+                                <a href="#"  data-toggle="dropdown">
+                                  <%= if @current_user do %>
+                                      <%= if @current_user.image != " "  do %>
+                                  <img style="width:50px;height: 50px;border:2px solid gold;margin-left: -24px;float:left;display:inline-block" src="<%= Thamani.ImageUploader.url({@current_user.image, @current_user})%>" alt="avatar" class="img-circle img-responsive">
+                                        <% end %>
+
+                                  <%end%>
+                                    <p class="btn btn-simple text-left" style="text-transform:none;"> <%= @current_user.firstname%> <%= @current_user.lastname %> <i style="margin-right:-20px;margin-left:-10px" class="fa fa-angle-down btn btn-simple btn-info "></i></p>
+                                    <ul class="dropdown-menu">
+                                      <%= if @current_user.userlevel  do %>
+                                    <li>
+                                      <%=link "Users", to: user_path(@conn, :index)  %>
+                                  </li>
+                                  <li>
+                                    <%= link "Sign out", to: login_path(@conn, :delete, @current_user),
+                                                         method: "delete" %>
+                                  </li>
+                                      <% else %>
+
+
+                                        <li>
+                                            <%=link "My Profile", to: user_path(@conn, :show, @current_user)  %>
+                                        </li>
+                                        <li>
+                                          <%= link "Sign out", to: login_path(@conn, :delete,@current_user),
+                                                               method: "delete" %>
+                                        </li>
+
+                                      <% end %>
+                                    </ul>
+                                      </a>
+                            </li>
+                        </ul>
+
+                    </div>
+                </div>
+            </nav>
+    <div class="container" style="width:auto">
+
+      <div id ="hideMsg">
+
+      <p class="alert alert-success" role="alert"><%= get_flash(@conn, :info) %></p>
+      <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
+
+    </div>
+      <main role="main">
+        <%= render @view_module, @view_template, assigns %>
+      </main>
+
+    </div> <!-- /container -->
+      <% else %>
+
+      <h4> <%=   user = Accounts.get_user!(@current_user.slug)
+          changeset = Accounts.change_user(user)
+         render( ThamaniWeb.VerifyView,"edit.html", changeset: changeset, current_user: @current_user ,user: @current_user, conn: @conn) %></h4>
+
+    <% end %>
+    <footer class="footer">
+               <div class="container-fluid">
+                   <nav class="pull-left">
+                       <ul>
+                           <li>
+                               <a href="https://www.thamanionline.com">
+                                   Website
+                               </a>
+                           </li>
+                           <li>
+                               <a href="https://www.thamanionline.com/terms">
+                                   Terms & Conditions
+                               </a>
+                           </li>
+                           <li>
+                               <a href="https://www.thamanionline.com/privacy">
+                                   Privacy
+                               </a>
+                           </li>
+                           <%= if @current_user.userlevel  do %>
+                         <li>
+                           <%=link "Users", to: user_path(@conn, :index)  %>
+                       </li>
+                       <li>
+                         <%= link "Sign out", to: login_path(@conn, :delete, @current_user),
+                                              method: "delete" %>
+                       </li>
+                           <% else %>
+
+
+                             <li>
+                                 <%=link "My Profile", to: user_path(@conn, :show, @current_user)  %>
+                             </li>
+                             <li>
+                               <%= link "Sign out", to: login_path(@conn, :delete,@current_user),
+                                                    method: "delete" %>
+                             </li>
+
+                           <% end %>
+
+                       </ul>
+                   </nav>
+                   <p class="copyright pull-right">
+                       &copy;
+                       <script>
+                           document.write(new Date().getFullYear())
+                       </script>
+                       Thamani Online. All Rights Reserved
+
+                   </p>
+               </div>
+           </footer>
+       </div>
+   </div>
+    <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
+    <%= Drab.Client.run(@conn) %>
+    <script>
+
+
+    window.onload = () => {
+  const removeElement = ({target}) => {
+    let el = document.getElementById(target.dataset.id);
+    let li = el.parentNode;
+    li.parentNode.removeChild(li);
+  }
+  Array.from(document.querySelectorAll(".remove-form-field"))
+    .forEach(el => {
+      el.onclick = (e) => {
+        removeElement(e);
+      }
+    });
+  Array.from(document.querySelectorAll(".add-form-field"))
+    .forEach(el => {
+      el.onclick = ({target}) => {
+        let container = document.getElementById(target.dataset.container);
+        let index = container.dataset.index;
+        let newRow = target.dataset.prototype;
+        container.insertAdjacentHTML('beforeend', newRow.replace(/__name__/g, index));
+        container.dataset.index = parseInt(container.dataset.index) + 1;
+        container.querySelectorAll('a.remove-form-field').forEach(el => {
+          el.onclick = (e) => {
+            removeElement(e);
+          }
+        })
+      }
+    });
+}
+
+</script>
+    <!--   Core JS Files   -->
+<script src="<%= static_path(@conn, "/js/jquery-3.2.1.min.js") %>"></script>
+<script type=" " src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAfJnn7rjdUnRSAw98IvjNNbzqk5voUNjc&libraries=places&callback=initMap"></script>
+<script src="<%= static_path(@conn, "/js/jquery.spinner.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/bootstrap.min.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/material.min.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/perfect-scrollbar.jquery.min.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/arrive.min.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/jquery.bootstrap-wizard.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/jquery.tagsinput.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/jquery.bootstrap-wizard.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/jquery.tagsinput.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/jquery.select-bootstrap.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/jasny-bootstrap.min.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/jquery.validate.min.js" ) %>"></script>
+<script  src="<%= static_path(@conn, "/js/bootstrap-table.js") %>"></script>
+<script  src="<%= static_path(@conn, "/js/bootstrap-table-print.js") %>"></script>
+<script  src="<%= static_path(@conn, "/js/bootstrap-table-export.js") %>"></script>
+<script  src="<%= static_path(@conn, "/js/tableexport.js") %>"></script>
+<script src="<%= static_path(@conn, "/js/material-dashboard.js?v=1.2.1" ) %>"></script>
+<script  src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/2.1.0/jspdf.plugin.autotable.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.3/xlsx.core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.10.0/js/lightbox.js"></script>
+<script  src="<%= static_path(@conn, "/js/jquery.geocomplete.js") %>"></script>
+<script  src="<%= static_path(@conn, "/js/logger.js") %>"></script>
+<script>
+
+var map, infoWindow;
+$(document).ready (function(){
+
+var setloc = new google.maps.LatLng(0.0,1.1);
+  $(".geocomplete").geocomplete({
+    details: ".details",
+    detailsScope: '.location',
+
+    types: ["geocode", "establishment"],
+  });
+  $(".find").click(function(){
+    $(this).parents(".location").find(".geocomplete").trigger("geocode");
+  });
+
+  $(".geocomplete2").geocomplete({
+    details: ".details2",
+
+    detailsAttribute: "data-geo",
+    types: ["geocode", "establishment"],
+  });
+
+  $(".find2").click(function(){
+    $(this).parents(".location2").find(".geocomplete2").trigger("geocode2");
+  });
+});
+</script>
+<script>
+
+
+navigator.geolocation.getCurrentPosition(function initMap(p) {
+ var directionsService = new google.maps.DirectionsService;
+ var directionsDisplay = new google.maps.DirectionsRenderer;
+  var LatLng = new google.maps.LatLng(p.coords.latitude, p.coords.longitude);
+ var map = new google.maps.Map(document.getElementById('map'), {
+   zoom: 12,
+   center: {lat: p.coords.latitude, lng: p.coords.longitude}
+ });
+ var marker = new google.maps.Marker({
+     position: LatLng,
+     map: map,
+     title: "<div style = 'height:auto;width:auto'><b>Your Current location</b>"
+ });
+ google.maps.event.addListener(marker, "click", function (e) {
+     var infoWindow = new google.maps.InfoWindow();
+     infoWindow.setContent(marker.title);
+     infoWindow.open(map, marker);
+ });
+ directionsDisplay.setMap(map);
+
+ var onChangeHandler = function() {
+   calculateAndDisplayRoute(directionsService, directionsDisplay);
+ };
+ document.getElementById('start').addEventListener('change', onChangeHandler);
+ document.getElementById('end').addEventListener('change', onChangeHandler);
+
+})
+
+
+function calculateAndDisplayRoute(directionsService, directionsDisplay) {
+ directionsService.route({
+   origin: document.getElementById('start').value,
+   destination: document.getElementById('end').value,
+   travelMode: 'DRIVING'
+ }, function(response, status) {
+   if (status === 'OK') {
+     directionsDisplay.setDirections(response);
+
+   } else {
+     window.alert('Directions request failed due to ' + status);
+   }
+ });
+}
+
+</script>
+
+
+<script>
+$("#spinner")
+  .spinner('delay', 200) //delay in ms
+  .spinner('changed', function(e, newVal, oldVal) {
+    // trigger lazed, depend on delay option.
+  })
+  .spinner('changing', function(e, newVal, oldVal) {
+    // trigger immediately
+  });
+</script>
+
+<script>
+$(document).ready(function() {
+$('.single_select').select2({
+  tags: "true",
+
+  allowClear: true
+});
+});
+    $(document).ready(function(){
+     $('[data-toggle="popover"]').popover();
+    });
+
+    $(document).ready(function(){
+    $("#fieldList input").click(function(){
+            $(this).next().show();
+            $(this).next().hide();
+        });
+
+    });
+
+
+var inputs = document.querySelectorAll('input[list]');
+for (var i = 0; i < inputs.length; i++) {
+  // When the value of the input changes...
+  inputs[i].addEventListener('change', function() {
+    var optionFound = false,
+      datalist = this.list;
+    // Determine whether an option exists with the current value of the input.
+    for (var j = 0; j < datalist.options.length; j++) {
+        if (this.value == datalist.options[j].value) {
+            optionFound = true;
+            break;
+        }
+    }
+    // use the setCustomValidity function of the Validation API
+    // to provide an user feedback if the value does not exist in the datalist
+    if (optionFound) {
+      this.setCustomValidity('');
+    } else {
+      this.setCustomValidity('Please select a valid value.');
+    }
+  });
+}
+
+
+
+$(document).ready(function(e){
+
+ // Add new element
+ $("#add").on('click', function(e){
+  e.preventDefault();
+  // Finding total number of elements added
+  var total_element = $(".element").length;
+
+
+
+  // last <div> with element class id
+  var lastid = $(".element:last").attr("id");
+  var split_id = lastid.split("_");
+  var nextindex = Number(split_id[1]) + 1;
+
+  var max = 20;
+  // Check total number elements
+  if(total_element < max ){
+   // Adding new div container after last occurance of element class
+   $(".element:last").after("<div class='element' id='div_"+ nextindex +"'></div>");
+
+   // Adding element to <div>
+   $("#div_" + nextindex).append("<div class='col-md-4'><input type='text' list='brow_"+ nextindex +"' id='listing_"+ nextindex +"' placeholder='Search Batch/item here' class='form-control'><datalist id='brow_"+ nextindex +"'><%= for b <- bat do %><option data-value='<%= b.id %>'><%= b.sku.gtin %> (<%= b.sku.name %>) (<%= b.batch %>)</option><% end %></datalist><input type='hidden' name='scode[]' id='listing_"+ nextindex +"-hidden'></div><div class='col-md-3'><input type='text' class='form-control' name='quantity[]' placeholder='Quantity'/></div><div class='col-md-4'><div class='form-group'><select class='form-control' id='uom_1' name='uom[]' ><option data-value='Carton/Box'>Carton/Box</option><option data-value='Case'>Case</option><option data-value='Tray'>Tray</option><option data-value='Single Unit'>Single Unit</option><option data-value='Crate'>Crate</option><option data-value='Bale'>Bale</option><option data-value='Packet'>Packet</option><option data-value='Jar'>Jar</option></select></div></div>&nbsp;<div class='col-md-1'><span id='remove_" + nextindex + "' class='remove fa fa-close' style='font-size: 18px;margin-top: 35px;color:#f44336 !important'></span></div>").on('input',function(e){
+     var data = e.target;
+     console.log(data);
+     var input = e.target;
+
+     list = input.getAttribute('list');
+     options = document.querySelectorAll('#' + list + ' option'),
+     hiddenInput = document.getElementById(input.getAttribute('id') + '-hidden'),
+     inputValue = input.value;
+
+       for(var i = 0; i < options.length; i++) {
+        var option = options[i];
+
+        if(option.innerText === inputValue) {
+
+            hiddenInput.value = option.getAttribute('data-value');
+            break;
+        }
+    }
+    });
+
+
+  }
+
+ });
+
+ // Remove element
+ $('.container').on('click','.remove',function(){
+
+  var id = this.id;
+  var split_id = id.split("_");
+  var deleteindex = split_id[1];
+
+  // Remove <div> with id
+  $("#div_" + deleteindex).remove();
+
+ });
+});
+
+document.querySelector('input[list]').addEventListener('input', function(e) {
+     var input = e.target;
+     console.log(input);
+     list = input.getAttribute('list');
+     options = document.querySelectorAll('#' + list + ' option'),
+     hiddenInput = document.getElementById(input.getAttribute('id') + '-hidden'),
+     inputValue = input.value;
+
+       for(var i = 0; i < options.length; i++) {
+        var option = options[i];
+
+        if(option.innerText === inputValue) {
+
+            hiddenInput.value = option.getAttribute('data-value');
+            break;
+        }
+    }
+
+});
+
+
+
+
+
+</script>
+<script type="text/javascript">
+    var $table = $('#fresh-table'),
+        $alertBtn = $('#alertBtn'),
+        full_screen = false;
+
+    $().ready(function(){
+      $('#toolbar').find('select').change(function () {
+        $table.bootstrapTable('refreshOptions', {
+          exportDataType: $(this).val()
+        });
+      });
+        $table.bootstrapTable({
+            toolbar: ".toolbar",
+
+            search: true,
+            showToggle: true,
+            showColumns: true,
+            pagination: true,
+            striped: true,
+            pageSize: 10,
+            pageList: [8,10,25,50,100],
+
+            formatShowingRows: function(pageFrom, pageTo, totalRows){
+                //do nothing here, we don't want to show the text "showing x of y from..."
+            },
+            formatRecordsPerPage: function(pageNumber){
+                return pageNumber + " rows visible";
+            },
+            icons: {
+                refresh: 'fa fa-refresh',
+                toggle: 'fa fa-th-list',
+                columns: 'fa fa-columns',
+                detailOpen: 'fa fa-plus-circle',
+                detailClose: 'fa fa-minus-circle'
+            }
+        });
+
+
+        $(window).resize(function () {
+            $table.bootstrapTable('resetView');
+        });
+
+
+    });
+
+</script>
+  </body>
+</html>

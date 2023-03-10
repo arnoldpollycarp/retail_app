@@ -1,0 +1,60 @@
+<div class="row">
+                       <div class="col-md-12">
+
+                         <span><%= link "Back", to: notes_admin_path(@conn, :index), class: "btn btn-gold btn-gold" %></span>
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">notes</h4>
+                                   <p class="category"><%= link "Dashboard", to: retail_admin_dashboard_path(@conn, :index) %>/ notes/ Show notes</p>
+
+                               </div>
+                               <table class="table" style="margin-left: 15px;">
+                                    <tbody>
+                                            <tr>
+                                                   <td>
+                                                          <h5>  Receipt Number: <%= @notes.receipt_number %> </h5>
+                                                    </td>
+                                          </tr>
+                                          <tr>
+                                                    <td>
+                                                            <h5>  Credit Note number: <%= @notes.note_number %> </label>
+                                                    </td>
+                                          </tr>
+                                          <tr>
+                                                    <td>
+                                                            <h5>  Item: <%= @notes.item %> </label>
+                                                    </td>
+                                          </tr>
+                                          <tr>
+                                                    <td>
+                                                            <h5> Quantity: <%= @notes.quantity %> </label>
+                                                    </td>
+                                          </tr>
+
+                                          <tr>
+                                                    <td>
+                                                            <h5>  Description: <%= @notes.description %> </label>
+                                                    </td>
+                                          </tr>
+
+                                          <tr>
+                                                    <td>
+
+                                                              <%= if @notes.active == "true" do %>
+                                                                <h5>Active:<i class="fa fa-check" style= "color:#66bb6a !important"></i></h5>
+                                                              <% else  %>
+                                                              <h5>Active:<i class="fa fa-close" style= "color:#f44336 !important"></i></h5>
+                                                              <% end %>
+                                                    </td>
+                                            </tr>
+                                          </tbody>
+                                      </table>
+<ul>
+
+
+
+</ul>
+
+      </div>
+      </div>
+      </div>

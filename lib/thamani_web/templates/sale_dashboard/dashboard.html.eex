@@ -1,0 +1,587 @@
+
+<div class="row">
+  <div class="col-lg-12 col-md-12">
+        <div class="card">
+            <div class="card-header" data-background-color="gold">
+
+                <h4 class="">Sales Dashboard </h4>
+                <script>
+                    document.write(new Date())
+                </script>
+            </div>
+            <div class="card-content table-responsive">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+            <div class="row">
+            <div class="col-md-12">
+    <div class="card ">
+      <div class="card-header " style="width:150px;background:gold;">
+        <h4 class="card-title" style="text-align:center;">Sales Reports</h4>
+      </div>
+      <div class="card-body ">
+          <div class="row">
+
+        <div class="col-md-3">
+
+        </div>
+        <div class="col-md-7 ">
+        <ul class="nav nav-pills nav-pills-warning" role="tablist" style="">
+          <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#link1" role="tablist">
+              All Sales
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#link2" role="tablist">
+              Today
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#link3" role="tablist">
+              Search by date
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#link4" role="tablist">
+               By retailer
+            </a>
+          </li>
+        </ul>
+	</div>
+
+        </div>
+        </div>
+        <div class="tab-content tab-space">
+          <div class="tab-pane active" id="link1">
+
+          <div class="row">
+          <div class="col-lg-4 col-md-6 col-sm-6">
+
+          </div>
+        <div class="col-lg-4 col-md-6 col-sm-6">
+            <div class="card card-stats">
+                <div class="card-header" data-background-color="green">
+                    <i class="fa fa-money"></i>
+                </div>
+                <div class="card-content">
+                   <p class="category">Total Revenue</p>
+
+ 		  <%= if (@count_2 + @count_4 + @count_6) == 0 do %>
+		  <h4 class="title">0 </h4>
+		  <% else %>
+                   <h4 class="title"><%= :erlang.float_to_binary((@count_2 + @count_4 + @count_6), decimals: 2) %></h4>
+                <% end %>
+		</div>
+                <div class="card-footer">
+                    <div class="stats">
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6">
+        </div>
+     </div>
+       <div class="row">
+
+        <div class="col-lg-4 col-md-6 col-sm-6">
+            <div class="card card-stats">
+                <div class="card-header" data-background-color="red">
+                    <i class="fa fa-truck"></i>
+                </div>
+                <div class="card-content">
+
+                  <p class="category">Manufacturer Total Revenue </p>
+                  <%= if @count_2 == nil do %>
+                       <h4 class="title"> 0 </h4>
+                  <% else %>
+                     <h4 class="title">
+                     <input name="current_user" id="current_user" type = "hidden" value= "<%= @current_user.id %> " />
+		     <%= if @count_2 == 0 do %>
+                     0
+		     <% else %>
+		     <%= :erlang.float_to_binary((@count_2), decimals: 2)%>
+		     <% end %>
+                       </h4>
+                 <% end %>
+
+                </div>
+                <div class="card-footer">
+                    <div class="stats">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 col-sm-6">
+            <div class="card card-stats">
+                <div class="card-header" data-background-color="red">
+                    <i class="fa fa-truck"></i>
+                </div>
+                <div class="card-content">
+
+                  <p class="category">Warehouse Total Revenue</p>
+                  <%= if @count_4 == nil do %>
+                       <h4 class="title"> 0 </h4>
+                  <% else %>
+
+		     <%= if @count_4 == 0 do %>
+			<h4 class="title"> 0</h4>
+		     <% else %>
+                     <h4 class="title"><%= :erlang.float_to_binary((@count_4), decimals: 2)%></h4>
+                     <% end %>
+		 <% end %>
+                </div>
+                <div class="card-footer">
+                    <div class="stats">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-6 col-sm-6">
+            <div class="card card-stats">
+                <div class="card-header" data-background-color="red">
+                    <i class="fa fa-truck"></i>
+                </div>
+                <div class="card-content">
+
+                  <p class="category">Retailer Total Revenue </p>
+
+                  <%= if @count_6 == nil do %>
+                       <h4 class="title"> 0 </h4>
+                  <% else %>
+			 <%= if @count_6 == 0 do %>
+                        <h4 class="title"> 0</h4>
+                     <% else %>
+                     <h4 class="title"><%= :erlang.float_to_binary((@count_6), decimals: 2)%></h4>
+                     <% end %>
+                 <% end %>
+                </div>
+                <div class="card-footer">
+                    <div class="stats">
+                       Number of Sales : <%= (@count_5) %>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+          </div>
+
+          <div class="tab-pane" id="link2">
+          <div class="row">
+                 <div class="col-lg-4 col-md-6 col-sm-6">
+
+                 </div>
+               <div class="col-lg-4 col-md-6 col-sm-6">
+                   <div class="card card-stats">
+                       <div class="card-header" data-background-color="green">
+                           <i class="fa fa-money"></i>
+                       </div>
+                       <div class="card-content">
+                          <p class="category">Total Revenue</p>
+			 <%= if (@count_7 + @count_8 + @count_9) == 0 do %>
+                        <h4 class="title"> 0</h4>
+                     <% else %>
+                     <h4 class="title"><%= :erlang.float_to_binary((@count_7 + @count_8 + @count_9), decimals: 2)%></h4>
+                     <% end %>
+
+                       </div>
+                       <div class="card-footer">
+                           <div class="stats">
+
+
+                           </div>
+                       </div>
+                   </div>
+               </div>
+               <div class="col-lg-3 col-md-6 col-sm-6">
+               </div>
+            </div>
+
+           <div class="row">
+
+
+             <div class="col-lg-4 col-md-6 col-sm-6">
+                 <div class="card card-stats">
+                     <div class="card-header" data-background-color="red">
+                         <i class="fa fa-truck"></i>
+                     </div>
+                     <div class="card-content">
+
+                       <p class="category">Manufacturer Total Revenue </p>
+                       <%= if @count_7 == nil do %>
+                            <h4 class="title"> 0 </h4>
+                       <% else %>
+                          <h4 class="title">
+                          <input name="current_user" id="current_user" type = "hidden" value= "<%= @current_user.id %> " />
+			  <%= if @count_7 == 0 do %>
+			  0
+			  <% else %>
+                          <%= :erlang.float_to_binary((@count_7), decimals: 2)%>
+			  <% end %>
+                            </h4>
+                      <% end %>
+
+                     </div>
+                     <div class="card-footer">
+                         <div class="stats">
+
+                         </div>
+                     </div>
+                 </div>
+             </div>
+
+             <div class="col-lg-4 col-md-6 col-sm-6">
+                 <div class="card card-stats">
+                     <div class="card-header" data-background-color="red">
+                         <i class="fa fa-truck"></i>
+                     </div>
+                     <div class="card-content">
+
+                       <p class="category">Warehouse Total Revenue</p>
+                       <%= if @count_8 == nil do %>
+			     <h4 class="title"> 0 </h4>
+                       <% else %>
+			 <%= if @count_8 == 0 do %>
+                        <h4 class="title"> 0</h4>
+                     <% else %>
+                     <h4 class="title"><%= :erlang.float_to_binary((@count_8), decimals: 2)%></h4>
+                     <% end %>
+                      <% end %>
+                     </div>
+                     <div class="card-footer">
+                         <div class="stats">
+
+                         </div>
+                     </div>
+                 </div>
+             </div>
+
+             <div class="col-lg-4 col-md-6 col-sm-6">
+                 <div class="card card-stats">
+                     <div class="card-header" data-background-color="red">
+                         <i class="fa fa-truck"></i>
+                     </div>
+                     <div class="card-content">
+
+                       <p class="category">Retailer Total Revenue </p>
+
+                       <%= if @count_9 == nil do %>
+                            <h4 class="title"> 0 </h4>
+                       <% else %>
+                          <%= if @count_9 == 0 do %>
+                        <h4 class="title"> 0 </h4>
+                        <% else %>
+                        <h4 class="title"><%= :erlang.float_to_binary((@count_9), decimals: 2)%></h4>
+                        <% end %>
+		     <% end %>
+                     </div>
+                     <div class="card-footer">
+                         <div class="stats">
+
+                         </div>
+                     </div>
+                 </div>
+             </div>
+
+            <div class="col-lg-3 col-md-6 col-sm-6">
+            </div>
+
+        </div>
+          </div>
+          <div class="tab-pane" id="link3">
+              <div class="row">
+              <form>
+              <div class="col-md-1">
+              </div>
+		<div class="col-md-4">
+                  <div class="form-group label">
+                    <label class= "control-label">From  date</label>
+                    <input type = "date" name="date_search" class="form-control select-with-transition" value="<%= @date_search %>"  >
+
+                  </div>
+              </div>
+              <div class="col-md-4">
+                  <div class="form-group label">
+                    <label class= "control-label">To date</label>
+                    <input type = "date" name="date_search_2" class="form-control select-with-transition" value="<%= @date_search_2 %>"  >
+
+                  </div>
+              </div>
+                  <div class="col-md-2">
+                       <button   style="margin-top:30px" drab-click="return_list_sale">Look Up</button>
+
+                   </div>
+                <div class="col-md-1">
+                     <div class="loader <%= @loader_class %>"></div>
+                 </div>
+                 </form>
+              </div>
+
+          <div class="row">
+                 <div class="col-lg-4 col-md-6 col-sm-6">
+
+                 </div>
+               <div class="col-lg-4 col-md-6 col-sm-6">
+                   <div class="card card-stats">
+                       <div class="card-header" data-background-color="green">
+                           <i class="fa fa-money"></i>
+                       </div>
+                       <div class="card-content">
+                          <p class="category">Total Revenue</p>
+                     	 <%= if (@count_10 + @count_11 + @count_12) == 0 do %>
+                        <h4 class="title"> 0</h4>
+                     <% else %>
+                     <h4 class="title"><%= :erlang.float_to_binary((@count_10 + @count_11 + @count_12), decimals: 2)%></h4>
+                     <% end %>
+                       </div>
+                       <div class="card-footer">
+                           <div class="stats">
+
+
+                           </div>
+                       </div>
+                   </div>
+               </div>
+               <div class="col-lg-3 col-md-6 col-sm-6">
+               </div>
+            </div>
+
+           <div class="row">
+
+
+             <div class="col-lg-4 col-md-6 col-sm-6">
+                 <div class="card card-stats">
+                     <div class="card-header" data-background-color="red">
+                         <i class="fa fa-truck"></i>
+                     </div>
+                     <div class="card-content">
+
+                       <p class="category">Manufacturer Total Revenue </p>
+                       <%= if @count_10 == nil do %>
+                            <h4 class="title"> 0 </h4>
+                       <% else %>
+                          <h4 class="title">
+			   <%= if @count_10 == 0  do %>
+                          0
+                          <% else %>
+                          <%= :erlang.float_to_binary((@count_10), decimals: 2)%>
+			  <% end %>
+                            </h4>
+                      <% end %>
+
+                     </div>
+                     <div class="card-footer">
+                         <div class="stats">
+
+                         </div>
+                     </div>
+                 </div>
+             </div>
+
+             <div class="col-lg-4 col-md-6 col-sm-6">
+                 <div class="card card-stats">
+                     <div class="card-header" data-background-color="red">
+                         <i class="fa fa-truck"></i>
+                     </div>
+                     <div class="card-content">
+
+                       <p class="category">Warehouse Total Revenue</p>
+                       <%= if @count_11 == nil do %>
+                            <h4 class="title"> 0 </h4>
+                       <% else %>
+			<%= if @count_11 == 0  do %>
+                          <h4 class="title"> 0 </h4>
+			<% else %>
+			  <h4 class="title"><%= :erlang.float_to_binary((@count_11), decimals: 2) %></h4>
+			<% end %>
+                      <% end %>
+                     </div>
+                     <div class="card-footer">
+                         <div class="stats">
+
+                         </div>
+                     </div>
+                 </div>
+             </div>
+
+             <div class="col-lg-4 col-md-6 col-sm-6">
+                 <div class="card card-stats">
+                     <div class="card-header" data-background-color="red">
+                         <i class="fa fa-truck"></i>
+                     </div>
+                     <div class="card-content">
+
+                       <p class="category">Retailer Total Revenue </p>
+
+                       <%= if @count_12 == nil do %>
+                            <h4 class="title"> 0 </h4>
+                       <% else %>
+			<%= if @count_12 == 0 do %>
+                          <h4 class="title"> 0 </h4>
+                        <% else %>
+                          <h4 class="title"><%= :erlang.float_to_binary((@count_12), decimals: 2) %></h4>
+                        <% end %>
+                      <% end %>
+                     </div>
+                     <div class="card-footer">
+                         <div class="stats">
+
+                         </div>
+                     </div>
+                 </div>
+             </div>
+
+            <div class="col-lg-3 col-md-6 col-sm-6">
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane" id="link4">
+         <div class="row">
+       <form>
+       <div class="col-md-1">
+       </div>
+        <div class="col-md-3">
+           <div class="form-group label">
+             <label class= "control-label">From  date</label>
+             <input type = "date" name="date_search" class="form-control select-with-transition" value="<%= @date_search %>"  >
+
+           </div>
+       </div>
+       <div class="col-md-3">
+           <div class="form-group label">
+             <label class= "control-label">To date</label>
+             <input type = "date" name="date_search_2" class="form-control select-with-transition" value="<%= @date_search_2 %>"  >
+
+           </div>
+       </div>
+       <div class="col-md-3">
+       <input type="text" list="retailer_1" id="retailers" placeholder= "Search Retailer here" class="form-control data">
+       <datalist  id="retailer_1" >
+       <%= for c <- @company do %>
+          <option  data-value="<%= c.id %>"><%= c.company %></option>
+         <% end %>
+       </datalist>
+       <input type="hidden" name="retailer" id="retailers-hidden">
+
+       </div>
+           <div class="col-md-2">
+                <button   style="margin-top:30px" drab-click="return_list_sale_by_retailer">Look Up</button>
+
+            </div>
+         <div class="col-md-1">
+              <div class="loader <%= @loader_class %>"></div>
+          </div>
+          </form>
+       </div>
+<div class="row">
+               <div class="col-lg-4 col-md-6 col-sm-6">
+
+               </div>
+             <div class="col-lg-3 col-md-6 col-sm-6">
+                 <div class="card card-stats">
+                     <div class="card-header" data-background-color="green">
+                         <i class="fa fa-money"></i>
+                     </div>
+                     <div class="card-content">
+                        <p class="category">Total Revenue</p>
+                        <h4 class="title"><%= :erlang.float_to_binary((@count_13 + @count_14 + @count_15), decimals: 2) %></h4>
+                     </div>
+                     <div class="card-footer">
+                         <div class="stats">
+
+
+                         </div>
+                     </div>
+                 </div>
+             </div>
+             <div class="col-lg-3 col-md-6 col-sm-6">
+             </div>
+          </div>
+            <div class="row">
+              <div class="col-lg-1 col-md-6 col-sm-6">
+              </div>
+             <div class="col-lg-3 col-md-6 col-sm-6">
+                 <div class="card card-stats">
+                     <div class="card-header" data-background-color="red">
+                         <i class="fa fa-truck"></i>
+                     </div>
+                     <div class="card-content">
+
+                       <p class="category">Manufacturer Total Revenue </p>
+                        <h4 class="title"><%= :erlang.float_to_binary(@count_13 , decimals: 2) %></h4>
+
+
+                     </div>
+                     <div class="card-footer">
+                         <div class="stats">
+
+
+                         </div>
+                     </div>
+                 </div>
+             </div>
+
+             <div class="col-lg-3 col-md-6 col-sm-6">
+                 <div class="card card-stats">
+                     <div class="card-header" data-background-color="red">
+                         <i class="fa fa-truck"></i>
+                     </div>
+                     <div class="card-content">
+
+                       <p class="category">Warehouse Total Revenue</p>
+                       <%= if @count_14 == nil do %>
+                            <h4 class="title"> 0 </h4>
+                       <% else %>
+                          <h4 class="title"> <%= :erlang.float_to_binary(@count_14 , decimals: 2)  %>    </h4>
+                      <% end %>
+                     </div>
+                     <div class="card-footer">
+                         <div class="stats">
+
+                         </div>
+                     </div>
+                 </div>
+             </div>
+
+             <div class="col-lg-3 col-md-6 col-sm-6">
+                 <div class="card card-stats">
+                     <div class="card-header" data-background-color="red">
+                         <i class="fa fa-truck"></i>
+                     </div>
+                     <div class="card-content">
+
+                       <p class="category">Retailer Total Revenue </p>
+                        <h4 class="title"><%= :erlang.float_to_binary(@count_15 , decimals: 2) %></h4>
+
+
+                     </div>
+                     <div class="card-footer">
+                         <div class="stats">
+
+
+                         </div>
+                     </div>
+                 </div>
+             </div>
+           </div>
+
+
+        </div>
+
+      </div>
+    </div>
+            </div>
+             </div>
+        </div>

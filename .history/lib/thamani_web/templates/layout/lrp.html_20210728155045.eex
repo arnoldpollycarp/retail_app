@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Mobile Specific Meta -->
+  	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  	<!-- Favicon-->
+  <link rel="shortcut icon" href="<%= static_path(@conn, "/images/fav.ico") %>">
+	<!-- Author Meta -->
+	<meta name="author" content="GTS,CS Digital">
+	<!-- Meta Description -->
+	<meta name="description" content="Thamani online is one of the seamless retail platform to provide real time payment to the parties within the system ">
+	<!-- Meta Keyword -->
+	<meta name="keywords" content="Realtime payment Kenya, Thamani, Thamani online, Kenya, online supply chain,Retail, Manufacturer, Warehousing, Data Synchronisation">
+	<!-- meta character set -->
+  	<meta charset="UTF-8">
+    	<title>Thamani Online</title>
+
+      <!-- example for Phoenix.HTML 2.7.1+ -->
+   <%= csrf_meta_tag() %>
+   <!-- example for Phoenix.HTML 2.7.0 and below-->
+
+      <link href='https://fonts.googleapis.com/css?family=Muli:400,300' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
+
+      <!--  Material Dashboard CSS    -->
+     <link rel="stylesheet" href="<%= static_path(@conn, "/css/material-dashboards.css")   %>">
+
+     <!--     Fonts and icons     -->
+        <link rel="stylesheet" href="<%= static_path(@conn, "/css/font-awesome/css/font-awesome.min.css") %>">
+
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+        <script language="javascript" type="text/javascript">
+        function timeMsg(){
+
+        	window.setTimeout("clearMsg()",5000);//10secs
+
+        }
+
+        //
+
+        function clearMsg(){
+
+        	document.getElementById("hideMsg").innerHTML = "";
+
+        }
+    </script>
+  </head>
+
+  <body onLoad = "timeMsg()" style="background-size: cover; ">
+    <div class="container" >
+
+      <div id="hideMsg">
+      <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
+      <p class="alert alert-warning" role="alert"><%= get_flash(@conn, :warning) %></p>
+      <p class="alert alert-danger" role="alert" style="z-index:10;"><%= get_flash(@conn, :error) %></p>
+    </div>
+
+
+      <main role="main">
+        <%= render @view_module, @view_template, assigns %>
+      </main>
+
+    </div> <!-- /container -->
+    <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
+    <!--   Core JS Files   -->
+<script src="<%= static_path(@conn, "/js/jquery-3.2.1.min.js") %>"></script>
+<script src="<%= static_path(@conn, "/js/bootstrap.min.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/material.min.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/perfect-scrollbar.jquery.min.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/arrive.min.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/jquery.bootstrap-wizard.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/jquery.tagsinput.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/jasny-bootstrap.min.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/jquery.validate.min.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/material-dashboard.js?v=1.2.1" ) %>"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+
+
+
+<script>
+    $(document).ready(function() {
+        demo.initCharts();
+    });
+
+    $(document).ready(function() {
+    $('.single_select').select2({
+      tags: "true",
+      placeholder: "Select an option",
+      allowClear: true
+    });
+    });
+
+$( function() {
+  $( "#datepicker" ).datepicker({
+  changeMonth: true,
+  changeYear: true
+});
+  $( "#anim" ).on( "change", function() {
+    $( "#datepicker" ).datepicker( "option", "showAnim", $( this ).val() );
+  });
+} );
+</script>
+   <script type="text/javascript">
+       var $table = $('#fresh-table'),
+           $alertBtn = $('#alertBtn'),
+           full_screen = false;
+
+       $().ready(function(){
+           $table.bootstrapTable({
+               toolbar: ".toolbar",
+
+               search: true,
+               showToggle: true,
+               showColumns: true,
+               pagination: true,
+               striped: true,
+               pageSize: 8,
+               pageList: [8,10,25,50,100],
+
+               formatShowingRows: function(pageFrom, pageTo, totalRows){
+                   //do nothing here, we don't want to show the text "showing x of y from..."
+               },
+               formatRecordsPerPage: function(pageNumber){
+                   return pageNumber + " rows visible";
+               },
+               icons: {
+                   refresh: 'fa fa-refresh',
+                   toggle: 'fa fa-th-list',
+                   columns: 'fa fa-columns',
+                   detailOpen: 'fa fa-plus-circle',
+                   detailClose: 'fa fa-minus-circle'
+               }
+           });
+
+
+
+           $(window).resize(function () {
+               $table.bootstrapTable('resetView');
+           });
+
+
+       });
+
+   </script>
+  </body>
+</html>

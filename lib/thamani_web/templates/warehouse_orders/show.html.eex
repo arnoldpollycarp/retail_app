@@ -1,0 +1,65 @@
+<div class="row">
+                       <div class="col-md-12">
+
+                         <span><%= link "Back", to: warehouse_orders_path(@conn, :index), class: "btn btn-gold btn-gold" %></span>
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">Warehouse Orders</h4>
+                                   <p class="category"><%= link "Dashboard", to: warehouse_orders_path(@conn, :index) %>/ Order/ Show order</p>
+
+                               </div>
+                               <table class="table" style="margin-left: 15px;">
+                                    <tbody>
+                                            <tr>
+                                                   <td>
+                                                          <h5>  Category: <%= @warehouse_order.pmaster.name %> </h5>
+                                                    </td>
+                                          </tr>
+                                          <tr>
+                                                    <td>
+                                                            <h5>  Brand: <%= @warehouse_order.sku.name  %>(<%= @warehouse_order.sku.gtin %>) </label>
+                                                    </td>
+                                          </tr>
+					     <tr>
+                                                 <td>
+                                                        <h5>  City: <%= @warehouse_order.kcity.city %> </h5>
+                                                  </td>
+                                        </tr>
+                                        <tr>
+                                               <td>
+                                                      <h5>  Warehouse: <%= @warehouse_order.company.company %> </h5>
+                                                </td>
+                                      </tr>
+                                          <tr>
+                                                    <td>
+                                                            <h5>  Delivery: <%= @warehouse_order.delivery %> </label>
+                                                    </td>
+                                          </tr>
+                                          <tr>
+                                                    <td>
+                                                            <h5>  Description: <%= @warehouse_order.description %> </label>
+                                                    </td>
+                                          </tr>
+
+                                          <tr>
+                                                    <td>
+
+                                                              <%= if @warehouse_order.active == "true" do %>
+                                                                <h5>Status:<i class="fa fa-check" style= "color:#66bb6a !important"></i></h5>
+                                                              <% else  %>
+                                                              <h5>Status:<i class="fa fa-close" style= "color:#f44336 !important"></i></h5>
+                                                              <% end %>
+                                                    </td>
+                                            </tr>
+                                          </tbody>
+                                      </table>
+<ul>
+
+
+         <span><%= link "Edit", to: warehouse_orders_path(@conn, :edit, @current_user) , class: "btn btn-gold btn-gold" %></span>
+
+</ul>
+
+      </div>
+      </div>
+      </div>

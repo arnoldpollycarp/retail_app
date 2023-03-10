@@ -1,0 +1,104 @@
+<div class="row">
+  <div class="col-lg-12 col-md-12">
+        <div class="card">
+            <div class="card-header" data-background-color="gold">
+
+                <h4 class="">Retailer Dashboard </h4>
+                <script>
+                    document.write(new Date())
+                </script>
+            </div>
+            <div class="card-content table-responsive">
+
+            </div>
+        </div>
+    </div>
+</div>
+                  <div class="row">
+                       <div class="col-lg-3 col-md-6 col-sm-6">
+                           <div class="card card-stats">
+                               <div class="card-header" data-background-color="orange">
+                                   <i class="fa fa-inbox"></i>
+                               </div>
+                               <div class="card-content">
+
+                                  <h3 class="title"><%=@count + @count_6 %></h3>
+                               </div>
+                               <div class="card-footer">
+                                   <div class="stats">
+
+                                        Recieved
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+
+                       <div class="col-lg-3 col-md-6 col-sm-6">
+                           <div class="card card-stats">
+                               <div class="card-header" data-background-color="blue">
+                                   <i class="fa fa-edit"></i>
+                               </div>
+                               <div class="card-content">
+
+                                 <%= if @count_1 == nil do %>
+                                      <h3 class="title"> 0 </h3>
+                                 <% else %>
+                                    <h3 class="title"> <%=@count_1  %>    </h3>
+                                <% end %>
+
+                               </div>
+                               <div class="card-footer">
+                                   <div class="stats">
+
+                                       Inventory
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+
+                       <div class="col-lg-3 col-md-6 col-sm-6">
+                           <div class="card card-stats">
+                               <div class="card-header" data-background-color="green">
+                                   <i class="fa fa-money"></i>
+                               </div>
+                               <div class="card-content">
+
+                               <input name="current_user" id="current_user" type = "hidden" value= "<%= @current_user.id %> />" />
+
+                                   <h4 class="title"> <%=@count_2 %></h4>
+                               </div>
+                               <div class="card-footer">
+                                   <div class="stats">
+                                        Sales
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+
+                       <div class="col-lg-3 col-md-6 col-sm-6">
+                           <div class="card card-stats">
+                               <div class="card-header" data-background-color="green">
+                                   <i class="fa fa-money"></i>
+                               </div>
+                               <div class="card-content">
+
+
+                                 <%= if @count_3 == nil do %>
+                                      <h4 class="title"> 0 </h4>
+                                 <% else %>
+
+                                    <h4 class="title"> <%=@count_3  %>    </h4>
+                                <% end %>
+
+                               </div>
+                               <div class="card-footer">
+                                   <div class="stats">
+                                        Revenue
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+
+
+
+                   </div>

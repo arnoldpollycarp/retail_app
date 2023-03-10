@@ -1,0 +1,97 @@
+
+<span class="col-md-10" style="margin-left: -25px;"><%= link "Back", to: item_admin_path(@conn, :index),class: "btn btn-gold btn-gold"  %></span>
+<div class="card" style="margin:25px -10px">
+    <div class="card-header" data-background-color="gold">
+        <h4 class="title">Items </h4>
+        <p class="category"><%= link "Dashboard", to: user_path(@conn, :index) %>/Items/edit</p>
+
+    </div>
+
+    <%= form_for @changeset,  item_admin_path(@conn, :update, @item),[multipart: true], fn f -> %>
+      <%= if @changeset.action do %>
+        <div class="alert alert-danger">
+          <p>Oops, something went wrong! Please check the errors below.</p>
+        </div>
+      <% end %>
+
+
+
+            <div class="col-md-6">
+              <div class="form-group label-floating">
+                <%= label f, :"Width", class: "control-label" %>
+                  <%= text_input f, :width, class: "form-control select-with-transition" %>
+              </div>
+                <%= error_tag f, :width %>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group label-floating">
+                  <%= label f, :"Length", class: "control-label" %>
+                    <%= text_input f, :length, class: "form-control select-with-transition" %>
+                </div>
+                  <%= error_tag f, :length %>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group label-floating">
+                    <%= label f, :"Description", class: "control-label" %>
+
+                      <%= textarea f, :description, class: "form-control select-with-transition" ,  required: "required" %>
+
+                  </div>
+                    <%= error_tag f, :description %>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group label-floating">
+                      <%= label f, :"Height", class: "control-label" %>
+                        <%= text_input f, :height, class: "form-control " %>
+                    </div>
+                      <%= error_tag f, :height %>
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="form-group label-floating">
+                        <%= label f, :"Markup", class: "control-label" %>
+                          <%= text_input f, :markup, class: "form-control " %>
+                      </div>
+                        <%= error_tag f, :markup %>
+                      </div>
+
+
+                      <div class="col-md-10">
+                        <%= label f, :"Item Image", class: "control-label" ,style: "top: -35px;" %>
+                        <div class="fileinput fileinput-new text-center" data-provides="fileinput">
+                                                                   <div class="fileinput-new thumbnail">
+
+                                                                       <img src="<%= static_path(@conn, "/images/placeholder.jpeg")  %>" alt="...">
+                                                                   </div>
+                                                                   <div class="fileinput-preview fileinput-exists thumbnail"></div>
+                                                                   <div>
+                                                                       <span class="btn btn-gold btn-round btn-file">
+                                                                           <span class="fileinput-new">Select image</span>
+                                                                           <span class="fileinput-exists">Change</span>
+                                                                           <%= file_input f, :image %>
+
+                                                                      </span>
+                                                                      <a href="#pablo" class="btn btn-danger btn-round fileinput-exists" data-dismiss="fileinput"><i class="fa fa-times"></i> Remove</a>
+                                                                  </div>
+                                                              </div>
+
+                        <%= error_tag f, :image %>
+                        </div>
+
+              <div class="col-md-2">
+                <div class="form-group label-floating">
+                  <%= label f, :active, class: "control-label" %>
+                    <%= checkbox f, :active , class: "checkbox-material"%>
+                </div>
+              <%= error_tag f, :active %>
+              </div>
+
+    <div class="col-md-12">
+      <div class="form-group">
+        <%= submit "Submit", class: "btn btn-gold" %>
+      </div>
+    </div>
+    <% end %>
+
+
+</div>

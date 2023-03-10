@@ -1,0 +1,83 @@
+<div class="row">
+           <div class="col-md-12">
+                         <span><%= link "Add location", to: locations_path(@conn, :new), class: "btn gold btn-gold" %></span>
+
+                         <div class="navbar-form navbar-right" >
+                           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                            search
+                           </button>
+
+                         </div>
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">Locations</h4>
+                                   <p class="category"><%= link "Dashboard", to: manufacturer_dashboard_path(@conn, :index) %>/Locations/</p>
+
+                               </div>
+
+                               <div class="card-content table-responsive">
+<table id ="" class="table">
+  <thead class="text-info">
+    <tr>
+      <th data-field="state" data-checkbox="true"></th>
+      <th data-field="code" data-sortable="true">county</th>
+      <th data-field="code" data-sortable="true">city</th>
+      <th data-field="carton" data-sortable="true">status</th>
+
+
+      <th class="text-center">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for kcity <- @kcity do %>
+    <tr>
+      <td></td>
+      <td><%= kcity.county %></td>
+      <td><%= kcity.city %></td>
+      <td><%= kcity.status %></td>
+
+      <td class="text-center">
+
+
+         <span  rel="tooltip" title="Edit Task" class="btn btn-primary btn-simple ">
+             <span><%= link "", to: locations_path(@conn, :edit, kcity),  "data-toggle": "tooltip", title: "Edit Data", class: "fa fa-pencil", style: "color:#66bb6a !important" %></span>
+        </span>
+        <span  rel="tooltip" title="Delete Task" class="btn btn-danger btn-simple ">
+            <span><%= link "", to: locations_path(@conn, :delete, kcity), method: :delete, data: [confirm: "Are you sure?"],  "data-toggle": "tooltip", title: "Delete Data", class: "fa fa-close", style: "color:#f44336 !important" %></span>
+       </span>
+
+
+      </td>
+    </tr>
+<% end %>
+</tbody>
+</table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modal -->
+      <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Seacrh Functionalities</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+               <div class="form-group">
+
+
+                                          </div>
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+            </div>
+          </div>
+        </div>
+      </div>

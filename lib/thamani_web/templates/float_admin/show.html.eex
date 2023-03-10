@@ -1,0 +1,57 @@
+
+
+<div class="row">
+               <div class="col-md-12">
+
+
+                           <span><%= link "Back", to: float_admin_path(@conn, :index), class: "btn btn-gold btn-gold" %></span>
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">Float</h4>
+                                   <p class="category"><%= link "Dashboard", to: float_admin_dashboard_path(@conn, :index) %>/ float / Show </p>
+
+                               </div>
+
+                               <table class="table" style="margin-left: 15px;">
+                                    <tbody>
+
+
+  <tr>
+    <td>Account:
+    <%= @float.account %></td>
+  </tr>
+  <tr>
+    <td>Type:
+    <%= @float.type %></td>
+  </tr>
+  <tr>
+    <td>Amount:
+    <%= @float.amount %></td>
+  </tr>
+  <tr>
+    <td>Recieved from:
+    <%= @float.from %></td>
+  </tr>
+
+  <tr>
+    <td>description:
+    <%= @float.description %></td>
+  </tr>
+
+  <tr>
+    <td>Active:
+      <%= if @float.active == "true" do %>
+        <i class="fa fa-check" style= "color:#66bb6a !important"></i>
+      <% else  %>
+      <i class="fa fa-close" style= "color:#f44336 !important"></i>
+      <% end %>
+  </tr>
+</tbody>
+                              </table>
+                            </div>
+                          </div>
+
+
+
+
+</div>

@@ -1,0 +1,63 @@
+<span class="col-md-10" style="margin-left: -25px;"> <%= link "Back", to: inventory_path(@conn, :index),class: "btn btn-gold btn-gold"  %></span>
+
+<div class="card" style="margin:25px -10px">
+    <div class="card-header" data-background-color="gold">
+        <h4 class="title">Inventory</h4>
+        <p class="category"><%= link "Dashboard", to: inventory_path(@conn, :index) %>/ inventory/edit</p>
+
+    </div>
+    <%= form_for @changeset, inventory_path(@conn, :update, @inventory), [multipart: true] , fn f -> %>
+      <%= if @changeset.action do %>
+        <div class="alert alert-danger">
+          <p>Oops, something went wrong! Please check the errors below.</p>
+        </div>
+      <% end %>
+
+
+
+      <div class="col-md-6">
+        <div class="form-group label-floating">
+        <%= label f, :price, class: "control-label" %>
+        <%= text_input f, :price, class: "form-control" %>
+          </div>
+
+        <%= error_tag f, :price %>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group label-floating">
+        <%= label f, :quantity, class: "control-label" %>
+        <%= text_input f, :quantity, class: "form-control" %>
+          </div>
+
+        <%= error_tag f, :quantity %>
+      </div>
+
+
+      <div class="col-md-10">
+        <div class="form-group label-floating">
+        <%= label f, :description, class: "control-label" %>
+        <%= textarea f, :description, class: "form-control" %>
+          </div>
+        <%= error_tag f, :description %>
+      </div>
+
+
+
+
+
+      <div class="col-md-10">
+        <div class="form-group label-floating">
+
+        <%= label f, :active, class: "control-label" %>
+        <%= checkbox f, :active, class: "checkbox-material" %>
+          </div>
+        <%= error_tag f, :active %>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group label-floating">
+        <%= submit "Submit", class: "btn btn-gold" %>
+      </div>
+        </div>
+    <% end %>

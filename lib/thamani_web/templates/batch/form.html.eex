@@ -1,0 +1,82 @@
+
+<%= form_for @changeset, @action, [multipart: true] , fn f -> %>
+  <%= if @changeset.action do %>
+    <div class="alert alert-danger">
+      <p>Oops, something went wrong! Please check the errors below.</p>
+    </div>
+  <% end %>
+
+  <div class="col-md-12">
+
+    <div class='element' id='div_1'>
+      <div class="col-md-5" >
+
+        <input type="text" list="batch_1" id="listing_1" placeholder= "Search item/GTIN here" class="form-control data">
+        <datalist  id="batch_1" >
+        <%= for b <- @bat do %>
+          <option  data-value="<%= b.id %>"><%= b.gtin %> (<%= b.name %>)</option>
+          <% end %>
+        </datalist>
+        <input type="hidden" name="item[]" id="listing_1-hidden">
+
+      </div>
+      <div class="col-md-5">
+      <div class="form-group label-floating">
+        <%= label f, :"Batch Number", class: "control-label" %>
+        <%= text_input f, :batch, name: "batches[]", class: "form-control" %>
+          </div>
+        <%= error_tag f, :batch %>
+      </div>
+      <div class="col-md-4">
+      <div class="form-group ">
+        <%= label f, :"Expiry Date", class: "control-label" %>
+        <%= text_input f, :expiry,type: "date", name: "expiry[]", class: "form-control" %>
+          </div>
+        <%= error_tag f, :expiry %>
+      </div>
+      <div class="col-md-4">
+      <div class="form-group ">
+        <%= label f, :"Production Date", class: "control-label" %>
+        <%= text_input f, :production, type: "date", name: "production[]", class: "form-control" %>
+          </div>
+        <%= error_tag f, :production %>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group" >
+
+        <%= number_input f, :quantity, name: "quantity[]", type: "hidden", value: "1", class: "form-control" ,"data-rule": "quantity" ,placeholder: "Enter quantity"%>
+
+     </div>
+    </div>
+    <div class="col-md-10">
+      <div class="form-group label-floating">
+      <%= label f, :"Enter batch description", class: "control-label" %>
+      <%= textarea f, :description, name: "description[]", class: "form-control" %>
+        </div>
+      <%= error_tag f, :description %>
+    </div>
+      <p class='col-md-12' style="border-top: 1.5px dotted gold;"></p>
+  </div>
+</div>
+  <div class='col-md-6'>
+   <button id="add_man">Add</button>
+ </div>
+
+<div class="col-md-12">
+
+  <div class="col-md-10">
+    <div class="form-group label-floating">
+
+    <%= label f, :active, class: "control-label" %>
+    <%= checkbox f, :active, class: "checkbox-material" %>
+      </div>
+    <%= error_tag f, :active %>
+  </div>
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= submit "Submit", class: "btn btn-gold" %>
+  </div>
+    </div>
+  </div>
+<% end %>

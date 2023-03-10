@@ -1,0 +1,68 @@
+<%= form_for @changeset, @action, fn f -> %>
+  <%= if @changeset.action do %>
+    <div class="alert alert-danger">
+      <p>Oops, something went wrong! Please check the errors below.</p>
+    </div>
+  <% end %>
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+      <label class= "control-label">Category</label>
+          <select name="category" class="form-control" id="sel2">
+            <option>Beverages</option>
+            <option>Bread/Bakery</option>
+            <option>Canned/Jarred Goods</option>
+            <option>Dairy</option>
+            <option>Dry/Baking Goods</option>
+            <option>Frozen Foods</option>
+            <option>Meat</option>
+            <option>Fruits/vegetables</option>
+            <option>Cleaning products</option>
+            <option>Hygiene products</option>
+            <option>Cosmetics</option>
+            <option>Confections & Candies</option>
+            <option>Houseware & Utensils</option>
+            <option>Cards</option>
+            <option>Paper Goods</option>
+            <option>Personal Care</option>
+            <option>Pet foods & products</option>
+            <option>Medicinal</option>
+            <option>Tools</option>
+            <option>Others</option>
+
+          </select>
+    </div>
+    </div>
+
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= label f, :Brand, class: "control-label" %>
+  <p><%= @retman_order.sku.name %></p>
+  </div>
+    <%= error_tag f, :item %>
+  </div>
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= label f, :"Unit Of Measure", class: "control-label" %>
+    <%= text_input f, :uom, class: "form-control" %>
+  </div>
+    <%= error_tag f, :uom %>
+  </div>
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= label f, :description, class: "control-label" %>
+    <%= text_input f, :description, class: "form-control" %>
+  </div>
+    <%= error_tag f, :description %>
+  </div>
+
+
+
+<div class="col-md-12">
+  <div class="form-group">
+    <%= submit "Submit", class: "btn btn-gold" %>
+  </div>
+</div>
+<% end %>

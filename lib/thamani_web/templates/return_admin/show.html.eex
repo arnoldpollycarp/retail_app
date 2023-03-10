@@ -1,0 +1,58 @@
+
+
+<div class="row">
+                     <div class="col-md-12">
+
+
+                           <span><%= link "Back", to: return_admin_path(@conn, :index), class: "btn btn-gold btn-gold" %></span>
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">Return</h4>
+                                   <p class="category"><%= link "Dashboard", to: manufacturer_admin_dashboard_path(@conn, :index) %>/ return / Show </p>
+
+                               </div>
+
+                               <table class="table" style="margin-left: 15px;">
+                                    <tbody>
+
+
+  <tr>
+    <td>SKU:
+    <%= @return.sku.gtin %></td>
+  </tr>
+  <tr>
+    <td>Quantity:
+    <%= @return.quantity %></td>
+  </tr>
+  <tr>
+    <td>Company:
+    <%= @return.companies.company %></td>
+  </tr>
+  <tr>
+    <td>description:
+    <%= @return.description %></td>
+  </tr>
+  <tr>
+    <td>description:
+    <%= @return.description %></td>
+  </tr>
+
+  <tr>
+    <td>Active:
+      <%= if @return.active == "true" do %>
+        <i class="fa fa-check" style= "color:#66bb6a !important"></i>
+      <% else  %>
+      <i class="fa fa-close" style= "color:#f44336 !important"></i>
+      <% end %>
+  </tr>
+</tbody>
+                              </table>
+                            </div>
+                          </div>
+
+
+<ul>
+
+</ul>
+
+</div>

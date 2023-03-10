@@ -1,0 +1,161 @@
+<%
+alias Thamani.Inventories
+alias Thamani.Dispatches
+alias Thamani.Pmasters
+alias Thamani.Sales
+%>
+<form>
+     <p class="message  <%= @message_class %>" role="alert"><%= @long_process_button_text %></p>
+      <div class="col-md-3">
+      <input name="current_user" id="current_user" type = "hidden" class="form-control select-with-transition"  value=<%= @current_user.id %> />
+
+       </div>
+       <div class="col-md-6">
+         <div class="form-group label-floating">
+           <label class= "control-label">Select Recieved Item - item name | shipping code</label>
+               <select name="item" class= "single_select" style="width:100%" id="sel2">
+               <%= for bat <- @bat do %>
+                 <option style="width:125%;margin-left:-30px;" value = "<%=bat.id %>"><%= bat.sku.name %> | (<%= bat.shipping%>) </option>
+                 <% end %>
+
+               </select>
+       </div>
+       </div>
+        <div class="col-md-2">
+             <button style="margin-top:30px" drab-click="range_retailer">Look Up</button>
+         </div>
+      <div class="col-md-1">
+           <div class="loader <%= @loader_class2 %>"></div>
+       </div>
+
+       <div class="col-md-12">
+
+           <%= for lists <- @items_details do %>
+
+           <div class="form-group label-floating">
+	     <input name="item_id" id="item_id"  class="form-control select-with-transition"  value="<%= lists.id %>" type= "hidden" />
+           <input name="name" id="name"  class="form-control select-with-transition"  value="<%= lists.item %>" type= "hidden" />
+           <input name="expiry" id="expiry"  class="form-control select-with-transition"  value="<%= lists.expiry %>" type= "hidden" />
+           <input name="batch" id="batch"  class="form-control select-with-transition"  value="<%= lists.batch %>" type= "hidden" />
+           <input name="production" id="production"  class="form-control select-with-transition"  value="<%= lists.production %>" type= "hidden" />
+          </div>
+
+           <div class="col-md-2">
+           <div class="form-group label-floating">
+           <label class= "control-label">Quantity</label>
+	   <%= if lists.sku.quantity =="Single unit" do %>
+  	   <input name="quantity" id="quantity"  class="form-control select-with-transition"  value="<%= lists.quantity %>" disabled="disabled"/>
+	    <% else %>
+           <input name="quantity" id="quantity"  class="form-control select-with-transition"  value="<%= lists.quantity * lists.sku.quantity_unit  %> " disabled="disabled"/>
+	   <% end %>
+          </div>
+          </div>
+          <div class="col-md-2">
+          <div class="form-group label-floating">
+         <label class= "control-label">Price Buildup</label>
+          <p><span style ="background:#66bb6a !important;padding: 5px;border-radius: 5px;font-size: 13px;"> <%= String.to_float(Dispatches.get_price(lists.item)) + Float.ceil(Sales.get_gs1_value(),1)  %></span></p>
+
+           </div>
+           </div>
+
+            <div class="col-md-2">
+            <div class="form-group label-floating">
+             <label class= "control-label">Range Allowable</label>
+            <p><span style ="background:#f44336 !important;padding: 5px;border-radius: 5px;font-size: 13px;"><%= Pmasters.get_min(Dispatches.getcategoryname(lists.item))%>% - <%= Pmasters.get_max(Dispatches.getcategoryname(lists.item))%>%</span></p>
+
+             </div>
+             </div>
+
+             <div class="col-md-3">
+             <div class="form-group label-floating">
+              <label class= "control-label">Price Addition Allowed</label>
+             <p><span style ="background:gold !important;padding: 5px;border-radius: 5px;font-size: 13px;">
+             <%= Float.ceil( (Pmasters.get_min(Dispatches.getcategoryname(lists.item))/100) * (String.to_float(Dispatches.get_price(lists.item)) + Float.ceil(Sales.get_gs1_value(),1) ),2)%> -
+                    <%= Float.ceil( (Pmasters.get_max(Dispatches.getcategoryname(lists.item))/100) * (String.to_float(Dispatches.get_price(lists.item)) + Float.ceil(Sales.get_gs1_value(),1)  ),2)%> </span></p>
+
+              </div>
+              </div>
+
+              <div class="col-md-3">
+              <div class="form-group label-floating">
+               <label class= "control-label">Final Price Buildup</label>
+               <p><span style ="background:#66bb6a !important;padding: 5px;border-radius: 5px;font-size: 13px;">
+      <%= Float.ceil( Float.ceil(String.to_float(Dispatches.get_price(lists.item))+ Float.ceil(Sales.get_gs1_value(),1)  ,2) +
+      Float.ceil( (Pmasters.get_min(Dispatches.getcategoryname(lists.item))/100) * (String.to_float(Dispatches.get_price(lists.item))+ Float.ceil(Sales.get_gs1_value(),1)  ),2),2)%> -
+               <%= Float.ceil( Float.ceil(String.to_float(Dispatches.get_price(lists.item)) + Float.ceil(Sales.get_gs1_value(),1)  ,2) +
+               Float.ceil( (Pmasters.get_max(Dispatches.getcategoryname(lists.item))/100) * (String.to_float(Dispatches.get_price(lists.item))+ Float.ceil(Sales.get_gs1_value(),1)  ),2),2)%> </span></p>
+
+               </div>
+               </div>
+
+           <% end %>
+
+
+       </div>
+
+       <div class="col-md-12" style="<%= @field_class %>">
+ <%= for lists <- @items_details do %>
+
+      <div class="col-md-6">
+      <div class="form-group label-floating">
+       <label class= "control-label">stock level threshold</label>
+      <input name="reorderlevel" id="reorderlevel" value="<%= Inventories.get_reorderlevel_adding_item(lists.item,@current_user.id) %>" class="form-control "   />
+     </div>
+     </div>
+
+     <div class="col-md-6">
+     <div class="form-group label-floating">
+      <label class= "control-label">Reorder stock quantity </label>
+     <input name="reorderstock" id="reorderstock" value="<%= Inventories.get_reorderstock_adding_item(lists.item,@current_user.id) %>" class="form-control "   />
+     </div>
+     </div>
+
+
+      <div class="col-md-6">
+      <div class="form-group label-floating spinner" >
+       <label class= "control-label">Price Value (Price format i.e 100.00 or 100.5 0r 100.25)</label>
+
+       <%= if is_nil(Inventories.get_price_adding_item(lists.item,@current_user.id)) || Inventories.get_price_adding_item(lists.item,@current_user.id) == "0.00" do %>
+        <input name="price" type="text" class="form-control" value="0.00" data-rule="currency" required >
+      <% else %>
+       <input name="price" type="text" class="form-control" value="<%= Inventories.get_price_adding_item(lists.item,@current_user.id) %>" data-rule="currency" disabled >
+       <% end %>
+
+       <p class="message  <%= @message_class %>" role="alert"><%= @price_text %></p>
+     </div>
+     </div>
+      <% end %>
+
+
+        <div class="col-md-6">
+        <div class="form-group label-floating">
+       <label class= "control-label">Extra Description</label>
+        <input name="description" id="description"  class="form-control select-with-transition"  value="" />
+       </div>
+       </div>
+
+     <div class="col-md-8">
+     <div class="form-group label-floating">
+       <label class= "control-label">Active </label>
+
+        <select name="active" class="form-control">
+          <option>true</option>
+          <option>false</option>
+
+        </select>
+
+     </div>
+     </div>
+
+      <div class="col-md-10">
+        <div class="form-group">
+          <%= submit "Submit", class: "btn btn-gold", "drab-click": "add_items" %>
+            <%= link "Close",  class: "btn btn-danger", to: inventory_path(@conn, :index) %>
+
+        </div>
+      </div>
+      <div class="col-md-1">
+           <div class="loader <%= @loader_class %>"></div>
+       </div>
+       </div>
+  </form>

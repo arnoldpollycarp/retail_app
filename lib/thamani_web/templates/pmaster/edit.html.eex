@@ -1,0 +1,11 @@
+<span class="col-md-10" style="margin-left: -25px;"><%= link "Back", to: pmaster_path(@conn, :index),class: "btn btn-gold btn-gold"  %></span>
+<div class="card" style="margin:25px -10px">
+  <div class="card-header" data-background-color="gold">
+      <h4 class="title"> Price master </h4>
+        <p class="category"><%= link "Dashboard", to: gs1_dashboard_path(@conn, :index) %>/Price Master/edit</p>
+
+    </div>
+
+<%= render "form.html", Map.put(assigns, :action, pmaster_path(@conn, :update, @pmaster)) %>
+
+</div>

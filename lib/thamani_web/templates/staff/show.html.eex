@@ -1,0 +1,62 @@
+<div class="row">
+                       <div class="col-md-12">
+
+                         <span><%= link "Back", to: staff_path(@conn, :index), class: "btn btn-gold btn-gold" %></span>
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">Staff</h4>
+                                   <p class="category"><%= link "Dashboard", to: retail_dashboard_path(@conn, :index) %>/ Staff/ Show Staff</p>
+
+                               </div>
+                               <table class="table" style="margin-left: 15px;">
+                                    <tbody>
+                                            <tr>
+                                                   <td>
+                                                          <h5>  Fullname: <%= @staff.fullname %> </h5>
+                                                    </td>
+                                          </tr>
+					    <tr>
+                                                    <td>
+                                                            <h5>  Shop: <%= @staff.shops.name %> </label>
+                                                    </td>
+                                          </tr>
+
+                                          <tr>
+                                                    <td>
+                                                            <h5>  Phone: <%= @staff.phone %> </label>
+                                                    </td>
+                                          </tr>
+                                          <tr>
+                                                    <td>
+                                                            <h5>  Passcode: <%= @staff.passcode %> </label>
+                                                    </td>
+                                          </tr>
+                                          <tr>
+                                                    <td>
+                                                            <h5>  Description: <%= @staff.description %> </label>
+                                                    </td>
+                                          </tr>
+
+                                          <tr>
+                                                    <td>
+
+                                                              <%= if @staff.active == "true" do %>
+                                                                <h5>Active:<i class="fa fa-check" style= "color:#66bb6a !important"></i></h5>
+                                                              <% else  %>
+                                                              <h5>Active:<i class="fa fa-close" style= "color:#f44336 !important"></i></h5>
+                                                              <% end %>
+                                                    </td>
+                                            </tr>
+                                          </tbody>
+                                      </table>
+<ul>
+
+
+        <span><%= link "Add staff", to: staff_path(@conn, :new), class: "btn btn-gold btn-gold" %></span>
+       <span><%= link "Edit", to: staff_path(@conn, :edit, @staff) , class: "btn btn-gold btn-gold" %></span>
+
+</ul>
+
+      </div>
+      </div>
+      </div>

@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+REQUIRED_CONFIGS+=("APP")
+REQUIRED_CONFIGS+=("RELEASE_STORE")
+
+REQUIRED_CONFIGS+=("COMMAND")
+OPTIONAL_CONFIGS+=("RELEASE_FILE")
+OPTIONAL_CONFIGS+=("DESTINATION_FILE")
+OPTIONAL_CONFIGS+=("COMMAND_INFO")
+OPTIONAL_CONFIGS+=("VERSION")
+
+run() {
+  authorize_release_store_host
+
+  if [ -z "$RELEASE_FILE" ]; then
+    if [ -n "$VERSION" ] && [ -n "$COMMAND_INFO" ] && [ -n "$APP" ]; then
+      RELEASE_FILE="${APP}_${VERSION}.${COMMAND_INFO}.tar.gz"
+    else
+      __help; error_message "No $COMMAND_INFO version given\n"; exit 2
+    fi
+  fi
+
+  [ -z "$DESTINATION_FILE" ] && DESTINATION_FILE="$RELEASE_FILE"
+
+  [ -d "$DESTINATION_FILE" ] && DESTINATION_FILE="${DESTINATION_FILE%%/}/$RELEASE_FILE"
+
+  __detect_release_store_type
+
+  if [[ "$COMMAND" = "download" ]]; then
+    if [ "$RELEASE_STORE_TYPE" = "s3" ]; then
+      download_file_from_s3_release_store "$RELEASE_FILE" "$DESTINATION_FILE"
+    elif [ "$RELEASE_STORE_TYPE" = "remote" ]; then
+      download_file_from_remote_release_store "$RELEASE_FILE" "$DESTINATION_FILE"
+    else
+      error_message "Cannot download releases in store for store type ${RELEASE_STORE_TYPE}"; exit 2
+    fi
+  elif [[ "$COMMAND" = "upload" ]]; then
+    if [ "$RELEASE_STORE_TYPE" = "s3" ]; then
+      upload_file_to_s3_release_store "$RELEASE_FILE" "$DESTINATION_FILE"
+    elif [ "$RELEASE_STORE_TYPE" = "remote" ]; then
+      upload_file_to_remote_release_store "$RELEASE_FILE" "$DESTINATION_FILE"
+    else
+      error_message "Cannot upload releases in store for store type ${RELEASE_STORE_TYPE}"; exit 2
+    fi
+  fi
+}
+
+
+

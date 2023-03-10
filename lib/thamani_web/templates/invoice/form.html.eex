@@ -1,0 +1,41 @@
+
+<%= form_for @changeset, @action, [multipart: true] , fn f -> %>
+  <%= if @changeset.action do %>
+    <div class="alert alert-danger">
+      <p>Oops, something went wrong! Please check the errors below.</p>
+    </div>
+  <% end %>
+
+
+
+
+  <div class="col-md-6">
+  <div class="form-group label-floating date" >
+    <%= label f, :"Invoice Number", class: "control-label" %>
+    <%= text_input f, :invoice_number, class: "form-control" %>
+
+      </div>
+    <%= error_tag f, :invoice_number %>
+  </div>
+  <div class="col-md-6">
+  <div class="form-group label-floating">
+    <%= label f, :"Items", class: "control-label" %>
+    <%= date_select f, :items, class: "form-control" %>
+      </div>
+    <%= error_tag f, :items %>
+  </div>
+  <div class="col-md-6">
+  <div class="form-group label-floating">
+    <%= label f, :"Date generated", class: "control-label" %>
+    <%= date_select f, :inserted_at, class: "form-control" %>
+      </div>
+    <%= error_tag f, :inserted_at %>
+  </div>
+
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= submit "Submit", class: "btn btn-gold" %>
+  </div>
+    </div>
+<% end %>

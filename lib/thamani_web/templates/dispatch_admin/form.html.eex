@@ -1,0 +1,91 @@
+
+<%= form_for @changeset, @action, [multipart: true] , fn f -> %>
+  <%= if @changeset.action do %>
+    <div class="alert alert-danger">
+      <p>Oops, something went wrong! Please check the errors below.</p>
+    </div>
+  <% end %>
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= label f, :"Shipping Code", class: "control-label" %>
+    <%= text_input f, :scode, class: "form-control" , required: "required"%>
+      </div>
+    <%= error_tag f, :scode %>
+  </div>
+
+  <div class="col-md-6">
+  <div class="form-group label-floating">
+    <%= label f, :"SKU item", class: "control-label" %>
+    <%= select f, :item, @bat , class: "selectpicker", "data-style": "btn btn-gold btn-round", title: "Choose item" , required: "required"%>
+      </div>
+    <%= error_tag f, :item %>
+  </div>
+
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= label f, :Quantity, class: "control-label" %>
+    <%= text_input f, :quantity, class: "form-control" , required: "required"%>
+      </div>
+    <%= error_tag f, :quantity %>
+  </div>
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= label f, :"Retailer", class: "control-label" %>
+    <%= select f, :retailer, @company, class: "selectpicker", "data-style": "btn btn-gold btn-round", title: "Choose retailer" , required: "required"%>
+
+      </div>
+    <%= error_tag f, :retailer %>
+  </div>
+
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= label f, :"Warehouse", class: "control-label" %>
+    <%= select f, :warehouse, @company, class: "selectpicker", "data-style": "btn btn-gold btn-round", title: "Choose warehouse" , required: "required"%>
+
+      </div>
+    <%= error_tag f, :warehouse %>
+  </div>
+
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= label f, :Transporter, class: "control-label" %>
+    <%= text_input f, :transporter, class: "form-control" %>
+      </div>
+    <%= error_tag f, :transporter %>
+  </div>
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= label f, :"Transporter details", class: "control-label" %>
+    <%= textarea f, :transporterid, class: "form-control" %>
+      </div>
+    <%= error_tag f, :transporterid %>
+  </div>
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= label f, :"Extra description", class: "control-label" %>
+    <%= textarea f, :description, class: "form-control" %>
+      </div>
+    <%= error_tag f, :description %>
+  </div>
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+
+    <%= label f, :"Confirmation Status", class: "control-label" %>
+    <%= checkbox f, :active, class: "checkbox-material" , disabled: "disabled"%>
+    <%= checkbox f, :active, class: "checkbox-material" , style: "display:none"%>
+      </div>
+    <%= error_tag f, :active %>
+  </div>
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= submit "Submit", class: "btn btn-gold" %>
+  </div>
+    </div>
+<% end %>

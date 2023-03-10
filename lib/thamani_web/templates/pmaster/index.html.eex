@@ -1,0 +1,79 @@
+<%= if @current_user.userlevel do %>
+<div class="row">
+           <div class="col-md-12">
+                         <span><%= link "Add price master", to: pmaster_path(@conn, :new), class: "btn gold btn-gold" %></span>
+                         <div class="navbar-form navbar-right" >
+
+
+
+                         </div>
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">Price Master</h4>
+                                   <p class="category"><%= link "Dashboard", to: gs1_dashboard_path(@conn, :index) %>/Price Master/</p>
+
+                               </div>
+
+                               <div class="card-content table-responsive">
+                                 <div id="toolbar" style="margin-top: -16px;">
+                                <select class="form-control">
+                                  <option value="">Export Current page</option>
+                                  <option value="all">Export All</option>
+                                  <option value="selected">Export Selected</option>
+                                </select>
+                              </div>
+   <table class="table" id ="fresh-table" data-toggle="table" data-toolbar="#toolbar" data-search="true"  data-pagination="true" data-show-print="true" data-show-export="true"   data-export-options='{"fileName": "reports"}'>
+  <thead class="text-info">
+    <tr>
+      <th data-field="state" data-checkbox="true"></th>
+      <th data-field="name" data-sortable="true">Name</th>
+      <th data-field="type" data-sortable="true">type</th>
+      <th data-field="min" data-sortable="true">Min Value %</th>
+      <th data-field="max" data-sortable="true">Max Value %</th>
+      <th data-field="description" data-sortable="true">Description</th>
+      <th>Active</th>
+
+      <th class="text-center">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for pmaster <- @pmaster do %>
+    <tr>
+      <td></td>
+      <td><%= pmaster.name %></td>
+      <td><%= pmaster.type %></td>
+      <td><%= Float.ceil(pmaster.min,2) %></td>
+      <td><%= Float.ceil(pmaster.max,2) %></td>
+      <td><%= pmaster.description %></td>
+      <%= if pmaster.active == "true" do %>
+      <td><i class="fa fa-check" style= "color:#66bb6a !important"></i></td>
+      <% else  %>
+      <td><i class="fa fa-close" style= "color:#f44336 !important"></i></td>
+      <% end %>
+
+      <td class="text-center">
+        <span  rel="tooltip" title="View Task" class="btn btn-info btn-simple ">
+            <span ><%= link "", to: pmaster_path(@conn, :show, pmaster),  "data-toggle": "tooltip", title: "View Data", class: "fa fa-search-plus ",style: "color:#00bcd4 !important" %></span>
+        </span>
+
+         <span  rel="tooltip" title="Edit Task" class="btn btn-primary btn-simple ">
+             <span><%= link "", to: pmaster_path(@conn, :edit, pmaster),  "data-toggle": "tooltip", title: "Edit Data", class: "fa fa-pencil", style: "color:#66bb6a !important" %></span>
+        </span>
+        <span  rel="tooltip" title="Delete Task" class="btn btn-danger btn-simple ">
+            <span><%= link "", to: pmaster_path(@conn, :delete, pmaster), method: :delete, data: [confirm: "Are you sure?"],  "data-toggle": "tooltip", title: "Delete Data", class: "fa fa-close", style: "color:#f44336 !important" %></span>
+       </span>
+
+
+      </td>
+    </tr>
+<% end %>
+</tbody>
+</table>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <% else %>
+            <h1>Not authorised to access this page</h1>
+          <% end%>

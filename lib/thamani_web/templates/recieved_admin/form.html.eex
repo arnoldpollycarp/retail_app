@@ -1,0 +1,48 @@
+
+<%= form_for @changeset, @action, [multipart: true] , fn f -> %>
+  <%= if @changeset.action do %>
+    <div class="alert alert-danger">
+      <p>Oops, something went wrong! Please check the errors below.</p>
+    </div>
+  <% end %>
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= label f, :"Shipping Code", class: "control-label" %>
+    <%= text_input f, :scode, class: "form-control", disabled: "disabled" %>
+      </div>
+
+  </div>
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= label f, :"Sku Item", class: "control-label" %>
+    <%= text_input f, :item, class: "form-control", disabled: "disabled", value: @recieved.sku.gtin <> " (" <> @recieved.sku.name <> ")" %>
+      </div>
+
+  </div>
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= label f, :"Estimated delivery time", class: "control-label" %>
+    <%= text_input f, :delivery, class: "form-control" %>
+      </div>
+    <%= error_tag f, :delivery %>
+  </div>
+
+
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+
+    <%= label f, :"Confirm Recieved", class: "control-label" %>
+    <%= checkbox f, :active, class: "checkbox-material" %>
+      </div>
+    <%= error_tag f, :active %>
+  </div>
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= submit "Submit", class: "btn btn-gold" %>
+  </div>
+    </div>
+<% end %>

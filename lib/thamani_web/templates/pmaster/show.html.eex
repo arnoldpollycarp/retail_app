@@ -1,0 +1,65 @@
+<%= if @current_user.userlevel do %>
+<div class="row">
+                       <div class="col-md-12">
+
+                         <span><%= link "Back", to: pmaster_path(@conn, :index), class: "btn btn-gold btn-gold" %></span>
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">Barcordes</h4>
+                                   <p class="category"><%= link "Dashboard", to: gs1_dashboard_path(@conn, :index) %>/ Barcode/ Show Barcode</p>
+
+                               </div>
+                               <table class="table" style="margin-left: 15px;">
+                                    <tbody>
+                                            <tr>
+                                                   <td>
+                                                          <h5>  Name: <%= @pmaster.name %> </h5>
+                                                    </td>
+                                          </tr>
+                                          <tr>
+                                                    <td>
+                                                            <h5>  Type: <%= @pmaster.type %> </label>
+                                                    </td>
+                                          </tr>
+                                          <tr>
+                                                    <td>
+                                                            <h5>  Min Value %: <%= @pmaster.min %> </label>
+                                                    </td>
+                                          </tr>
+                                          <tr>
+                                                    <td>
+                                                            <h5>  Max Value %: <%= @pmaster.max %> </label>
+                                                    </td>
+                                          </tr>
+                                          <tr>
+                                                    <td>
+                                                            <h5>  Description: <%= @pmaster.description %> </label>
+                                                    </td>
+                                          </tr>
+
+                                          <tr>
+                                                    <td>
+
+                                                              <%= if @pmaster.active == "true" do %>
+                                                                <h5>Active:<i class="fa fa-check" style= "color:#66bb6a !important"></i></h5>
+                                                              <% else  %>
+                                                              <h5>Active:<i class="fa fa-close" style= "color:#f44336 !important"></i></h5>
+                                                              <% end %>
+                                                    </td>
+                                            </tr>
+                                          </tbody>
+                                      </table>
+<ul>
+
+
+        <span><%= link "Add pmaster", to: pmaster_path(@conn, :new), class: "btn btn-gold btn-gold" %></span>
+       <span><%= link "Edit", to: pmaster_path(@conn, :edit, @pmaster) , class: "btn btn-gold btn-gold" %></span>
+
+</ul>
+
+      </div>
+      </div>
+      </div>
+      <% else %>
+        <h1>Not authorised to access this page</h1>
+      <% end%>

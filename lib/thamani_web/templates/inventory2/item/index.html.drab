@@ -1,0 +1,325 @@
+
+<%= if @current_user.id == @user.id do %>
+<div class="row">
+                       <div class="col-md-12">
+
+                         <span>
+                           <!--  modal button-->
+                           <button type="button" class="btn btn-gold" data-toggle="modal" data-target=".bd-example-modal-lg">Add Item</button>
+                         </span>
+
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">Items</h4>
+                                   <p class="category"><%= link "Dashboard", to: manufacturer_dashboard_path(@conn, :index) %>/Items</p>
+
+                               </div>
+
+                               <div class="card-content table-responsive">
+                                 <div id="toolbar" style="margin-top: -16px;">
+                                <select class="form-control">
+                                  <option value="">Export Current page</option>
+                                  <option value="all">Export All</option>
+                                  <option value="selected">Export Selected</option>
+                                </select>
+                              </div>
+   <table class="table" id ="fresh-table" data-toggle="table" data-toolbar="#toolbar" data-search="true"  data-pagination="true" data-show-print="true" data-show-export="true"   data-export-options='{"fileName": "reports"}'>
+  <thead class="text-info">
+    <tr>
+      <th data-field="state" data-checkbox="true"></th>
+        <th data-field="item" data-sortable="true">Item</th>
+      <th data-field="gtin" data-sortable="true">GTIN</th>
+      <th data-field="price" data-sortable="true">Ex-Factory Price</th>
+      <th data-field="weight" data-sortable="true">Weight</th>
+      <th data-field="weight2" data-sortable="true">UOM</th>
+      <th data-field="length" data-sortable="true">Min Quantity</th>
+      <th data-field="width" data-sortable="true">Type of unit</th>
+      <th data-field="category" data-sortable="true">Category</th>
+      <th class="text-center">Actions</th>
+
+
+    </tr>
+  </thead>
+  <tbody >
+<%= for item <- @items do %>
+  <tr>
+<input name="slug" id="slug" type = "hidden" class="form-control select-with-transition"  value=<%= @current_user.slug %> />
+
+      <td></td>
+      <td><%=item.name%></td>
+      <td><%=item.gtin%></td>
+      <td><%=item.price%></td>
+      <td><%=item.weight%> </td>
+      <td><%=item.weight2%></td>
+      <td><%=item.min_quantity%></td>
+      <td><%=item.quantity%></td>
+      <td><%=item.pmaster.names%></td>
+
+
+      <td class="text-right">
+        <span  rel="tooltip" title="View Task" class="btn btn-info btn-simple ">
+            <span ><%= link "",  to: item_path(@conn, :show, item), class: "fa fa-search-plus" ,style: "color:#00bcd4 !important" %></span>
+        </span>
+
+         <span  rel="tooltip" title="Edit Task" class="btn btn-primary btn-simple ">
+            <span ><%= link "", to: item_path(@conn, :edit,item), class: "fa fa-pencil" ,style: "color:#66bb6a !important" %></span>
+        </span>
+        <span  rel="tooltip" title="Delete Task" class="btn btn-danger btn-simple ">
+            <span><%= link "",to: item_path(@conn, :delete, item), method: :delete, data: [confirm: "Are you sure?"],  class: "fa fa-close", style: "color:#f44336 !important" %></span>
+       </span>
+
+
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+<% else %>
+<h1>Not authorised to view other Items apart from yours</h1>
+<% end %>
+
+  <!-- Large modal -->
+
+
+  <div class="modal fade bd-example-modal-lg" tabindex="1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="exampleModalLabel">Add Items</h4>
+        <h5 class="category"><strong style="color:brown;">1.</strong> Before filling in the form kindly enter your GTIN (Global Trade item Number) in the look up form to get already exixtsing details in our global database </h5>
+        <h5 class="category"><strong style="color:brown;">2.</strong> If no data exists then enter a proper GTIN or contact us for more details</h5>
+	 <h5 class="category"> <strong style="color:brown;">3. Highlighted </strong> fileds must be filled in </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+          <p class="message  <%= @message_class %>" role="alert"><%= @long_process_button_text %></p>
+	 <p class="message  <%= @alert_class %>" role="alert"><%= @item_text %></p>
+      </div>
+
+      <div class="container-fluid">
+        <div class="row">
+	  <form >
+          <div class="col-md-2">
+
+           </div>
+
+              <div class="col-md-3">
+                   <input name="gtin" class="form-control select-with-transition" value="<%= @text %>" placeholder="Enter a GTIN" >
+
+               </div>
+               <div class="col-md-3">
+                     <input name="mo" class="form-control select-with-transition" value="<%= @text2 %>" placeholder="Enter membership number">
+              </div>
+               <div class="col-md-2">
+                    <button style="margin-top:30px" drab-click="replace_list">Look Up</button>
+
+                </div>
+             <div class="col-md-1">
+                  <div class="loader <%= @loader_class %>"></div>
+              </div>
+
+                  <div class="col-md-6">
+                    <div class="form-group label-floating">
+                      <label class= "control-label"><strong style="color:brown;"> Name of item * </strong></label>
+                         <input name="name" class="form-control select-with-transition"  value=" <%= @users %>"  />
+                         <input name="current_user" id="current_user" type = "hidden" class="form-control select-with-transition"  value=<%= @current_user.id %> />
+
+                    </div>
+
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group label-floating">
+                            <label class= "control-label"><strong style="color:brown;">GTIN *</strong> </label>
+                           <input name="code" class="form-control select-with-transition"  value="<%= @gtin %>" disabled />
+                            <p class="message  <%= @alert_class %>" role="alert"><%= @code_text %></p>
+                      </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="form-group label-floating">
+                          <label class= "control-label"> <strong style="color:brown;">Description *</strong></label>
+                           <input name="text" class="form-control select-with-transition"  value="<%= @description %>" />
+
+                        </div>
+                        </div>
+
+                        <div class="col-md-6">
+                          <div class="form-group label-floating">
+                            <label class= "control-label"> <strong style="color:brown;">Category *</strong></label>
+                                <select name="category" class="form-control" id="sel2">
+                                <%= for cat <- @cat do %>
+                                  <option value = "<%= cat.id %>"><%= cat.names %> </option>
+                                  <% end %>
+
+                                </select>
+                          </div>
+                          </div>
+
+                        <div class="col-md-6">
+                          <div class="form-group label-floating" data-trigger="spinner" >
+                            <label class= "control-label"> <strong style="color:brown;">Weight *</strong></label>
+  				 <input name="weight" type="text" class="form-control" value="1" data-rule="currency" required >
+			       <button type="button" data-spin="up">+</button>
+                             <button type="button" data-spin="down">-</button>
+                               <p class="message  <%= @alert_class %>" role="alert"><%= @weight_text %></p>
+                          </div>
+                          </div>
+
+
+
+                          <div class="col-md-6">
+                            <div class="form-group label-floating">
+                              <label class= "control-label"> <strong style="color:brown;">Unit of measure *</strong></label>
+                                  <select name="weight2" class="form-control" id="sel1">
+                                    <option>Tonnes</option>
+                                    <option>Kilograms</option>
+                                    <option>Grams</option>
+                                    <option>Litres</option>
+                                    <option>MIllilitres</option>
+                                    <option>Litres</option>
+                                  </select>
+                            </div>
+                            </div>
+
+                              <div class="col-md-12">
+                            <div class="col-md-3">
+                            <div class="form-group label-floating" data-trigger="spinner">
+                              <label class= "control-label"> <strong style="color:brown;">Min Quantity Units *</strong> </label>
+                               <input name="min_quantity" type="text" class="form-control" value="1" data-rule="quantity" required >
+                               <button type="button" data-spin="up">+</button>
+                             <button type="button" data-spin="down">-</button>
+                                <p class="message  <%= @alert_class %>" role="alert"><%= @quantity_text %></p>
+                            </div>
+                            </div>
+                              <div class="col-md-3">
+                            <div class="form-group label-floating">
+                              <label class= "control-label"> <strong style="color:brown;">Type of unit *</strong> </label>
+                                  <select name="quantity" class="form-control" id="sel1">
+                                    <option>Carton/box</option>
+                                    <option>Case</option>
+                                    <option>Tray</option>
+                                    <option>Single Unit</option>
+                                    <option>Crate</option>
+				    <option>Bale</option>
+				    <option>Bale</option>
+				    <option>Packet</option>
+				    <option>Jar</option>
+                                  </select>
+                            </div>
+                            </div>
+			      <div class="col-md-5">
+                            <div class="form-group label-floating" data-trigger="spinner">
+                              <label class= "control-label"> <strong style="color:brown;">Place Quantity Units in carton/box/tray/crate/case *</strong> </label>
+                               <input name="quantity_unit" type="text" class="form-control" value="1" data-rule="quantity" required >
+                               <button type="button" data-spin="up">+</button>
+                             <button type="button" data-spin="down">-</button>
+                                <p class="message  <%= @alert_class %>" role="alert"><%= @quantity_unit_text %></p>
+                            </div>
+                            </div>
+                            </div>
+
+                            <div class="col-md-6">
+                            <div class="form-group label-floating spinner" data-trigger="spinner">
+                              <label class= "control-label"><strong style="color:brown;"> Ex-Factory Price (Ksh) for single unit *</strong> </label>
+                               <input name="price" type="text" class="form-control" value="1" data-rule="currency" required >
+                               <button type="button" data-spin="up">+</button>
+                             <button type="button" data-spin="down">-</button>
+                                <p class="message <%= @alert_class %>" role="alert"><%= @price_text %></p>
+                            </div>
+
+
+                                </div>
+
+                            <div class="col-md-6">
+                              <div class="form-group " style="margin-top: -4px;">
+                                <label class= "control-label"><strong style="color:brown;"> Estimated Delivery time *</strong></label>
+                                 <input name="delivery" class="form-control select-with-transition"  placeholder="i.e 1 day, 1-3 working days, 10-15 days" />
+                                   <p class="message  <%= @alert_class %>" role="alert"><%= @weight_text %></p>
+                              </div>
+                              </div>
+
+
+
+
+
+                              <div class="col-md-12">
+                            <div class="col-md-4">
+                              <div class="form-group label-floating" data-trigger="spinner">
+                                <label class= "control-label"> Width in centimeters</label>
+                                 <input name="width" type="text" class="form-control select-with-transition"   />
+				  <button type="button" data-spin="up">+</button>
+                             <button type="button" data-spin="down">-</button>
+                              </div>
+                              </div>
+
+
+
+                              <div class="col-md-4">
+                                <div class="form-group label-floating" data-trigger="spinner">
+                                  <label class= "control-label"> Length in centimeters </label>
+                                   <input name="length" class="form-control select-with-transition" data-rule="quantity" type="text"  />
+				    <button type="button" data-spin="up">+</button>
+                             <button type="button" data-spin="down">-</button>
+                              </div>
+                              </div>
+
+                              <div class="col-md-4">
+                              <div class="form-group label-floating" data-trigger="spinner">
+                                <label class= "control-label">Height in centimeters</label>
+                                 <input name="height" class="form-control select-with-transition" data-rule="quantity" type="text"  />
+			     <button type="button" data-spin="up">+</button>
+                             <button type="button" data-spin="down">-</button>
+                              </div>
+                              </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                  <div class="form-group label-floating">
+                                  <label class= "control-label"> Shipping Code </label>
+                                  <input name="scode" class="form-control select-with-transition" required = "required" />
+
+                                    </div>
+
+                                </div>
+
+
+                              <div class="col-md-6">
+                              <div class="form-group label-floating">
+                                <label class= "control-label"> <strong style="color:brown;">Active</strong> </label>
+
+                                 <select name="active" class="form-control">
+                                   <option>true</option>
+                                   <option>false</option>
+
+                                 </select>
+
+                              </div>
+                              </div>
+
+
+
+
+
+              <div class="col-md-10">
+                <div class="form-group">
+                  <%= submit "Submit", class: "btn btn-gold", "drab-click": "add_items" %>
+                    <%= link "Close",  class: "btn btn-danger", to: item_path(@conn, :index) %>
+                    <p class="message  <%= @message_class %>" role="alert"><%= @long_process_button_text %></p>
+                </div>
+              </div>
+              <div class="col-md-1">
+                   <div class="loader2 <%= @loader_class %>"></div>
+               </div>
+</form>
+        </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>

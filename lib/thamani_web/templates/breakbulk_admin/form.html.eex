@@ -1,0 +1,65 @@
+
+<%= form_for @changeset, @action, [multipart: true] , fn f -> %>
+  <%= if @changeset.action do %>
+    <div class="alert alert-danger">
+      <p>Oops, something went wrong! Please check the errors below.</p>
+    </div>
+  <% end %>
+
+<div class="col-md-12" style= "margin-bottom: -75px;margin-top: -40px;">
+  <div class="col-md-5">
+  <div class="form-group ">
+    <h4 style="text-align: center;" class= "btn btn-gold btn-gold">Choose Shipping Code</h4>
+
+  </div>
+ </div>
+
+ <div class="col-md-1">
+ </div>
+
+ <div class="col-md-5">
+ <div class="form-group ">
+
+   <h4 style="text-align: center;"  class= "btn btn-gold btn-gold">Enter corresponding quantity</h4>
+ </div>
+</div>
+</div>
+<div class="col-md-12">
+  <div class="col-md-5">
+      <div class="form-group label-floating">
+      <%= array_select f, :scode , @conn %>
+
+      <%= array_select_add_button f, :scode , @conn%>
+
+    </div>
+      <%= error_tag f, :scode %>
+  </div>
+
+  <div class="col-md-1">
+
+</div>
+    <div class="col-md-5">
+        <div class="form-group label-floating">
+        <%= array_input f, :quantity %>
+
+        <%= array_add_button f, :quantity %>
+
+      </div>
+        <%= error_tag f, :quantity %>
+ </div>
+  <div class="col-md-10">
+    <div class="form-group label-floating">
+
+    <%= label f, :active, class: "control-label" %>
+    <%= checkbox f, :active, class: "checkbox-material" %>
+      </div>
+    <%= error_tag f, :active %>
+  </div>
+</div>
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= submit "Submit", class: "btn btn-gold" %>
+  </div>
+    </div>
+
+<% end %>

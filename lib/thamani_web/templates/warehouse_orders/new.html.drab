@@ -1,0 +1,231 @@
+<%
+ alias Thamani.Warehouse_orders
+
+ get_timestamp =
+ Timex.local()
+   |> Timex.format!("{YYYY}{0M}{0D}{h24}")
+
+ %>
+<span class="col-md-10" style="margin-left: -25px;"><%= link "Back", to: warehouse_orders_path(@conn, :index),class: "btn btn-gold btn-gold"  %></span>
+<div class="card" style="margin:25px -10px">
+    <div class="card-header" data-background-color="gold">
+        <h4 class="title">Warehouse Orders </h4>
+        <p class="category"><%= link "Dashboard", to: warehouse_orders_path(@conn, :index) %>/ Orders/Add</p>
+
+    </div>
+    <div class="container-fluid">
+      <div class="row">
+        <form>
+		<p><input name="order_id" id="order_id" type = "hidden"  disabled  value=TOW_<%=get_timestamp%><%= String.upcase(SecureRandom.hex(3))%>_<%= String.upcase(String.slice(@current_user.slug, 0..5))%> /></p>
+
+                    <div class="col-md-12">
+                    <div class="col-md-2">
+
+                     </div>
+
+
+                        <div class="col-md-6">
+                            <div class="form-group label-floating">
+                              <label class= "control-label">Category</label>
+                                  <select name="category" class= "form-control" style="width:100%" id="sel2">
+                                  <%= for cat <- @cat do %>
+                                    <option id = "<%= cat.id %>"value = "<%= cat.id %>"><%= cat.name %> </option>
+                                    <% end %>
+
+                                  </select>
+                            </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                 <button style="margin-top:30px" drab-click="return_company">Look Up</button>
+
+                             </div>
+                          <div class="col-md-1">
+                               <div class="loader <%= @loader_class %>"></div>
+                           </div>
+                           </div>
+
+                           <div class="col-md-12">
+                           <div class="col-md-2">
+
+                            </div>
+
+
+                               <div class="col-md-6">
+                                   <div class="form-group" style="margin-top: 0px;">
+                                     <label class= "control-label">Company</label>
+                                         <select name="warehouse_id" class= "form-control" style="width:100%" id="sel5">
+                                         <%= for company <- @list_company do %>
+                                           <option id = "<%= company %>"value = "<%= company %>"><%= Warehouse_orders.get_warehouse_name(company) %> </option>
+                                           <% end %>
+
+                                         </select>
+                                   </div>
+                                   </div>
+
+                                   <div class="col-md-2">
+                                        <button style="margin-top:30px" drab-click="return_item">Look Up</button>
+
+                                    </div>
+                                 <div class="col-md-1">
+                                      <div class="loader <%= @loader_class2 %>"></div>
+                                  </div>
+                                  </div>
+
+
+                             <div class="col-md-12">
+
+                             <div class="col-md-2">
+
+                              </div>
+                              <div class="col-md-6">
+                                  <div class="form-group" style="margin-top: 0px;">
+
+                                    <label class= "control-label">Brand Item /Unit of measure/ GTIN</label>
+                                    <select name="item" class= "form-control" style="width:100%" id ="sel">
+                                      <%= for list <- @list_item do %>
+                                      <option id="<%= list %>" value = "<%= list  %>" ><%= Warehouse_orders.get_sku_name(list)%>/ <%= Warehouse_orders.get_sku_weight(list) %> <%= Warehouse_orders.get_sku_weight2(list) %>/ <%= Warehouse_orders.get_sku_gtin(list) %> </option>
+
+                                      <% end %>
+                                    </select>
+                                      <p class="message  <%= @alert_class %>" role="alert"><%= @item_text %></p>
+
+                              </div>
+                              </div>
+
+
+                              <div class="col-md-2">
+                                   <button style="margin-top:30px" drab-click="return_uom">Look Up</button>
+
+                               </div>
+                            <div class="col-md-1">
+                                 <div class="loader <%= @loader_class3 %>"></div>
+                             </div>
+
+                             </div>
+
+                               <div class="col-md-12" style="<%= @field_class2 %>">
+
+                                   <div class="col-md-2">
+
+                                   </div>
+
+
+                                   <div class="col-md-3">
+                                    <div class="form-group label-floating" >
+                                      <label class= "control-label"> Estimated date of delivery </label>
+
+                                      <input name="delivery" id="delivery"  class="form-control select-with-transition"  value="<%= @delivery %> " disabled="disabled"/>
+
+                                      </select>
+                                    </div>
+                                    </div>
+				
+				  <div class="col-md-3">
+                                     <div class="form-group label-floating">
+                                    <label class= "control-label">Price </label>
+                                     <p><%= @price %></p>
+
+                                   </div>
+                                    </div>
+
+				  <div class="col-md-3">
+                                     <div class="form-group label-floating">
+                                    <label class= "control-label">Description </label>
+                                     <p><%= @description %></p>
+                                   </div>
+                                    </div>
+
+                                 </div>
+
+
+                                 <div class="col-md-12" style="<%= @field_class2 %>">
+                                      <div class="col-md-2">
+
+                                      </div>
+
+                                     <div class="col-md-5">
+                                      <div class="form-group label-floating">
+                                     <label class= "control-label">Warehouse </label>
+                                      <p><%= @company %></p>
+		          		 <p>Phone number: <%= @phone %></p>
+                                    </div>
+                                     </div>
+
+                                     <input type = "hidden" name="item_id" id="item_id" value="<%= @item_id %>"  class="form-control select-with-transition"  />
+
+                                     <input type = "hidden" name="warehouse" id="warehouse" value="<%= @id %>"  class="form-control select-with-transition"  />
+  			 </div>
+	       		 <div class="col-md-12" style="<%= @field_class2 %>">
+				 <div class="col-md-2">
+
+                                      </div>
+				 <div class="col-md-4">
+                                      <div class="form-group label-floating">
+                                     <label class= "control-label">Image </label>
+					 <a href="<%= Thamani.ImageUploader.url({@image, @image})%>" data-lightbox="image-1" ><img src="<%= Thamani.ImageUploader.url({@image, @image})%>"  style="width:250px;padding:10px;border: 3px dashed #ddd;box-shadow: 0 0 0 3px #fff, 0 0 0 5px #ddd, 0 0 0 10px #fff, 0 0 2px 10px #eee;"></a>
+                                    </div>
+                                     </div>
+				</div>
+                                   <div class="col-md-12" style="<%= @field_class2 %>">
+                                        <div class="col-md-2">
+
+                                        </div>
+                                        <div class="col-md-3">
+                                         <div class="form-group label-floating">
+                                        <label class= "control-label">Enter Order Quantity </label>
+                                        <input type="number" name="quantity" id="quantity"  class="form-control select-with-transition" />
+                                          <p class="message  <%= @alert_class %>" role="alert"><%= @quantity_text %></p>
+                                       </div>
+                                        </div>
+                                   <div class="col-md-5">
+                                     <div class="form-group" style="margin-top:-4px">
+                                       <label class= "control-label">Select City</label>
+                                           <select name="city" class="form-control" id="sel4">
+                                           <%= for city <- @list_city do %>
+                                           <option value = "<%= city.id %>"><%= city.city %> (<%= city.county %> county)</option>
+                                           <% end %>
+                                           </select>
+                                     </div>
+                                     </div>
+
+                                     </div>
+
+                                     <div class="col-md-12" style="<%= @field_class2 %>">
+                                          <div class="col-md-2">
+                                          <input name="current_user" id="current_user" type = "hidden" class="form-control select-with-transition"  value=<%= @current_user.id %> />
+
+                                                </div>
+
+                                        <div class="col-md-6">
+                                        <div class="form-group label-floating">
+                                          <label class= "control-label">Extra Description </label>
+
+                                          <textarea name="description" id="description"   class="form-control select-with-transition" ></textarea>
+
+                                        </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-12">
+
+                                    <div class="col-md-2">
+
+                                    </div>
+                                      <div class="col-md-8">
+                                        <div class="form-group">
+                                          <%= submit "Submit", class: "btn btn-gold", "drab-click": "add_order" %>
+                                            <%= link "Close",  class: "btn btn-danger", to: warehouse_orders_path(@conn, :index) %>
+                                            <p class="message  <%= @message_class %>" role="alert"><%= @long_process_button_text %></p>
+                                        </div>
+                                      </div>
+                                      <div class="col-md-1">
+                                           <div class="loader <%= @loader_class4 %>"></div>
+                                       </div>
+
+                                    </div>
+                               </form>
+
+      </div>
+      </div>
+</div>

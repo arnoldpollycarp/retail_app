@@ -1,0 +1,331 @@
+#!/usr/bin/env bash
+
+# If working directory isn't clean, all changes will be lost if this strategy
+# runs all the way to the end. I would be very annoyed if that happened.
+#
+gitstatus() {
+  status "Checking local repository"
+
+  if [ $(git status | grep -c "working directory clean") = 0 ]
+  then
+    error "
+Your working directory is not clean.
+Either stash or commit before re-running this command.
+Stopping so that uncommitted changes won't be lost.\n"
+  fi
+}
+
+nothing_to_do() {
+  status "Everything up-to-date"
+}
+
+# authorizes the hosts on the local machine
+# to which an ssh connection will be opened
+# by adding them to the ~/.ssh/known_hosts
+# file
+authorize_hosts() {
+  if [ -n "$HOSTS" ]
+  then
+    status "Authorizing hosts"
+
+    if [[ ! -e ~/.ssh/known_hosts ]]
+    then
+      touch ~/.ssh/known_hosts
+    fi
+
+    for _host in $HOSTS
+    do
+      if [[ $(ssh-keygen -F $_host | grep -c found) = 0 ]]
+      then
+        [[ "$VERBOSE" = "true" ]] && echo "Authorizing $_host on localhost:"
+        [[ "$VERBOSE" = "true" ]] && ssh-keyscan "$_host" 2>/dev/null
+        ssh-keyscan "$_host" 2>/dev/null >> ~/.ssh/known_hosts
+      fi
+    done
+  fi
+}
+
+# authorizes the deploy hosts on the remote release store
+# host which will use ssh to copy the releases to the
+# deploy hosts. deploy hosts will be added to the
+# ~/.ssh/known_hosts file on the release store host
+authorize_deploy_hosts_on_release_store() {
+  __detect_release_store_type
+  if [[ "$AUTHORIZED_BUILD_HOST" != "true" && "$RELEASE_STORE_TYPE" = "remote" ]]; then
+    status "Authorizing deploy hosts on release store"
+    local _release_store_host=${RELEASE_STORE%:*}
+    __sync_remote "
+      [ -f ~/.profile ] && source ~/.profile
+      set -e
+      for _host in $HOSTS_APP_USER
+      do
+        _host=\${_host%:*}
+        _host=\${_host#*@}
+        if [[ \$(ssh-keygen -F \$_host | grep -c found) = 0 ]]
+        then
+          echo \"Authorizing \$_host on $_release_store_host:\" $SILENCE
+          ssh-keyscan \"\$_host\" 2>/dev/null $SILENCE
+          ssh-keyscan \"\$_host\" 2>/dev/null >> ~/.ssh/known_hosts
+        fi
+      done
+    " "$_release_store_host"
+
+    AUTHORIZED_BUILD_HOST="true"
+  fi
+}
+
+# authorizes the release hosts on the build hosts
+# which will use ssh to copy the releases to the
+# release store host. release store hosts will be added to the
+# ~/.ssh/known_hosts file on the build host
+authorize_release_store_on_build_host() {
+  __detect_release_store_type
+  if [[ "$AUTHORIZED_RELEASE_STORE_HOST_ON_BUILD_HOST" != "true" && "$RELEASE_STORE_TYPE" = "remote" ]]; then
+    status "Authorizing release store on build host"
+    local _release_store_host=${RELEASE_STORE%:*}
+    _release_store_host=${_release_store_host#*@}
+    __sync_remote "
+      [ -f ~/.profile ] && source ~/.profile
+      set -e
+      if [[ \$(ssh-keygen -F \"$_release_store_host\" | grep -c found) = 0 ]]; then
+        echo \"Authorizing $_release_store_host on $HOSTS_APP_USER:\" $SILENCE
+        ssh-keyscan \"$_release_store_host\" 2>/dev/null $SILENCE
+        ssh-keyscan \"$_release_store_host\" 2>/dev/null >> ~/.ssh/known_hosts
+      fi
+    "
+    AUTHORIZED_RELEASE_STORE_HOST_ON_BUILD_HOST="true"
+  fi
+}
+
+# authorizes the release store host on localhost
+# which means that it is added to the local
+# ~/.ssh/known_hosts file
+authorize_release_store_host() {
+  __detect_release_store_type
+  if [[ "$AUTHORIZED_RELEASE_STORE_HOST" != "true" && "$RELEASE_STORE_TYPE" = "remote" ]]; then
+    status "Authorizing release store host"
+    local _release_store_host=${RELEASE_STORE%:*}
+    _release_store_host=${_release_store_host#*@}
+    if [[ $(ssh-keygen -F $_release_store_host | grep -c found) = 0 ]]; then
+      [[ "$VERBOSE" = "true" ]] && echo "Authorizing $_release_store_host on localhost:"
+      [[ "$VERBOSE" = "true" ]] && ssh-keyscan "$_release_store_host" 2>/dev/null
+      ssh-keyscan "$_release_store_host" 2>/dev/null >> ~/.ssh/known_hosts
+    fi
+    AUTHORIZED_RELEASE_STORE_HOST="true"
+  fi
+}
+
+init_app_remotely() {
+  __exec_if_defined "pre_init_app_remotely"
+
+  local git_remote="$(git remote -v)"
+
+  status "Ensuring hosts are ready to accept git pushes"
+
+  for _host in $HOSTS_APP_USER
+  do
+    local _remote_url="$_host:$DELIVER_TO"
+    if [[ ! "$git_remote" =~ "$_host $_remote_url" ]]; then
+      [[ "$git_remote" =~ "$_host" ]] && git remote rm "$_host"
+      git remote add "$_host" "$_remote_url"
+    fi
+  done
+  __sync_remote "
+    current_shell=\"\$0\" || :
+    [ -z \"\$current_shell\" ] && current_shell=\"\$SHELL\"
+    case \"\$current_shell\" in
+      (*bash*) echo 'bash is installed and the default shell' $SILENCE ;;
+      (*zsh*)  echo  'zsh is installed and the default shell' $SILENCE ;;
+      (*)
+       echo
+       echo \"${txtred}You are using an unsupported shell: '\$current_shell'\"
+       echo \"edeliver requires either bash or zsh to be installed\"
+       echo \"and the default shell for the build user '$BUILD_USER'\"
+       echo \"on your build host: '$BUILD_HOST'.${txtrst}\"
+       exit 1
+       ;;
+    esac
+    set -e
+    if [ ! -d $DELIVER_TO ]
+    then
+      mkdir -p $DELIVER_TO
+      cd $DELIVER_TO
+      git init $SILENCE
+      git config receive.denyCurrentBranch ignore
+    else
+      cd $DELIVER_TO
+      git config receive.denyCurrentBranch ignore
+    fi
+  "
+  __exec_if_defined "post_init_app_remotely"
+}
+
+git_push() {
+  __exec_if_defined "pre_git_push"
+
+  local _hosts="${1:-"$HOSTS_APP_USER"}"
+
+  status "Pushing new commits with git to: $_hosts"
+
+  __sync_local "git push --tags $GIT_PUSH $_host $REFSPEC"
+
+  __exec_if_defined "post_git_push"
+}
+
+git_reset_remote() {
+  status "Resetting remote hosts to $REVISION"
+  __sync_remote "
+    set -e
+    cd $DELIVER_TO
+    git reset --hard $REVISION
+  "
+}
+
+git_submodules() {
+  __exec_if_defined "pre_git_submodules"
+
+  status "Updating git submodules"
+  __sync_remote "
+    set -e
+    cd $DELIVER_TO
+    git submodule init
+    git submodule sync
+    if [ -e .gitmodules ]
+    then
+      if [ ! -e ~/.ssh/known_hosts ]
+      then
+        touch ~/.ssh/known_hosts
+      fi
+      cat .gitmodules | awk -F '://|@|:|/' '
+      /url =/ {
+        command=\"test \$(ssh-keygen -F \" \$2 \" | grep -c found) = 0 && ssh-keyscan \" \$2 \" >> ~/.ssh/known_hosts\"
+        system(command)
+        close(command)
+      }'
+      git submodule foreach 'git reset --hard'
+      git submodule update
+    fi
+  "
+
+  __exec_if_defined "post_git_submodules"
+}
+
+rvmrc_trust() {
+  if [ -e "$ORIGIN_DIR/.rvmrc" ]
+  then
+    __exec_if_defined "pre_rvmrc_trust"
+
+    status "Trusting rvmrc in $DELIVER_TO"
+    __remote "
+      source ~/.profile
+      set -e
+      rvm rvmrc trust $DELIVER_TO $SILENCE
+    "
+
+    __exec_if_defined "post_rvmrc_trust"
+  fi
+}
+
+
+bundle_install() {
+  __exec_if_defined "pre_bundle_install"
+
+  status "Installing gems with bundler"
+  __remote "
+    source ~/.profile
+    set -e
+    cd $DELIVER_TO $SILENCE
+    if [[ \$APP_ENV = production ]] || [[ \$RACK_ENV = production ]] || [[ \$RAILS_ENV = production ]]
+    then
+      bundle install --local --deployment --without development test $SILENCE
+    else
+      bundle install --local --deployment $SILENCE
+    fi
+  "
+
+  __exec_if_defined "post_bundle_install"
+}
+
+npm_install() {
+  __exec_if_defined "pre_npm_install"
+
+  status "Installing modules with npm"
+  __remote "
+    source ~/.profile
+    set -e
+    cd $DELIVER_TO $SILENCE
+    npm install $SILENCE
+  "
+
+  __exec_if_defined "post_npm_install"
+}
+
+foreman_export() {
+  __exec_if_defined "pre_foreman_export"
+
+  status "Exporting services to $SUPERVISOR"
+  local _foreman="foreman export $SUPERVISOR tmp --user $APP_USER --app $APP"
+  test -n "$PORT" && _foreman="$_foreman --port $PORT"
+  test -n "$FOREMAN_EXTRAS" && _foreman="$_foreman $FOREMAN_EXTRAS"
+
+  __remote "
+    source ~/.profile
+    set -e
+    cd $DELIVER_TO $SILENCE
+    $_foreman $SILENCE
+  "
+
+  __exec_if_defined "post_foreman_export"
+}
+
+launch() {
+  __exec_if_defined "pre_launch"
+
+  status "Launching app with $SUPERVISOR"
+  # This command, because of the sudo dependency, will use your local $USER.
+  # You should be able to log in with $USER to the remote servers, and you
+  # should be able to run sudo without needing a password.
+  #
+  # I will be tackling this shortly, you really shouldn't neeed sudo
+  # privileges to deliver an app. What was I thinking?!?
+  if [[ "$SUPERVISOR" == "bluepill" ]]; then
+    __remote "
+      set -e
+      sudo bluepill ${APP} status | grep up && sudo bluepill ${APP} stop $SILENCE
+      sudo bluepill load $DELIVER_TO/tmp/${APP}.pill $SILENCE
+      " "$HOSTS"
+  else
+    __remote "
+      set -e
+      if [[ \$(sudo initctl list | awk '/^'$APP' / { print \$0 }') =~ 'run' ]]; then
+        sudo stop $APP $SILENCE
+      fi
+      sudo rm -f /etc/init/$APP[.-]*
+      sudo mv -f $DELIVER_TO/tmp/*conf /etc/init/
+      sudo start $APP $SILENCE
+    " "$HOSTS"
+  fi
+
+  __exec_if_defined "post_launch"
+}
+
+# Aliased, no longer bound to upstart
+#
+upstart() {
+  __exec_if_defined "pre_upstart"
+  launch
+  __exec_if_defined "post_upstart"
+}
+
+permissions() {
+  __exec_if_defined "pre_permissions"
+
+  status "Setting file permissions"
+  __remote "
+    [ -n \"$OWNER\" ] && sudo chown -fR $OWNER.$GROUP $DELIVER_TO
+    [ -n \"$PERMISSIONS\" ] && sudo chmod -fR $PERMISSIONS $DELIVER_TO
+    exit 0
+  " "$HOSTS"
+
+  __exec_if_defined "post_permissions"
+}

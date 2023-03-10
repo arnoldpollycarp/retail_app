@@ -1,0 +1,55 @@
+
+<%= form_for @changeset, @action, [multipart: true] , fn f -> %>
+  <%= if @changeset.action do %>
+    <div class="alert alert-danger">
+      <p>Oops, something went wrong! Please check the errors below.</p>
+    </div>
+  <% end %>
+
+  <div class="col-md-6">
+  <div class="form-group label-floating">
+    <%= label f, :"Inventory", class: "control-label" %>
+    <%= text_input f, :item, disabled: "disabled", value: @received.sku.name, class: "form-control" %>    </div>
+    <%= error_tag f, :item %>
+  </div>
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= label f, :Quantity, class: "control-label" %>
+    <%= text_input f, :quantity, disabled: "disabled",class: "form-control" %>
+      </div>
+
+    <%= error_tag f, :price %>
+  </div>
+
+  <div class="col-md-10">
+  <div class="form-group label-floating">
+    <%= label f, :"Order from", class: "control-label" %>
+        <%= text_input f, :type, disabled: "disabled",class: "form-control" %>
+      </div>
+    <%= error_tag f, :type %>
+  </div>
+
+  <div class="col-md-10">
+    <div class="form-group label-floating">
+    <%= label f, :description, class: "control-label" %>
+    <%= textarea f, :description, disabled: "disabled",class: "form-control" %>
+      </div>
+    <%= error_tag f, :description %>
+  </div>
+
+  <div class="col-md-10">
+    <div class="form-group label-floating">
+
+    <%= label f, :"Confirm Re-order", class: "control-label" %>
+    <%= checkbox f, :active, class: "checkbox-material" %>
+      </div>
+    <%= error_tag f, :active %>
+  </div>
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= submit "Submit", class: "btn btn-gold" %>
+  </div>
+    </div>
+<% end %>

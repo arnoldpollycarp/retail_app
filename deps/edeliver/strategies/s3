@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+# For pushing content to an S3 bucket, uses s3cmd utility
+#
+# ASSETS_DIR (defaults to ./)
+#   the files that will be uploaded to S3, defaults to the current folder
+# GENERATE_CMD
+#   useful if you need to run a generator before delivering to S3
+# S3_BUCKET
+#   self-explanatory
+# S3_BUCKET_PREFIX
+#   sync to folder in bucket
+# S3CMD_OPTIONS (defaults to sync)
+#   options that will be passed to the s3cmd command
+#   For example, "-c .deliver/s3cfg -P --delete -removed sync"
+#
+
+REQUIRED_CONFIGS+=("S3_BUCKET")
+OPTIONAL_CONFIGS+=("ASSETS_DIR" "GENERATE_CMD" "S3_BUCKET_PREFIX" "S3CMD_OPTIONS")
+
+if [ -z "$ASSETS_DIR" ]
+then
+  ASSETS_DIR="./"
+fi
+
+S3CMD=$(which s3cmd)
+if [ $? != 0 ]
+then
+  error_message "You must have s3cmd installed to use the s3 strategy."
+
+  echo -e "
+On Mac OS X:
+  brew install s3cmd
+
+On Ubuntu:
+  apt-get install s3cmd
+"
+
+  exit 1
+fi
+
+if [ -z "$S3CMD_OPTIONS" ]
+then
+  S3CMD_OPTIONS="sync"
+fi
+
+run() {
+  if [ ! -z "$GENERATE_CMD" ]
+  then
+    __exec "$GENERATE_CMD"
+  fi
+
+  __exec "$S3CMD $S3CMD_OPTIONS $ASSETS_DIR s3://$S3_BUCKET$S3_BUCKET_PREFIX"
+}

@@ -1,0 +1,52 @@
+
+
+<div class="row">
+                 <%= if @current_user.id == @user.id do %>         <div class="col-md-12">
+
+
+                           <span><%= link "Back", to: user_debit_path(@conn, :index, @current_user), class: "btn btn-gold btn-gold" %></span>
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">Sales</h4>
+                                   <p class="category"><%= link "Dashboard", to: retail_dashboard_path(@conn, :index) %>/ debit/ Show </p>
+
+                               </div>
+
+                               <table class="table" style="margin-left: 15px;">
+                                    <tbody>
+
+                                      <tr>
+                                        <td>SKU GTIN:
+                                        <%= @debit.sku.gtin %></td>
+                                      </tr>
+
+                                    <tr>
+                                      <td>Name of item:
+                                      <%= @debit.sku.name %></td>
+                                    </tr>
+
+                                    <tr>
+                                      <td>Quantity:
+                                      <%= @debit.quantity %></td>
+                                    </tr>
+
+                                    <tr>
+                                      <td>Price:
+                                      <%= @debit.retailer %></td>
+                                    </tr>
+
+                                  </tbody>
+                              </table>
+                            </div>
+                          </div>
+
+
+<ul>
+
+<span><%= link "Edit", to: user_debit_path(@conn, :edit, @current_user, @debit) , class: "btn btn-gold btn-gold" %></span>
+
+</ul>
+<% else %>
+    <h1>Not authorised to access this page</h1>
+<% end %>
+</div>

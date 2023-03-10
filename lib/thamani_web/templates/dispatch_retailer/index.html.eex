@@ -1,0 +1,90 @@
+<%= if @current_user.id == @user.id do %>
+
+                                            <div class="row">
+                                                                   <div class="col-md-12">
+                                                                     <span><%= link "Add dispatch", to: dispatch_retailer_path(@conn, :new), class: "btn btn-gold btn-gold" %></span>
+
+                                                                       <div class="card">
+                                                                           <div class="card-header" data-background-color="gold">
+                                                                               <h4 class="title">dispatch to retailer</h4>
+                                                                               <p class="category"><%= link "Dashboard", to: manufacturer_dashboard_path(@conn, :index) %>/dispatches</p>
+
+                                                                           </div>
+
+                                                                           <div class="card-content table-responsive">
+                                                                             <div id="toolbar" style="margin-top: -16px;">
+                                                                            <select class="form-control">
+                                                                              <option value="">Export Current page</option>
+                                                                              <option value="all">Export All</option>
+                                                                              <option value="selected">Export Selected</option>
+                                                                            </select>
+                                                                          </div>
+                                          <table class="table" id ="fresh-table" data-toggle="table" data-toolbar="#toolbar" data-search="true"  data-pagination="true" data-show-print="true" data-show-export="true"   data-export-options='{"fileName": "reports"}'>
+                                              <thead class="text-info">
+                                                <tr>
+      <th data-field="state" data-checkbox="true"></th>
+      <th data-field="scode" data-sortable="true">Shipping</th>
+
+      <th data-field="item" data-sortable="true">Item Name</th>
+      <th data-field="quantity" data-sortable="true">Quantity</th>
+
+      <th data-field="warehouse" data-sortable="true">Dispatch to</th>
+      <th data-field="transporter" data-sortable="true">Transporter</th>
+       <th data-field="price" data-sortable="true">Price</th>
+      <th class="text-center" >Confirmation Status </th>
+      <th class="text-center"> Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for dispatch <- @dispatch do %>
+    <tr>
+      <td></td>
+      <td><%= dispatch.shipping %> </td>
+      <%= if is_nil(dispatch.sku) do %>
+      <td>Deleted</td>
+      <% else %>
+      <td><%= dispatch.sku.name %> </td>
+      <% end %>
+      <td><%= dispatch.quantity %> </td>
+      <%= if is_nil(dispatch.company) do %>
+      <td> N/A</td>
+      <% else %>
+      <td><%= dispatch.company.company %></td>
+      <% end %>
+      <td><%= dispatch.transporter %></td>
+      <td><%= :erlang.float_to_binary(dispatch.total , decimals: 2)  %></td>
+
+      <%= if dispatch.active == "true" do %>
+  <td><p class = "btn btn-success btn-success" >Recieved</p></td>
+    <% else  %>
+    <td><p class = "btn btn-info btn-info" >Pending</p></td>
+    <% end %>
+	</td>
+  <td class="text-right">
+                                                  <span  rel="tooltip" title="View Task" class="btn btn-info btn-simple ">
+                                                      <span ><%= link "",  to: dispatch_retailer_path(@conn, :show, dispatch), class: "fa fa-search-plus" ,style: "color:#00bcd4 !important" %></span>
+                                                  </span>
+
+                                                  <%= if dispatch.active == "true" do %>
+                                                  <span  rel="tooltip" title="Cannot Delete Task" class="btn btn-danger btn-simple ">
+                                                      <span class = "fa fa-ban", style = "color:#f44336 !important" ></span>
+                                                 </span>
+                                                  <% else  %>
+                                                  <span rel="tooltip" title="Delete Task" class="btn btn-danger btn-simple ">
+                                                      <span><%= link "",to: dispatch_retailer_path(@conn, :delete, dispatch), method: :delete, data: [confirm: "Are you sure?"],  class: "fa fa-close", style: "color:#f44336 !important" %></span>
+                                                 </span>
+                                                  <% end  %>
+
+</td>
+
+    </tr>
+<% end %>
+  </tbody>
+</table>
+</div>
+                                                        </div>
+                                                      </div>
+                                                    </div>
+<% else %>
+<h1>Not authorised to view this panel</h1>
+<% end %>

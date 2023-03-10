@@ -1,0 +1,11 @@
+
+<span class="col-md-10" style="margin-left: -25px;"><%= link "Back", to: user_codes_path(@conn, :index, @current_user),class: "btn btn-gold btn-gold"  %></span>
+<div class="card" style="margin:25px -10px">
+    <div class="card-header" data-background-color="gold">
+        <h4 class="title">Codes </h4>
+        <p class="category"><%= link "Dashboard", to: user_path(@conn, :index) %>/Codes/edit</p>
+
+    </div>
+<%= render "form.html", Map.put(assigns, :action, user_codes_path(@conn, :update, @current_user,@codes)) %>
+
+</div>

@@ -1,0 +1,9 @@
+<span class="col-md-10" style="margin-left: -25px;"> <%= link "Back", to: storage_admin_path(@conn, :index),class: "btn btn-gold btn-gold"  %></span>
+
+<div class="card" style="margin:25px -10px">
+    <div class="card-header" data-background-color="gold">
+        <h4 class="title">Storage</h4>
+        <p class="category"><%= link "Dashboard", to: storage_admin_path(@conn, :index) %>/ storage/edit</p>
+
+    </div>
+<%= render "form.html", Map.put(assigns, :action, storage_admin_path(@conn, :update, @storage)) %>

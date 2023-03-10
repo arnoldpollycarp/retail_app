@@ -1,0 +1,259 @@
+
+<div class="row">
+  <div class="col-lg-12 col-md-12">
+        <div class="card">
+            <div class="card-header" data-background-color="gold">
+
+                <h4 class="">Manufacturer Dashboard </h4>
+                <script>
+                    document.write(new Date())
+                </script>
+            </div>
+            <div class="card-content table-responsive">
+
+            </div>
+        </div>
+    </div>
+</div>
+                  <div class="row">
+                       <div class="col-lg-3 col-md-6 col-sm-6">
+                           <div class="card card-stats">
+                               <div class="card-header" data-background-color="orange">
+                                   <i class="fa fa-barcode"></i>
+                               </div>
+                               <div class="card-content">
+                                   <p class="category">Sku Items</p>
+                                  <h3 class="title">5</h3>
+                               </div>
+                               <div class="card-footer">
+                                   <div class="stats">
+
+                                      Quantity Dispatched :  <%= @count_4%>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                       <div class="col-lg-3 col-md-6 col-sm-6">
+                           <div class="card card-stats">
+                               <div class="card-header" data-background-color="red">
+                                   <i class="fa fa-truck"></i>
+                               </div>
+                               <div class="card-content">
+
+                                   <p class="category"> Dispatches</p>
+                                  <h3 class="title"><%= @count_3 %></h3>
+
+
+                               </div>
+                               <div class="card-footer">
+                                   <div class="stats">
+
+
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+
+                       <div class="col-lg-3 col-md-6 col-sm-6">
+                           <div class="card card-stats">
+                               <div class="card-header" data-background-color="blue">
+                                   <i class="fa fa-sitemap"></i>
+                               </div>
+                               <div class="card-content">
+
+                                   <p class="category"> Batches</p>
+                                  <h3 class="title"><%= @count_7 %></h3>
+
+
+                               </div>
+                               <div class="card-footer">
+                                   <div class="stats">
+
+
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+
+                       <div class="col-lg-3 col-md-6 col-sm-6">
+                           <div class="card card-stats">
+                               <div class="card-header" data-background-color="green">
+                                   <i class="fa fa-money"></i>
+                               </div>
+                               <div class="card-content">
+                                   <p class="category">Today's Revenue</p>
+                                 <%= if @count_6 == nil do %>
+                                      <h3 class="title"> 0 </h3>
+                                 <% else %>
+                                    <h3 class="title">
+                                    <input name="current_user" id="current_user" type = "hidden" value= "<%= @current_user.id %> />" />
+
+                                    <%=@count_6%>
+
+                                      </h3>
+                                <% end %>
+                                </div>
+                               <div class="card-footer">
+                                   <div class="stats">
+                                     Payment Due: <%=@count_2  %> 
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+
+                        <div class="col-lg-6 col-md-12">
+                         <div class="card">
+                           <div class="card-header card-header-tabs" data-background-color="red">
+                             <div class="nav-tabs-navigation">
+                               <div class="nav-tabs-wrapper">
+                                 <span class="nav-tabs-title">Last five dispatches:</span>
+                                 <ul class="nav nav-tabs" data-tabs="tabs" style="background:none;">
+                                   <li class="nav-item">
+                                     <a class="nav-link active" href="#one"  data-toggle="tab">
+                                        To Warehouse
+                                       <div class="ripple-container"></div>
+                                     </a>
+                                   </li>
+                                   <li class="nav-item">
+                                     <a class="nav-link" href="#two" data-toggle="tab">
+                                     To Retailer
+                                       <div class="ripple-container"></div>
+                                     </a>
+                                   </li>
+
+                                 </ul>
+                               </div>
+                             </div>
+                           </div>
+                           <div class="card-body">
+                             <div class="tab-content">
+                               <div class="tab-pane active" id="one">
+                               <div class="card-content table-responsive">
+                                   <table class="table table-hover">
+                                       <thead class="text-warning">
+                                         <tr>
+
+                                        <th >item</th>
+                                        <th >Quantity</th>
+                                        <th >Warehouse</th>
+                                        <th class="text-center" >Recieved</th>
+
+                                        </tr>
+                                       </thead>
+                                       <tbody>
+
+                                       <%= for dispatch <- @dispatch do %>
+                                           <tr>
+                                           <%= if is_nil(dispatch.sku) do %>
+                                           <td>Deleted</td>
+                                           <% else %>
+                                           <td><%= dispatch.sku.name %> </td>
+                                           <% end %>
+                                             <td><%= dispatch.quantity %></td>
+                                             <td><%= dispatch.company.company %></td>
+
+
+                                             <%= if dispatch.active == "true" do %>
+                                               <td class ="text-center"><i class="fa fa-check" style= "color:#66bb6a !important"></i></td>
+                                             <% else  %>
+                                             <td class ="text-center" ><i class="fa fa-close" style= "color:#f44336 !important"></i></td>
+                                             <% end %>
+
+                                             </tr>
+                                         <% end %>
+
+                                       </tbody>
+                                   </table>
+                               </div>
+                               </div>
+
+                               <div class="tab-pane" id="two">
+                               <div class="card-content table-responsive">
+                                   <table class="table table-hover">
+                                       <thead class="text-warning">
+                                         <tr>
+
+                                        <th >item</th>
+                                        <th >Quantity</th>
+                                        <th >Retailer</th>
+                                        <th class="text-center" >Recieved</th>
+
+                                        </tr>
+                                       </thead>
+                                       <tbody>
+
+                                       <%= for dispatchr <- @dispatch_retailer do %>
+                                           <tr>
+                                           <%= if is_nil(dispatchr.sku) do %>
+                                           <td>Deleted</td>
+                                           <% else %>
+                                           <td><%= dispatchr.sku.name %> </td>
+                                           <% end %>
+                                             <td><%= dispatchr.quantity %></td>
+                                             <td><%= dispatchr.company.company %></td>
+
+
+                                             <%= if dispatchr.active == "true" do %>
+                                               <td class ="text-center"><i class="fa fa-check" style= "color:#66bb6a !important"></i></td>
+                                             <% else  %>
+                                             <td class ="text-center" ><i class="fa fa-close" style= "color:#f44336 !important"></i></td>
+                                             <% end %>
+
+                                             </tr>
+                                         <% end %>
+
+                                       </tbody>
+                                   </table>
+                               </div>
+                               </div>
+
+                             </div>
+                           </div>
+                         </div>
+                       </div>
+
+                       <div class="col-lg-6 col-md-12">
+                           <div class="card">
+                               <div class="card-header" data-background-color="green">
+                                   <h4 class="title">Sales</h4>
+                                 <p class="" style="margin-bottom: 0px;">Last Five Sales</p>
+                               </div>
+                               <div class="card-content table-responsive">
+                                   <table class="table table-hover">
+                                       <thead class="text-warning">
+                                         <tr>
+
+                                        <th >item</th>
+                                        <th >Quantity</th>
+                                        <th >Price</th>
+                                        <th >Retailer</th>
+
+
+                                        </tr>
+                                       </thead>
+                                       <tbody>
+
+                                       <%= for sales <- @sales do %>
+                                           <tr>
+                                             <td><%= sales.sku.name %> </td>
+                                             <td><%= sales.quantity %></td>
+                                             <td><%= Float.floor(sales.retailer,2) %></td>
+                                             <%= if is_nil(sales.user) do %>
+                                             <td>N/A</td>
+                                             <% else %>
+                                             <td><%= sales.user.company %></td>
+                                             <% end %>
+
+
+
+                                             </tr>
+                                         <% end %>
+
+                                       </tbody>
+                                   </table>
+                               </div>
+                           </div>
+                       </div>
+
+
+                   </div>

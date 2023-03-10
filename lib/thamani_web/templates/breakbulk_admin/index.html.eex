@@ -1,0 +1,88 @@
+<%
+ alias Thamani.Breakbulks
+ %>
+
+
+                                            <div class="row">
+                                                                   <div class="col-md-12">
+                                                                       <div class="card">
+                                                                           <div class="card-header" data-background-color="gold">
+                                                                               <h4 class="title">Break Bulk</h4>
+                                                                               <p class="category"><%= link "Dashboard", to: manufacturer_admin_dashboard_path(@conn, :index) %>/Break Bulk</p>
+
+                                                                           </div>
+
+                                                                           <div class="card-content table-responsive">
+                                                                             <div id="toolbar" style="margin-top: -16px;">
+                                                                            <select class="form-control">
+                                                                              <option value="">Export Current page</option>
+                                                                              <option value="all">Export All</option>
+                                                                              <option value="selected">Export Selected</option>
+                                                                            </select>
+                                                                          </div>
+                                          <table class="table" id ="fresh-table" data-toggle="table" data-toolbar="#toolbar" data-search="true"  data-pagination="true" data-show-print="true" data-show-export="true"   data-export-options='{"fileName": "reports"}'>
+                                              <thead class="text-info">
+                                                <tr>
+                                                  <th data-field="state" data-checkbox="true"></th>
+                                                  <th data-field="item" data-sortable="true">Code</th>
+                                                  <th data-field="name" data-sortable="true">Units</th>
+                                                  <th data-field="breakbulk" data-sortable="true">Quantity</th>
+
+
+                                                  <th class="text-center" >Expand</th>
+
+                                                </tr>
+                                              </thead>
+                                              <tbody>
+                                                  <%= for code <- @code do %>
+                                                <tr>
+                                                  <td></td>
+                                                  <td><%= code %> </td>
+                                                  <td><%= Breakbulks.list_breakbulk_units(code) %> </td>
+                                                  <td><%= Breakbulks.list_breakbulk_quantity(code)%> </td>
+                                                  <td>
+
+                                                  <div class="tab">
+                                                    <input id="<%= code %> " type="checkbox" name="tabs">
+                                                    <label for="<%= code %> ">Expand to see all</label>
+                                                    <div class="tab-content">
+
+                                                        <table >
+                                                            <thead class="text-info">
+                                                              <tr>
+                                                                <th data-field="item" data-sortable="true">Shipping Code</th>
+                                                                <th data-field="breakbulk" data-sortable="true">Quantity</th>
+                                                                  <th data-field="breakbulk" data-sortable="true">Warehouse</th>
+
+                                                                </tr>
+                                                            </thead>
+
+                                                              <tbody>
+                                                          <%= for sub <- Breakbulks.list_breakbulk_code(code) do %>
+                                                                <tr>
+                                                                  <td style="font-size: 12px;"><%= sub.dispatch.shipping %></td>
+                                                                  <td style="text-align: center;"><%= sub.quantity %></td>
+                                                                    <td style="text-align: center;"><%= sub.user.company %></td>
+
+
+                                                      <% end %>
+                                                    </tbody>
+                                                  </table>
+
+                                                    </div>
+                                                  </div>
+
+                                               </td>
+                                                </tr>
+                                                <% end %>
+
+
+
+
+
+  </tbody>
+</table>
+</div>
+                                                        </div>
+                                                      </div>
+                                                    </div>

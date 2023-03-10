@@ -1,0 +1,47 @@
+
+
+<div class="row">
+                 <%= if @current_user.id == @user.id do %>         <div class="col-md-12">
+
+
+                         <span><%= link "Create invoice", to: invoice_path(@conn, :new), class: "btn btn-gold btn-gold" %></span>
+                         <span><%= link "Back", to: invoice_path(@conn, :index), class: "btn btn-gold btn-gold" %></span>
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">Invoice</h4>
+                                   <p class="category"><%= link "Dashboard", to: manufacturer_dashboard_path(@conn, :index) %>/ invoice / Show </p>
+
+                               </div>
+
+                               <table class="table" style="margin-left: 15px;">
+                                    <tbody>
+
+
+  <tr>
+    <td>Invoice number:
+    <%= @invoice.invoice_number %></td>
+  </tr>
+  <tr>
+    <td>Items:
+    <%= @invoice.items %></td>
+  </tr>
+  <tr>
+    <td> Date generated:
+    <%= @invoice.inserted_at %></td>
+  </tr>
+  <tr>
+   <td>Invoice :
+   <span ><a href="<%= Thamani.InvoiceUploader.url({@invoice.invoice_number, @invoice})%>.pdf"  class = "btn btn-primary btn-primary">Download Invoice</a></span></td>
+ </tr>
+
+</tbody>
+                              </table>
+                            </div>
+                          </div>
+
+
+
+<% else %>
+    <h1>Not authorised to access this page</h1>
+<% end %>
+</div>

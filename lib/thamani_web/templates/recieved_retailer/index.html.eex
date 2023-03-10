@@ -1,0 +1,109 @@
+<%
+alias Thamani.Dispatches
+alias Thamani.Pmasters
+alias Thamani.Breakbulks
+
+%>
+<%= if @current_user.id == @user.id do %>
+
+                                            <div class="row">
+                                                                   <div class="col-md-12">
+
+                                                                       <div class="card">
+                                                                           <div class="card-header" data-background-color="gold">
+                                                                               <h4 class="title">recieved</h4>
+                                                                               <p class="category"><%= link "Dashboard", to: retail_dashboard_path(@conn, :index) %>/recieved</p>
+
+                                                                           </div>
+
+                                                                           <div class="card-content table-responsive">
+                                                                             <div id="toolbar" style="margin-top: -16px;">
+                                                                            <select class="form-control">
+                                                                              <option value="">Export Current page</option>
+                                                                              <option value="all">Export All</option>
+                                                                              <option value="selected">Export Selected</option>
+                                                                            </select>
+                                                                          </div>
+                                          <table class="table" id ="fresh-table" data-toggle="table" data-toolbar="#toolbar" data-search="true"  data-pagination="true" data-show-print="true" data-show-export="true"   data-export-options='{"fileName": "reports"}'>
+                                                                                 <thead class="text-info">
+                                                                                   <tr>
+                                         <th data-field="state" data-checkbox="true"></th>
+                                         <th data-field="sku" data-sortable="true">Shipping Code</th>
+                                         <th class="text-center" > Expand  </th>
+                                         <th class="text-center" > Status </th>
+                                         <th class="text-center"> Actions</th>
+                                       </tr>
+                                     </thead>
+                                     <tbody>
+
+                                   <%= for recieved <- @recieved do %>
+                                       <tr>
+                                         <td></td>
+                                         <td><%= recieved.item %> </td>
+                                          <td>
+
+                                          <div class="tab">
+                                            <input id="<%= recieved.item %> " type="checkbox" name="tabs">
+					                                       <label for="<%= recieved.item %> ">Warehouse : <%= recieved.user.company %> &nbsp;&nbsp;Total Qty : <%= recieved.quantity %>&nbsp;&nbsp; Expand to see all</label>
+
+                                            <div class="tab-content">
+
+                                                <table>
+                                                    <thead class="text-info">
+                                                      <tr>
+                                                        <th style="font-size: 12px;text-align: center;" data-field="item" data-sortable="true">Shipping Code</th>
+                                                        <th style="font-size: 12px;" data-field="breakbulk" data-sortable="true">Quantity</th>
+                                                        <th style="font-size: 12px;" data-field="breakbulk" data-sortable="true">markup</th>
+                                                        <th style="font-size: 12px;" data-field="cat" data-sortable="true">Category</th>
+                                                        <th style="font-size: 12px;" data-field="pb" data-sortable="true">Price Buildup</th>
+                                                        <th  style="font-size: 12px;" data-field="allowable" data-sortable="true">Range allowable</th>
+
+                                                      </tr>
+                                                    </thead>
+
+                                                      <tbody>
+                                                  <%= for sub <- Breakbulks.list_breakbulk_code(recieved.item) do %>
+                                                        <tr>
+                                                          <td style="text-align: center;font-size: 12px;"><%= Breakbulks.get_sku_name(sub.dispatch.item) %>(<%= Breakbulks.get_sku_gtin(sub.dispatch.item) %>)</td>
+                                                          <td style="text-align: center;font-size: 12px;"><%= sub.quantity %></td>
+                                                          <td style="text-align: center;font-size: 12px;"><%= sub.dispatch.price %></td>
+                                                          <td style="font-size: 11px;"><%= Pmasters.getname(Dispatches.getcategoryname(sub.dispatch.item)) %> </td>
+                                                        <td ><span style ="background:#66bb6a !important;padding: 6px;border-radius: 5px;font-size: 12px;"><%=(Dispatches.get_price(sub.dispatch.item)) + (sub.dispatch.price * sub.quantity)%></span></td>
+                                                        <td ><span style ="background:#f44336 !important;padding: 5px;border-radius: 5px;font-size: 11px;"><%= Pmasters.get_min(Dispatches.getcategoryname(sub.dispatch.item))%>% - <%= Pmasters.get_max(Dispatches.getcategoryname(sub.dispatch.item))%>%</span></td>
+
+                                                        </tr>
+                                              <% end %>
+                                            </tbody>
+                                          </table>
+
+                                            </div>
+                                          </div>
+
+                                       </td>
+
+
+                                         <%= if recieved.active == "true" do %>
+                                         <td><p class = "btn btn-success btn-success" >Recieved</p></td>
+                                         <% else  %>
+                                          <td><p class = "btn btn-info btn-info" >Pending</p></td>
+                                         <% end %>
+                                         <td class="text-right">
+
+                                                                                      <span  rel="tooltip" title="Edit Task" class="btn btn-primary btn-simple ">
+                                                                                         <span ><%= link "", to: recieved_retailer_path(@conn, :edit, recieved), class: "fa fa-pencil" ,style: "color:#66bb6a !important" %></span>
+                                                                                     </span>
+
+
+                                   </td>
+
+                                       </tr>
+                                   <% end %>
+                                     </tbody>
+                                   </table>
+</div>
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                    <% else %>
+                                                    <h1>Not authorised to view this panel</h1>
+                                                    <% end %>

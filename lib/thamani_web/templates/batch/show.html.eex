@@ -1,0 +1,64 @@
+
+
+<div class="row">
+                 <%= if @current_user.id == @user.id do %>         <div class="col-md-12">
+
+
+                         <span><%= link "Add batch", to: batch_path(@conn, :new), class: "btn btn-gold btn-gold" %></span>
+                         <span><%= link "Back", to: batch_path(@conn, :index), class: "btn btn-gold btn-gold" %></span>
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">Batch</h4>
+                                   <p class="category"><%= link "Dashboard", to: manufacturer_dashboard_path(@conn, :index) %>/ batch / Show </p>
+
+                               </div>
+
+                               <table class="table" style="margin-left: 15px;">
+                                    <tbody>
+
+
+  <tr>
+    <td>SKU:
+    <%= @batch.sku.gtin %></td>
+  </tr>
+  <tr>
+    <td>Batch/Lot Number:
+    <%= @batch.batch %></td>
+  </tr>
+  <tr>
+    <td>Expiry Date:
+    <%= @batch.expiry %></td>
+  </tr>
+  <tr>
+    <td>Production Date:
+    <%= @batch.production %></td>
+  </tr>
+
+  <tr>
+    <td>description:
+    <%= @batch.description %></td>
+  </tr>
+
+  <tr>
+    <td>Active:
+      <%= if @batch.active == "true" do %>
+        <i class="fa fa-check" style= "color:#66bb6a !important"></i>
+      <% else  %>
+      <i class="fa fa-close" style= "color:#f44336 !important"></i>
+      <% end %>
+  </tr>
+</tbody>
+                              </table>
+                            </div>
+                          </div>
+
+
+<ul>
+
+<span><%= link "Edit", to: batch_path(@conn, :edit, @batch) , class: "btn btn-gold btn-gold" %></span>
+
+</ul>
+<% else %>
+    <h1>Not authorised to access this page</h1>
+<% end %>
+</div>

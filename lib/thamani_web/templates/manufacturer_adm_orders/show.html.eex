@@ -1,0 +1,68 @@
+<div class="row">
+                       <div class="col-md-12">
+
+                         <span><%= link "Back", to: manufacturer_adm_orders_path(@conn, :index), class: "btn btn-gold btn-gold" %></span>
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">Manufacturer Orders</h4>
+                                   <p class="category"><%= link "Dashboard", to: manufacturer_adm_orders_path(@conn, :index) %>/ Manufacturer Order/ Show order</p>
+
+                               </div>
+                               <table class="table" style="margin-left: 15px;">
+                                    <tbody>
+                                            <tr>
+                                                   <td>
+                                                          <h5>  Category: <%= @manufacturer_order.category %> </h5>
+                                                    </td>
+                                          </tr>
+                                          <tr>
+                                                    <td>
+                                                            <h5>  Brand: <%= @manufacturer_order.sku.name %> </label>
+                                                    </td>
+                                          </tr>
+                                          <tr>
+                                                    <td>
+                                                            <h5>  Manufacturer: <%= @manufacturer_order.company.company %> </label>
+                                                    </td>
+                                          </tr>
+                                          <tr>
+                                                    <td>
+                                                            <h5>  Delivery: <%= @manufacturer_order.delivery %> </label>
+                                                    </td>
+                                          </tr>
+                                          <tr>
+                                                    <td>
+                                                            <h5>  Quantity: <%= @manufacturer_order.quantity %> </label>
+                                                    </td>
+                                          </tr>
+                                          <tr>
+                                                    <td>
+                                                            <h5>  City/county: <%= @manufacturer_order.kcity.city %>/<%= @manufacturer_order.kcity.county %> </label>
+                                                    </td>
+                                          </tr>
+                                          <tr>
+                                                    <td>
+                                                            <h5>  Description: <%= @manufacturer_order.description %> </label>
+                                                    </td>
+                                          </tr>
+
+                                          <tr>
+                                                    <td>
+
+                                                              <%= if @manufacturer_order.active == "true" do %>
+                                                                <h5>Status:<i class="fa fa-check" style= "color:#66bb6a !important"></i></h5>
+                                                              <% else  %>
+                                                              <h5>Status:<i class="fa fa-close" style= "color:#f44336 !important"></i></h5>
+                                                              <% end %>
+                                                    </td>
+                                            </tr>
+                                          </tbody>
+                                      </table>
+<ul>
+
+
+</ul>
+
+      </div>
+      </div>
+      </div>

@@ -1,0 +1,79 @@
+
+
+<div class="row">
+                       <div class="col-md-12">
+			<span><%= link "Back", to: item_admin_path(@conn, :index), class: "btn btn-gold btn-gold" %></span>
+                         <div class="col-md-12">
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">Items</h4>
+                                   <p class="category"><%= link "Dashboard", to: item_admin_path(@conn, :index) %>/ Item/ Show item</p>
+
+                               </div>
+
+                                 <div id="toolbar" style="margin-top: -16px;">
+                                <select class="form-control">
+                                  <option value="">Export Current page</option>
+                                  <option value="all">Export All</option>
+                                  <option value="selected">Export Selected</option>
+                                </select>
+                              </div>
+        <table class="table" id ="fresh-table" data-toggle="table" data-toolbar="#toolbar" data-search="true"  data-pagination="true" data-show-print="true" data-show-export="true"   data-export-options='{"fileName": "reports"}'>
+
+  <thead class="text-info">
+    <tr>
+        <th data-field="state" data-checkbox="true"></th>
+      <th data-field="image" data-sortable="true">Image</th>
+        <th data-field="item" data-sortable="true">Item</th>
+      <th data-field="gtin" data-sortable="true">GTIN</th>
+      <th data-field="price" data-sortable="true">Ex-Factory Price</th>
+         <th data-field="weight" data-sortable="true">Weight(UOM)</th>
+      <th data-field="length" data-sortable="true">Min Quantity</th>
+      <th data-field="width" data-sortable="true">Type of unit</th>
+      <th data-field="cat" data-sortable="true">Category</th>
+      <th data-field="man" data-sortable="true">Description</th>
+
+
+    </tr>
+  </thead>
+  <tbody>
+<%= for item <- @items do %>
+
+    <tr>
+      <td></td>
+      <%= if is_nil(item.image) do %>
+
+      <td> <img src="<%= static_path(@conn, "/images/placeholder.jpeg")  %>"  style="width:60px" alt="..."> </td>
+      <% else %>
+	  <td> <a href="<%= Thamani.ImageUploader.url({item.image, item.image})%>" data-lightbox="image-1" ><img src="<%= Thamani.ImageUploader.url({item.image, item.image})%>"
+ style="width:50px;border: 1px dashed #ddd;box-shadow: 0 0 0 3px #fff, 0 0 0 5px #ddd, 0 0 0 10px #fff, 0 0 2px 10px #eee;"></a>
+         </td>
+      <% end %>
+      <td><%=item.name%></td>
+      <td><%=item.gtin%></td>
+      <td><%=item.price%></td>
+      <td><%=item.weight%> <%=item.weight2%></td>
+      <td><%=item.min_quantity%></td>
+      <td><%=item.quantity%></td>
+      <td><%=item.pmaster.name%></td>
+      <td><%=item.description%></td>
+      <td class="text-right">
+
+
+         <span  rel="tooltip" title="Edit Task" class="btn btn-primary btn-simple ">
+            <span ><%= link "", to: item_admin_path(@conn, :edit, item), class: "fa fa-pencil" ,style: "color:#66bb6a !important" %></span>
+        </span>
+
+
+
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+</div>
+                         </div>
+
+
+   </div>
+    </div>

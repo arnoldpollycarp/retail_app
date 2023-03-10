@@ -1,0 +1,674 @@
+<% alias Thamani.Accounts %>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Mobile Specific Meta -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Favicon-->
+    <link rel="shortcut icon" href="<%= static_path(@conn, "/images/fav.ico") %>">
+    <!-- Author Meta -->
+    <meta name="author" content="CS Digital">
+    <!-- Meta Description -->
+    <meta name="description" content="">
+    <!-- Meta Keyword -->
+    <meta name="keywords" content="">
+    <!-- meta character set -->
+    <meta charset="UTF-8">
+
+  <title>Thamani Online</title>
+
+      <link href='https://fonts.googleapis.com/css?family=Muli:400,300' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/font-awesome/css/font-awesome.min.css") %>">
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/material-dashboard.css?v=1.2.0")   %>">
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/bootstrap.min.css")   %>">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.10.0/css/lightbox.css">
+    <style>
+      .loader-show {
+        border: 16px solid #f3f3f3;
+        border-top: 16px solid #ffd700;
+        border-right: 16px solid #ef001d;
+        border-bottom: 16px solid #00bf48;
+        border-radius: 50%;
+        margin-top: 30px;
+        width: 20px;
+        height: 20px;
+        -webkit-animation: spin 2s linear ; /* Safari */
+        animation: spin 2s linear ;
+      }
+       .dt-button, .buttons-print {
+        margin-left:-170px;
+      }
+      .buttons-html5 {
+       margin-left:0px;
+     }
+
+
+      .loader-hide {
+        display:none;
+      }
+      /* Safari */
+      @-webkit-keyframes spin {
+        0% { -webkit-transform: rotate(0deg); }
+        100% { -webkit-transform: rotate(360deg); }
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      .tab {
+  position: relative;
+  margin-bottom: 1px;
+  width: 105%;
+  color: #fff;
+  overflow: hidden;
+}
+.tab input {
+  position: absolute;
+  opacity: 0;
+  z-index: -1;
+}
+
+.tab-content {
+  max-height: 0;
+  overflow: hidden;
+
+  -webkit-transition: max-height .35s;
+  -o-transition: max-height .35s;
+  transition: max-height .35s;
+  color: #000;
+}
+
+/* :checked */
+input:checked ~ .tab-content {
+  max-height: 50em;
+}
+/* Icon */
+.tab label::after {
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: block;
+  width: 3em;
+  height: 3em;
+  line-height: 3;
+  text-align: center;
+  -webkit-transition: all .35s;
+  -o-transition: all .35s;
+  transition: all .35s;
+}
+.tab input[type=checkbox] + label::after {
+  content: "+";
+}
+.tab input[type=radio] + label::after {
+  content: "\25BC";
+}
+.tab input[type=checkbox]:checked + label::after {
+  transform: rotate(315deg);
+}
+.tab input[type=radio]:checked + label::after {
+  transform: rotateX(180deg);
+}
+.tab-content p {
+  margin: 1em;
+}
+.tab label {
+  position: relative;
+  display: block;
+  padding: 0 0 0 1em;
+  background: gold;
+  font-weight: bold;
+  line-height: 3;
+  cursor: pointer;
+  color: #31708f;
+}
+</style>
+
+    <script language="javascript" type="text/javascript">
+
+
+    function timeMsg(){
+
+    	window.setTimeout("clearMsg()",5000);//10secs
+
+    }
+
+    //
+
+    function clearMsg(){
+
+    	document.getElementById("hideMsg").innerHTML = "";
+
+    }
+
+</script>
+
+
+  </head>
+
+  <body onLoad = "timeMsg()">
+    <div class="wrapper" style="background:#f5f5f5">
+         <%=if @current_user.verified == 1 do %>
+        <div class="sidebar" data-color="blue" data-image="<%= static_path(@conn, "/images/3.jpg")  %>">
+            <!--
+        Tip 1: You can change the color of the sidebar using: data-color="purple | blue | green | orange | red"
+
+        Tip 2: you can also add an image using data-image tag
+    -->
+            <div class="logo">
+
+            <img  style="width:165px;margin:auto;padding: 10px;"  alt="Thamani" src ="<%= static_path(@conn, "/images/thamani_logo.png") %>">
+            <h4 style="margin-left: 70px;color: #666666;margin-top: -5px;">Retail</h4>
+            </div>
+
+            <div class="sidebar-wrapper" data-color="blue">
+
+                <ul class="nav">
+                    <%= if @current_user.userlevel do %>
+                  <li>
+                    <i class="fa fa-th-large"></i>
+                          <%= link "Dashboard", to: retail_admin_dashboard_path(@conn, :index) %>
+                  </li>
+                  <% else %>
+                  <li>
+                    <i class="fa fa-th-large"></i>
+                          <%= link "Dashboard", to: retail_dashboard_path(@conn, :index) %>
+                  </li>
+                  <% end %>
+
+		   <%= if @current_user.userlevel do %>
+
+                  <% else %>
+          		 <li>
+
+                    <a data-toggle="collapse" style="margin-left: -15px;" href="#recieved">
+                        <i class="fa fa-inbox"></i>
+                          <p> Recieved<span class = "notification"> <%= @count_5 + @count_6 %></span>
+                            <b class="caret"></b>
+                          </p>
+                    </a>
+                  <div class="collapse" id="recieved">
+                    <ul class="nav" style="font-size:13px;">
+
+                      <li>
+
+                            <%= link "Recieved(Warehouse)", to: recieved_retailer_path(@conn, :index) %>
+                            <%= if @count_5 == 0 do %>
+
+                            <% else %>
+                            <span class = "notification"><%= @count_5 %></span>
+                            <% end %>
+                    </li>
+
+
+                      <li>
+
+                            <%= link "Recieved(Manufacturer)", to: recieved_retman_path(@conn, :index) %>
+                            <%= if @count_6== 0 do %>
+
+                            <% else %>
+                            <span class = "notification"><%= @count_6 %></span>
+                            <% end %>
+                    </li>
+
+
+
+                    </ul>
+              </div>
+            </li>
+              <% end %>
+
+                  <%= if @current_user.userlevel do %>
+                <li>
+                <i class="fa fa-edit"></i>
+                      <%= link "Inventory", to: inventory_admin_path(@conn, :index) %>
+              </li>
+
+                <% else %>
+                <li>
+                <i class="fa fa-edit"></i>
+                      <%= link "Inventory", to: inventory_path(@conn, :index) %>
+              </li>
+                <% end %>
+
+                <%= if @current_user.userlevel do %>
+              <li>
+            <i class="fa fa-money"></i>
+                  <%= link "sales", to: sale_admin_path(@conn, :index) %>
+              </li>
+              <% else %>
+              <%= if @current_user.userlevel do %>
+
+                  <% else %>
+                  <li>
+                    <a data-toggle="collapse" style="margin-left: -15px;" href="#sales">
+                        <i class="fa fa-money"></i>
+                          <p> Sales
+                              <b class="caret"></b>
+                          </p>
+                    </a>
+                    <div class="collapse" id="sales">
+                        <ul class="nav" style="font-size:13px;">
+                         <li>
+
+                       <%= link "Sales", to: sale_path(@conn, :index) %>
+                        </li>
+                        <li>
+
+                      <%= link "Generate Invoice", to: invoice_retail_path(@conn, :index) %>
+                       </li>
+                     </ul>
+                   </div>
+                 </li>
+
+                  <% end %>
+
+              <% end %>
+
+                <li>
+
+                  <a data-toggle="collapse" style="margin-left: -15px;" href="#orders">
+                    <i class="fa fa-sliders"></i>
+                        <p> Orders
+                          <b class="caret"></b>
+                        </p>
+                    </a>
+                <div class="collapse" id="orders">
+                  <ul class="nav" style="font-size:13px;">
+                    <%= if @current_user.userlevel do %>
+                        <li>
+
+                                    <%= link "Manufacturer orders", to: retman_admin_orders_path(@conn, :index) %>
+                        </li>
+
+                    <% else %>
+                    <li>
+
+                                <%= link "Manufacturer orders", to: retman_orders_path(@conn, :index) %>
+                    </li>
+                    <% end %>
+                    <%= if @current_user.userlevel do %>
+                        <li>
+
+                                    <%= link "Warehouse orders", to: warehouse_adm_orders_path(@conn, :index) %>
+                        </li>
+
+                    <% else %>
+                    <li>
+
+                                <%= link "Warehouse orders", to: warehouse_orders_path(@conn, :index) %>
+                    </li>
+                    <% end %>
+
+
+                  </ul>
+            </div>
+          </li>
+
+
+
+
+            <%= if @current_user.userlevel do %>
+            <li>
+              <i class="fa fa-reply"></i>
+                 <%= link "Returns", to: retail_admin_return_path(@conn, :index) %>
+            </li>
+            <% else %>
+            <li>
+              <i class="fa fa-reply"></i>
+                 <%= link "Returns", to: retail_return_path(@conn, :index) %>
+            </li>
+            <% end %>
+         <%= if @current_user.userlevel do %>
+          <li>
+          <i class="fa fa-refresh"></i>
+                <%= link "Reorders", to: reorder_admin_path(@conn, :index) %>
+
+        </li>
+
+          <% else %>
+          <li>
+          <i class="fa fa-refresh"></i>
+                <%= link "Reorders", to: reorder_path(@conn, :index) %>
+
+        </li>
+          <% end %>
+         <li>
+
+              <a data-toggle="collapse" style="margin-left: -15px;" href="#shop">
+                <i class="fa fa-home"></i>
+                    <p> Set up Shop
+                      <b class="caret"></b>
+                    </p>
+                </a>
+            <div class="collapse" id="shop">
+              <ul class="nav" style="font-size:13px;">
+                <%= if @current_user.userlevel do %>
+              <li>
+
+                   <%= link "Staff", to: staff_admin_path(@conn, :index) %>
+              </li>
+              <% else %>
+              <li>
+
+                   <%= link "Staff", to: staff_path(@conn, :index) %>
+              </li>
+              <% end %>
+
+              <%= if @current_user.userlevel do %>
+              <li>
+
+                   <%= link "shop", to: shop_admin_path(@conn, :index) %>
+              </li>
+              <% else %>
+              <li>
+
+                   <%= link "shop", to: shop_path(@conn, :index) %>
+              </li>
+              <% end %>
+
+                <%= if @current_user.userlevel do %>
+              <li>
+
+                   <%= link "Devices", to: device_admin_path(@conn, :index) %>
+              </li>
+              <% else %>
+              <li>
+
+                   <%= link "Devices", to: device_path(@conn, :index) %>
+              </li>
+              <% end %>
+              </ul>
+        </div>
+      </li>
+
+
+            <%= if @current_user.userlevel do %>
+            <li>
+              <i class="fa fa-ticket"></i>
+                 <%= link "Discounts", to: discount_admin_path(@conn, :index) %>
+            </li>
+            <% else %>
+            <li>
+              <i class="fa fa-ticket"></i>
+                 <%= link "Discounts", to: discount_path(@conn, :index) %>
+            </li>
+            <% end %>
+
+	    <%= if @current_user.userlevel do %>
+	        <li>
+              <i class="fa fa-folder"></i>
+                    <%= link "Credit Note", to: notes_admin_path(@conn, :index) %>
+            </li>
+	   <% else %>
+		 <li>
+              <i class="fa fa-folder"></i>
+                    <%= link "Credit Note", to: notes_path(@conn, :index) %>
+            </li>
+	   <% end %>
+
+                  <li>
+                    <i class="fa fa-cubes"></i>
+                          <%= link "Back to panel", to: panel_path(@conn, :index) %>
+                  </li>
+
+                </ul>
+            </div>
+        </div>
+        <div class="main-panel">
+            <nav class="navbar navbar-transparent navbar-absolute">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+
+                    </div>
+                    <div class="collapse navbar-collapse">
+                        <ul class="nav navbar-nav navbar-right" style="margin-top:-10px">
+
+                            <li style="margin-left:0px;">
+                                <a href="#"  data-toggle="dropdown">
+                                  <%= if @current_user do %>
+                                      <%= if @current_user.image != " "  do %>
+                                  <img style="width:50px;height: 50px;border:2px solid gold;margin-left: -24px;float:left;display:inline-block" src="<%= Thamani.ImageUploader.url({@current_user.image, @current_user})%>" alt="avatar" class="img-circle img-responsive">
+                                        <% end %>
+
+                                  <%end%>
+                                    <p class="btn btn-simple text-left" style="text-transform:none;"> <%= @current_user.firstname%> <%= @current_user.lastname %> <i style="margin-right:-20px;margin-left:-10px" class="fa fa-angle-down btn btn-simple btn-info "></i></p>
+                                    <ul class="dropdown-menu">
+                                      <%= if @current_user.userlevel  do %>
+                                    <li>
+                                      <%=link "Users", to: user_path(@conn, :index)  %>
+                                  </li>
+                                  <li>
+                                    <%= link "Sign out", to: login_path(@conn, :delete, @current_user),
+                                                         method: "delete" %>
+                                  </li>
+                                      <% else %>
+
+
+                                        <li>
+                                            <%=link "My Profile", to: user_path(@conn, :show, @current_user)  %>
+                                        </li>
+                                        <li>
+                                          <%= link "Sign out", to: login_path(@conn, :delete,@current_user),
+                                                               method: "delete" %>
+                                        </li>
+
+                                      <% end %>
+                                    </ul>
+                                      </a>
+                            </li>
+                        </ul>
+
+                    </div>
+                </div>
+            </nav>
+    <div class="container" style="width:auto">
+
+      <div id ="hideMsg">
+
+      <p class="alert alert-success" role="alert"><%= get_flash(@conn, :info) %></p>
+      <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
+
+    </div>
+      <main role="main">
+          <%= render @view_module, @view_template, assigns %>
+
+        <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
+        <%= Drab.Client.run(@conn) %>
+      </main>
+
+    </div> <!-- /container -->
+      <% else %>
+
+      <h4> <%=   user = Accounts.get_user!(@current_user.slug)
+          changeset = Accounts.change_user(user)
+         render( ThamaniWeb.VerifyView,"edit.html", changeset: changeset, current_user: @current_user ,user: @current_user, conn: @conn) %></h4>
+
+    <% end %>
+    <footer class="footer">
+               <div class="container-fluid">
+                   <nav class="pull-left">
+                       <ul>
+                         <li>
+                             <a href="https://www.thamanionline.com">
+                                 Website
+                             </a>
+                         </li>
+                         <li>
+                             <a href="https://www.thamanionline.com/terms">
+                                 Terms & Conditions
+                             </a>
+                         </li>
+                         <li>
+                             <a href="https://www.thamanionline.com/privacy">
+                                 Privacy
+                             </a>
+                         </li>
+                           <%= if @current_user.userlevel  do %>
+                         <li>
+                           <%=link "Users", to: user_path(@conn, :index)  %>
+                       </li>
+                       <li>
+                         <%= link "Sign out", to: login_path(@conn, :delete, @current_user),
+                                              method: "delete" %>
+                       </li>
+                           <% else %>
+
+
+                             <li>
+                                 <%=link "My Profile", to: user_path(@conn, :show, @current_user)  %>
+                             </li>
+                             <li>
+                               <%= link "Sign out", to: login_path(@conn, :delete,@current_user),
+                                                    method: "delete" %>
+                             </li>
+
+                           <% end %>
+
+                       </ul>
+                   </nav>
+                   <p class="copyright pull-right">
+                       &copy;
+                       <script>
+                           document.write(new Date().getFullYear())
+                       </script>
+                       Thamani Online. All Rights Reserved
+
+                   </p>
+               </div>
+           </footer>
+       </div>
+   </div>
+
+    <!--   Core JS Files   -->
+<script src="<%= static_path(@conn, "/js/jquery-3.2.1.min.js") %>"></script>
+<script src="<%= static_path(@conn, "/js/jquery.spinner.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/bootstrap.min.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/material.min.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/perfect-scrollbar.jquery.min.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/arrive.min.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/jquery.bootstrap-wizard.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/jquery.tagsinput.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/jquery.bootstrap-wizard.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/jquery.tagsinput.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/jquery.select-bootstrap.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/jasny-bootstrap.min.js" ) %>"></script>
+<script src="<%= static_path(@conn, "/js/jquery.validate.min.js" ) %>"></script>
+<script  src="<%= static_path(@conn, "/js/bootstrap-table.js") %>"></script>
+<script  src="<%= static_path(@conn, "/js/bootstrap-table-print.js") %>"></script>
+<script  src="<%= static_path(@conn, "/js/bootstrap-table-export.js") %>"></script>
+<script  src="<%= static_path(@conn, "/js/tableexport.js") %>"></script>
+<script src="<%= static_path(@conn, "/js/material-dashboard.js?v=1.2.1" ) %>"></script>
+<script  src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/2.1.0/jspdf.plugin.autotable.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.14.3/xlsx.core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.10.0/js/lightbox.js"></script>
+<script>
+$("#spinner")
+  .spinner('delay', 200) //delay in ms
+  .spinner('changed', function(e, newVal, oldVal) {
+    // trigger lazed, depend on delay option.
+  })
+  .spinner('changing', function(e, newVal, oldVal) {
+    // trigger immediately
+  });
+</script>
+<script>
+    $(document).ready(function(){
+     $('[data-toggle="popover"]').popover();
+    });
+
+    $(document).ready(function() {
+    $('.single_select').select2({
+      tags: "true",
+      placeholder: "Select an option",
+      allowClear: true
+    });
+    });
+
+      $(document).ready(function() {
+    $('#ReorderModal').on('show.bs.modal', function(e) {
+    var inventory = $(e.relatedTarget).data('id');
+    $(e.currentTarget).find('input[name="inventory_item"]').val(inventory);
+    var nameId = $(e.relatedTarget).data('name-id');
+    $(e.currentTarget).find('input[name="nameId"]').val(nameId);
+    var gtinId = $(e.relatedTarget).data('gtin-id');
+    $(e.currentTarget).find('input[name="gtinId"]').val(gtinId);
+    var typeId = $(e.relatedTarget).data('type-id');
+    $(e.currentTarget).find('input[name="typeId"]').val(typeId);
+    var mId = $(e.relatedTarget).data('m-id');
+    $(e.currentTarget).find('input[name="mId"]').val(mId);
+    var mnId = $(e.relatedTarget).data('mn-id');
+    $(e.currentTarget).find('input[name="mnId"]').val(mnId);
+    var mnPhone = $(e.relatedTarget).data('mn-phone');
+    $(e.currentTarget).find('input[name="mnPhone"]').val(mnPhone);
+    var wId = $(e.relatedTarget).data('w-id');
+    $(e.currentTarget).find('input[name="wId"]').val(wId);
+    var wnId = $(e.relatedTarget).data('wn-id');
+    $(e.currentTarget).find('input[name="wnId"]').val(wnId);
+    var wnPhone = $(e.relatedTarget).data('wn-phone');
+    $(e.currentTarget).find('input[name="wnPhone"]').val(wnPhone);
+    var quantity = $(e.relatedTarget).data('quantity-id');
+    $(e.currentTarget).find('input[name="quantity"]').val(quantity);
+  });
+
+      });
+</script>
+<script type="text/javascript">
+    var $table = $('#fresh-table'),
+        $alertBtn = $('#alertBtn'),
+        full_screen = false;
+
+    $().ready(function(){
+      $('#toolbar').find('select').change(function () {
+        $table.bootstrapTable('refreshOptions', {
+          exportDataType: $(this).val()
+        });
+      });
+        $table.bootstrapTable({
+            toolbar: ".toolbar",
+
+            search: true,
+            showToggle: true,
+            showColumns: true,
+            pagination: true,
+            striped: true,
+            pageSize: 10,
+            pageList: [8,10,25,50,100],
+
+            formatShowingRows: function(pageFrom, pageTo, totalRows){
+                //do nothing here, we don't want to show the text "showing x of y from..."
+            },
+            formatRecordsPerPage: function(pageNumber){
+                return pageNumber + " rows visible";
+            },
+            icons: {
+                refresh: 'fa fa-refresh',
+                toggle: 'fa fa-th-list',
+                columns: 'fa fa-columns',
+                detailOpen: 'fa fa-plus-circle',
+                detailClose: 'fa fa-minus-circle'
+            }
+        });
+
+
+        $(window).resize(function () {
+            $table.bootstrapTable('resetView');
+        });
+
+
+    });
+
+</script>
+  </body>
+</html>

@@ -1,0 +1,79 @@
+
+
+<div class="row">
+                 <%= if @current_user.id == @user.id do %>         <div class="col-md-12">
+
+
+                         <span><%= link "Add dispatch", to: dispatch_warehouse_path(@conn, :new), class: "btn btn-gold btn-gold" %></span>
+                         <span><%= link "Back", to: dispatch_warehouse_path(@conn, :index), class: "btn btn-gold btn-gold" %></span>
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">dispatch</h4>
+                                   <p class="category"><%= link "Dashboard", to: warehouse_dashboard_path(@conn, :index) %>/ dispatches/ Show </p>
+
+                               </div>
+
+                               <table class="table" style="margin-left: 15px;">
+                                    <tbody>
+
+
+  <tr>
+    <td>Shipping code:
+    <%= @dispatch__warehouse.item %></td>
+  </tr>
+
+
+
+  <tr>
+    <td>Price:
+    <%= :erlang.float_to_binary(@dispatch__warehouse.total, decimals: 2) %></td>
+  </tr>
+
+  <tr>
+    <td>Retailer:
+    <%= @dispatch__warehouse.companies.company %></td>
+  </tr>
+
+  <tr>
+    <td>Transporter:
+    <%= @dispatch__warehouse.transporter %></td>
+  </tr>
+
+  <tr>
+    <td>Transporter details:
+    <%= @dispatch__warehouse.transporterid %></td>
+  </tr>
+
+  <tr>
+    <td>description:
+    <%= @dispatch__warehouse.description %></td>
+  </tr>
+
+  <tr>
+   <td>Proforma Invoice :
+   <span ><a href="<%= Thamani.WarehouseUploader.url({@dispatch__warehouse.item, @dispatch__warehouse})%>.pdf"  class = "btn btn-primary btn-primary">Download Proforma Invoice</a></span></td>
+ </tr>
+
+  <tr>
+    <td>Confirmation Status:
+      <%= if @dispatch__warehouse.active == "true" do %>
+
+        <p class = "btn btn-success btn-success" >Recieved</p>
+        <% else  %>
+        <p class = "btn btn-info btn-info" >Pending</p>
+        <% end %>
+  </tr>
+</tbody>
+                              </table>
+                            </div>
+                          </div>
+
+
+<ul>
+
+
+</ul>
+<% else %>
+    <h1>Not authorised to access this page</h1>
+<% end %>
+</div>

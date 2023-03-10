@@ -1,0 +1,132 @@
+<%= if @current_user.userlevel  do %>
+<div class="row">
+                     <div class="col-md-12">
+			 <span><%= link "Back to panel", to: panel_path(@conn, :index), class: "btn btn-gold btn-gold" %></span>
+                       <span><%= link "Add User", to: user_path(@conn, :new), class: "btn btn-gold btn-gold" %></span>
+			 <div class="navbar-form navbar-right" >
+                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#salesmanModal">
+                          search
+                         </button>
+
+                       </div>
+
+                         <div class="card">
+                             <div class="card-header" data-background-color="gold">
+                                 <h4 class="title">System Users</h4>
+                                 <p class="category"><%= link "Dashboard", to: panel_path(@conn, :index) %>/System users</p>
+
+                             </div>
+
+                             <div class="card-content table-responsive">
+                               <div id="toolbar" style="margin-top: -16px;">
+                              <select class="form-control">
+                                <option value="">Export current page</option>
+                                <option value="all">Export All</option>
+                                <option value="selected">Export Selected</option>
+                              </select>
+                            </div>
+   <table class="table" id ="fresh-table" data-toggle="table" data-toolbar="#toolbar"   data-pagination="true" data-show-print="true" data-show-export="true"   data-export-options='{"fileName": "users"}'>
+<thead class="text-info">
+  <tr>
+   <th data-field="state" data-checkbox="true"></th>
+    <th><%= sort_link @conn, @rummage, [field: :firstname] %></th>
+    <th><%= sort_link @conn, @rummage, [field: :lastname] %></th>
+    <th><%= sort_link @conn, @rummage, [field: :email] %></th>
+    <th><%= sort_link @conn, @rummage, [field: :company] %></th>
+    <th><%= sort_link @conn, @rummage, [field: :phone] %></th>
+
+    <th>Verified</th>
+    <th>Date Created</th>
+
+    <th>Active</th>
+    <th class="text-center">Actions</th>
+
+  </tr>
+</thead>
+<tbody>
+<%= for user <- @users do %>
+  <tr>
+     <td></td>
+    <td><%= user.firstname %></td>
+    <td><%= user.lastname %></td>
+    <td><%= user.email %></td>
+    <td><%= user.company %></td>
+    <td><%= user.phone %></td>
+
+    <%= if user.verified  == 1 do %>
+       <td><i class="fa fa-check" style= "color:#66bb6a !important"></i></td>
+    <% else  %>
+      <td><i class="fa fa-close" style= "color:#f44336 !important"></i></td>
+    <% end %>
+
+    <td><%= user.inserted_at %></td>
+
+    <%= if user.active == "true" do %>
+      <td><i class="fa fa-check" style= "color:#66bb6a !important"></i></td>
+    <% else  %>
+    <td><i class="fa fa-close" style= "color:#f44336 !important"></i></td>
+    <% end %>
+
+    <td class="text-center">
+      <span rel="tooltip" title="View Task" class="btn btn-info btn-simple ">
+          <span ><%= link "", to: user_path(@conn, :show, user),  class: "fa fa-search-plus",style: "color:#00bcd4 !important" %></span>
+      </span>
+
+       <span rel="tooltip" title="Edit Task" class="btn btn-primary btn-simple ">
+           <span><%= link "", to: user_path(@conn, :edit, user),  class: "fa fa-pencil", style: "color:#66bb6a !important" %></span>
+      </span>
+      <span rel="tooltip" title="Delete Task" class="btn btn-danger btn-simple ">
+          <span><%= link "", to: user_path(@conn, :delete, user), method: :delete, data: [confirm: "Are you sure?"],  class: "fa fa-close", style: "color:#f44336 !important" %></span>
+     </span>
+
+    </td>
+  </tr>
+<% end %>
+</tbody>
+</table>
+                </div>
+
+              </div>
+                <%= pagination_link(@conn, @rummage) %>
+            </div>
+          </div>
+
+	      <!-- Modal -->
+<div class="modal fade" id="salesmanModal" tabindex="-1" role="dialog" aria-labelledby="salesmanModalLabel" aria-hidden="true">
+<div class="modal-dialog" role="document">
+<div class="modal-content">
+<div class="modal-header">
+<h5 class="modal-title" id="exampleModalLabel">Seacrh Functionalities</h5>
+<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+<span aria-hidden="true">&times;</span>
+</button>
+</div>
+<div class="modal-body">
+<div class="navbar-form row"  >
+
+<%= search_form(@conn, @rummage,
+ [ fields: [
+
+   firstname: %{label: "Search by firstname", search_type: "like"},
+   lastname: %{label: "Search by lastname", search_type: "like"},
+   email: %{label: "Search by email", search_type: "like"},
+   company: %{label: "Search by company", search_type: "like"},
+   phone: %{label: "Search by phone", search_type: "like"}
+   ]
+ ]
+
+ ) %>
+</div>
+
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+</div>
+</div>
+</div>
+</div>
+
+          <% else %>
+            <h1>Not authorised to access this page</h1>
+          <% end%>

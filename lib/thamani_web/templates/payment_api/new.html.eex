@@ -1,0 +1,19 @@
+<%= form_for @conn, payment_api_path(@conn, :create),   fn f -> %>
+<div class="card-content">
+
+
+  <div class="footer text-center">
+
+        <div class="col-md-3">
+             <input name="phone" class="form-control select-with-transition"  placeholder="Enter a GTIN" >
+
+         </div>
+      <input type="submit" class="btn btn-simple btn-wd btn-lg" style="color:#f70000;" value="Login">
+  
+  </div>
+
+</div>
+
+
+<% end %>
+

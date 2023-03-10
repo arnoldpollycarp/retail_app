@@ -1,0 +1,90 @@
+<div id="cart">
+  <a href="/order" class="continue" rel="tooltip" title="Continue shopping" style="z-index: 10;position:fixed;right: 100px;"><i class="fa fa-tags" style="font-size: 45px;margin-top: 15px;color: white;"></i></a>
+  <a href="/panel" class="back" rel="tooltip" title="Back to panel" style="z-index: 10;position:fixed;"><i class="fa fa-reply" style="font-size: 45px;margin-top: 10px;color: white;"></i></a>
+
+</div>
+<div class="row" style="margin-top:100px">
+           <div class="col-md-12">
+
+           <div class="navbar-form navbar-right" >
+
+
+
+                         </div>
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">Warehouse Orders</h4>
+                                   <p class="category"><%= link "Dashboard", to: warehouse_dashboard_path(@conn, :index) %>/orders/</p>
+
+                               </div>
+
+                               <div class="card-content table-responsive">
+                                 <div id="toolbar" style="margin-top: -16px;">
+                                <select class="form-control">
+                                  <option value="">Export current page</option>
+                                  <option value="all">Export All</option>
+                                  <option value="selected">Export Selected</option>
+                                </select>
+                              </div>
+     <table class="table" id ="fresh-table" data-toggle="table" data-toolbar="#toolbar" data-search="true"  data-pagination="true" data-show-print="true" data-show-export="true"   data-export-options='{"fileName": "users"}'>
+
+  <thead class="text-info">
+    <tr>
+     <th data-field="state" data-checkbox="true"></th>
+      <th data-field="code" data-sortable="true">Category</th>
+      <th data-field="carton" data-sortable="true">Brand</th>
+      <th data-field="qty" data-sortable="true">quantity</th>
+      <th data-field="description" data-sortable="true">Description</th>
+      <th data-field="name" data-sortable="true">Order ID</th>
+      <th data-field="city" data-sortable="true">City</th>
+
+      <th>Status</th>
+      <th class="text-center">Actions</th>
+    </tr>
+  </thead>
+
+
+  <tbody>
+<%= for warehouse_order <- @warehouse_order do %>
+    <tr>
+    <td></td>
+      <td><%= warehouse_order.pmaster.name %></td>
+      <%= if is_nil(warehouse_order.sku) do %>
+        <td>N/A</td>
+        <td>N/A</td>
+     <% else %>
+      <td><%= warehouse_order.sku.name  %>(<%= warehouse_order.sku.gtin %>)</td>
+        <td><%= warehouse_order.quantity %></td>
+      <td><%= warehouse_order.sku.description %></td>
+
+     <% end %>
+      <td><%= warehouse_order.order_id %></td>
+      <td><%= warehouse_order.kcity.city %></td>
+
+      <%= if warehouse_order.active == "true" do %>
+
+       <td><p class = "btn btn-success btn-success" >Recieved</p></td>
+       <% else  %>
+        <td><p class = "btn btn-info btn-info" >Processing</p></td>
+      <% end %>
+
+      <td class="text-center">
+
+        <%= if warehouse_order.active == "true" do %>
+
+        <% else %>
+        <span  rel="tooltip" title="Delete Task" class="btn btn-danger btn-simple ">
+            <span><%= link "", to: warehouse_orders_path(@conn, :delete, warehouse_order), method: :delete, data: [confirm: "Are you sure?"],  "data-toggle": "tooltip", title: "Delete Data", class: "fa fa-close", style: "color:#f44336 !important" %></span>
+       </span>
+       <% end %>
+
+      </td>
+    </tr>
+<% end %>
+</tbody>
+</table>
+                </div>
+              </div>
+
+            </div>
+          </div>

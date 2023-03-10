@@ -1,0 +1,12 @@
+
+<span class="col-md-10" style="margin-left: -25px;"><%= link "Back", to: item_path(@conn, :index),class: "btn btn-gold btn-gold"  %></span>
+<div class="card" style="margin:25px -10px">
+    <div class="card-header" data-background-color="gold">
+        <h4 class="title">Items </h4>
+        <p class="category"><%= link "Dashboard", to: user_path(@conn, :index) %>/Items/Add</p>
+        <p class="category">Before filling in the form kindly enter your GTIN (Global Trade item Number) in the look up form to get already exixtsing details in our global database </p>
+        <p class="category">If no data exists Then fill in details.Then enter a proper GTIN or contact us for more details</p>
+    </div>
+<%= render "form.html", Map.put(assigns, :action, item_path(@conn, :create)) %>
+
+</div>

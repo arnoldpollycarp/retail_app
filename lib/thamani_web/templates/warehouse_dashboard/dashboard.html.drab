@@ -1,0 +1,125 @@
+<div class="row">
+  <div class="col-lg-12 col-md-12">
+        <div class="card">
+            <div class="card-header" data-background-color="gold">
+
+                <h4 class="">Warehouse Dashboard </h4>
+                <script>
+                    document.write(new Date())
+                </script>
+            </div>
+            <div class="card-content table-responsive">
+
+            </div>
+        </div>
+    </div>
+</div>
+                  <div class="row">
+                       <div class="col-lg-3 col-md-6 col-sm-6">
+                           <div class="card card-stats">
+                               <div class="card-header" data-background-color="orange">
+                                   <i class="fa fa-inbox"></i>
+                               </div>
+                               <div class="card-content">
+                                  <p class="category">Total Recieved</p>
+                                  <h3 class="title"><%= @count%></h3>
+                               </div>
+                               <div class="card-footer">
+                                   <div class="stats">
+
+                                      Quantity Dispatched :<%= @count_4 %>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                       <div class="col-lg-3 col-md-6 col-sm-6">
+                           <div class="card card-stats">
+                               <div class="card-header" data-background-color="red">
+                                   <i class="fa fa-truck"></i>
+                               </div>
+                               <div class="card-content">
+
+                                 <p class="category">All Dispatches</p>
+                                  <h3 class="title"><%= @count_3 %></h3>
+
+
+                               </div>
+                               <div class="card-footer">
+                                   <div class="stats">
+
+                                      Confirmed Arrival :<%= @count_5 %>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+
+                       <div class="col-lg-3 col-md-6 col-sm-6">
+                           <div class="card card-stats">
+                               <div class="card-header" data-background-color="green">
+                                   <i class="fa fa-money"></i>
+                               </div>
+                               <div class="card-content">
+                                 <input name="current_user" id="current_user" type = "hidden" value= "<%= @current_user.id %> />" />
+
+                                 <p class="category"Today's >Revenue</p>
+                                 <%= if @count_6 == nil do %>
+                                      <h3 class="title"> 0 </h3>
+                                 <% else %>
+                                    <h3 class="title"> <%=@count_6  %>    </h3>
+                                <% end %>
+                               </div>
+                               <div class="card-footer">
+                                   <div class="stats">
+				
+                                  <!--  <%= if @count_2 == "" do %>
+                                              Payment Due: 0
+                                        <% else %>
+                                            Payment Due: <%=@count_2  %>
+                                       <% end %>
+				  -->
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+		   <div class="col-lg-7 col-md-12">
+                           <div class="card">
+                               <div class="card-header" data-background-color="red">
+                                   <h4 class="title">Expiring items</h4>
+                                 <p class="" style="margin-bottom: 0px;">Items expiring in 60 days</p>
+                               </div>
+                               <div class="card-content table-responsive">
+                                   <table id ="fresh-table" data-toggle="table"   data-icons-prefix="fa" data-icons="icons"  data-search="true"  data-pagination="true"  class="table table-hover">
+                                       <thead class="text-warning">
+                                         <tr>
+
+                                         <th data-field="item">item</th>
+                                         <th data-field="batch">batch</th>
+                                         <th data-field="expiry">expiry</th>
+                                         <th data-field="production">production</th>
+                                        <th> Days to expiry</th>
+
+                                        </tr>
+                                       </thead>
+                                       <tbody>
+
+                                       <%= for list <- @list_expiry do %>
+                                           <tr>
+                                             <td><%= list.sku.name %> </td>
+                                             <td><%= list.batch %></td>
+                                             <td><%= list.expiry %></td>
+                                             <td><%= list.production %></td>
+                                             <td>  <button type="button" class= 'btn btn-success btn-danger' data-toggle="popover" data-trigger="hover" title="Date of Expiry" data-content= '<%=list.expiry %>' style="margin:20px;">
+                                               <%= Timex.diff(Date.from_iso8601!(list.expiry), DateTime.utc_now(), :days)  %>
+                                               </button>
+                                               </td>
+                                            </tr>
+                                         <% end %>
+
+                                       </tbody>
+                                   </table>
+                               </div>
+                           </div>
+                       </div>
+
+
+                   </div>

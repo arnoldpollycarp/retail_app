@@ -1,0 +1,76 @@
+
+
+<div class="row">
+                 <%= if @current_user.id == @user.id do %>         <div class="col-md-12">
+
+
+
+                         <span><%= link "Back", to: orders_retman_path(@conn, :index), class: "btn btn-gold btn-gold" %></span>
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">Orders</h4>
+                                   <p class="category"><%= link "Dashboard", to: manufacturer_dashboard_path(@conn, :index) %>/ orders/ Show </p>
+
+                               </div>
+
+                               <table class="table" style="margin-left: 15px;">
+                                 <tbody>
+                                         <tr>
+                                                <td>
+                                                       <h5>  Category: <%= @retman_order.pmaster.names %> </h5>
+                                                 </td>
+                                       </tr>
+                                       <tr>
+                                                 <td>
+                                                         <h5>  Brand: <%= @retman_order.sku.name %> </label>
+                                                 </td>
+                                       </tr>
+                                       <tr>
+                                                 <td>
+                                                         <h5>  Manufacturer: <%= @retman_order.company.company %> </label>
+                                                 </td>
+                                       </tr>
+                                       <tr>
+                                                 <td>
+                                                         <h5>  Delivery: <%= @retman_order.delivery %> </label>
+                                                 </td>
+                                       </tr>
+                                       <tr>
+                                                 <td>
+                                                         <h5>  Quantity: <%= @retman_order.quantity %> </label>
+                                                 </td>
+                                       </tr>
+                                       <tr>
+                                                 <td>
+                                                         <h5>  City/county: <%= @retman_order.kcity.city %>/<%= @retman_order.kcity.county %> </label>
+                                                 </td>
+                                       </tr>
+                                       <tr>
+                                                 <td>
+                                                         <h5>  Description: <%= @retman_order.description %> </label>
+                                                 </td>
+                                       </tr>
+
+                                       <tr>
+                                                 <td>
+
+                                                           <%= if @retman_order.active == "true" do %>
+                                                             <h5>Status:<i class="fa fa-check" style= "color:#66bb6a !important"></i></h5>
+                                                           <% else  %>
+                                                           <h5>Status:<i class="fa fa-close" style= "color:#f44336 !important"></i></h5>
+                                                           <% end %>
+                                                 </td>
+                                         </tr>
+                                       </tbody>
+                              </table>
+                            </div>
+                          </div>
+
+
+<ul>
+
+</ul>
+<% else %>
+    <h1>Not authorised to access this page</h1>
+<% end %>
+</div>

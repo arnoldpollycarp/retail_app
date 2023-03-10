@@ -1,0 +1,198 @@
+<% alias Thamani.Sales%>
+<div id="cart">
+	<a href="order/<%= @current_user.id %>" class="cart" style="z-index: 10;position:fixed;right: 100px;"><span></span></a>
+	<a href="/panel" class="back" rel="tooltip" title="Back to panel" style="z-index: 10;position:fixed;right: 175px;"><i class="fa fa-reply" style="font-size: 45px;margin-top: 10px;color: white;"></i></a>
+	<a href="#" class="searches" data-toggle="modal" data-target="#salesmanModal" rel="tooltip" title="Search" style="z-index: 10;position:fixed;right: 250px;">
+		<i class="fa fa-search" style="font-size: 45px;margin-top: 10px;color: white;"></i>
+	</a>
+		<a href="/completed" class="orders" rel="tooltip" title="Completed Orders" style="z-index: 10;position:fixed"><i class="fa fa-folder-open" style="font-size: 45px;margin-top: 13px;margin-left: 10px;color: white;"></i></a>
+
+
+</div>
+<!-- <div id="sidebar" style="width:275px;">
+	<h3>CART</h3>
+
+
+    <h3>CATEGORIES</h3>
+    <div class="checklist categories">
+    	<ul>
+					<%= for cat <- @cat do %>
+        	<li><a href=""><span></span><%= cat.names %></a></li>
+          <% end %>
+        </ul>
+    </div>
+
+
+</div> -->
+
+<div id="grid-selector">
+       <div id="grid-menu">
+       	   View:
+           <ul>
+               <li class="largeGrid"><a href=""></a></li>
+               <li class="smallGrid"><a class="active" href=""></a></li>
+           </ul>
+       </div>
+			 <div class="flash">
+			   <div class="flash__icon">
+			     <i class="icon fa fa-check-circle-o"></i>
+			   </div>
+			   <p class="flash__body">
+			     Success!
+			   </p>
+			 </div>
+
+</div>
+
+
+<div id="grid">
+
+<%= if @sku == [] do %>
+<div class="col-md-10">
+  <h4>No item found in that search criteria</h4>
+	<span ><%= link "Continue shopping",  to: commerce_path(@conn, :index), class: "fa fa-tags btn btn-info"  %></span>
+</div>
+<% else %>
+	<%= for item <- @sku do %>
+
+<%
+item_price =
+	case item.price do
+		"1" -> "1.0"
+		"" -> "0.0"
+		_ -> item.price
+	end
+%>
+		 <!-- <div class="col-md-5"> -->
+    <div class="product">
+    	<div class="info-large">
+        	<h4><%= item.name %></h4>
+            <div class="sku">
+            	PRODUCT SKU:  <strong><%= item.gtin %></strong>
+								PRODUCT CATEGORY:  <strong><%= item.pmaster.names %></strong>
+            </div>
+
+            <div class="price-big">
+            	<!-- <span>$43</span>  -->
+							<%= String.to_float(item_price) + item.markup + Sales.get_gs1_value() %>
+            </div>
+
+            <!-- <h3>COLORS</h3>
+            <div class="colors-large">
+                <ul>
+                    <li><a href="" style="background:#222"><span></span></a></li>
+                    <li><a href="" style="background:#6e8cd5"><span></span></a></li>
+                    <li><a href="" style="background:#f56060"><span></span></a></li>
+                    <li><a href="" style="background:#44c28d"><span></span></a></li>
+                </ul>
+            </div> -->
+
+            <h3>SIZE</h3>
+            <div class="sizes-large">
+ 				        <span><%= item.weight %> <%= item.weight2 %></span>
+            </div>
+
+            <button class="add-cart-large">Add To Cart</button>
+
+        </div>
+        <div class="make3D">
+            <div class="product-front">
+                <div class="shadow"></div>
+                <img src="<%= Thamani.ImageUploader.url({item.image, item})%>"  alt=""/>
+                <div class="image_overlay"></div>
+                <button class="add_to_cart button success" onclick="AddToCart(<%= item.id %>)">Add to cart</button>
+                <div class="view_gallery">View gallery</div>
+                <div class="stats">
+                    <div class="stats-container">
+                        <span class="product_price"><%= String.to_float(item_price) + item.markup + Sales.get_gs1_value() %></span>
+                        <span class="product_name"><%= String.slice(item.name, 0..40) %> </br> <%= item.gtin %></span>
+
+                        <p><%= item.pmaster.names %></p>
+
+                        <div class="product-options">
+                        <strong>SIZES</strong>
+                        <span> <%= item.weight %> <%= item.weight2 %> </span>
+                        <!-- <strong>COLORS</strong>
+                        <div class="colors">
+                            <div class="c-blue"><span></span></div>
+                            <div class="c-red"><span></span></div>
+                            <div class="c-white"><span></span></div>
+                            <div class="c-green"><span></span></div>
+                        </div> -->
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-back">
+                <div class="shadow"></div>
+                <div class="carousel">
+                    <ul class="carousel-container">
+                        <li>   <img src="<%= Thamani.ImageUploader.url({item.image, item})%>"  style=""> </li>
+                        <li>  <img src="<%= Thamani.ImageUploader.url({item.image, item})%>"  style=""> </li>
+                        <!-- <li><img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/245657/3.jpg" alt="" /></li> -->
+                    </ul>
+                    <div class="arrows-perspective">
+                        <div class="carouselPrev">
+                            <div class="y"></div>
+                            <div class="x"></div>
+                        </div>
+                        <div class="carouselNext">
+                            <div class="y"></div>
+                            <div class="x"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flip-back">
+                    <div class="cy"></div>
+                    <div class="cx"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+		<% end %>
+	 <!-- </div> -->
+	 <!-- Modal -->
+<div class="modal fade" id="salesmanModal" tabindex="-1" role="dialog" aria-labelledby="salesmanModalLabel" aria-hidden="true">
+<div class="modal-dialog" role="document">
+<div class="modal-content">
+<div class="modal-header">
+<h5 class="modal-title" id="exampleModalLabel">Seacrh Functionalities</h5>
+<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+<span aria-hidden="true">&times;</span>
+</button>
+</div>
+<div class="modal-body">
+<div class="form-group">
+
+<%= search_form(@conn, @rummage,
+[ fields: [
+
+gtin: %{label: "Search by Barcode", search_type: "like"},
+name: %{label: "Search by item", search_type: "like"},
+company: %{label: "Search by company", search_type: "like",assoc: ["user"]},
+names: %{label: "Search by category", search_type: "like",assoc: ["pmaster"]}
+
+]
+]
+
+) %>
+</div>
+
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+</div>
+</div>
+</div>
+</div>
+
+
+<% end %>
+<div class="col-md-12">
+	  <%= pagination_link(@conn, @rummage) %>
+</div>
+
+</div>

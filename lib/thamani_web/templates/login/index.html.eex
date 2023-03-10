@@ -1,0 +1,61 @@
+
+	<div class="wrapper wrapper-full-page">
+         <div class="full-page login-page" >
+             <!--   you can change the color of the filter page using: data-color="blue | purple | green | orange | red | rose " -->
+             <div class="content">
+                 <div class="container">
+                     <div class="row">
+                         <div class="col-md-6 col-sm-6 col-md-offset-3 col-sm-offset-4"  >
+
+                                 <div class="card card-login ">
+                                     <div class="card-header text-center" data-background-color="gold">
+                                         <h4 class="card-title">  <img  style="width:165px" alt="Thamani Online" src ="<%= static_path(@conn, "/images/thamani_logo.png") %>"></h4>
+                                         <p class="category text-center">
+                                         Login Portal
+                                     </p>
+                                     </div>
+
+																		   <%= form_for @conn, login_path(@conn, :create),  [as: :session], fn f -> %>
+                                     <div class="card-content">
+
+                                         <div class="input-group">
+                                             <span class="input-group-addon">
+                                                  <i class="fa fa-user"></i>
+                                             </span>
+                                             <div class="form-group label-floating">
+                                                 <label class="control-label">Email address</label>
+                                                   <%= text_input f, :email,class: "form-control" ,type: "email"%>
+																									 <%= error_tag f, :email %>
+                                             </div>
+                                         </div>
+                                         <div class="input-group">
+                                             <span class="input-group-addon">
+                                                 <i class="fa fa-lock"></i>
+                                             </span>
+                                             <div class="form-group label-floating">
+                                                 <label class="control-label">Password</label>
+                                               <%= password_input f, :password,class: "form-control" ,required: "required" %>
+                                             </div>
+                                         </div>
+																				 <div class="footer text-center">
+																						 <input type="submit" class="btn btn-simple btn-wd btn-lg" style="color:#f70000;" value="Login">
+																				 </div>
+
+                                         <div class="footer text-center">
+                                            <p  ><%= link "Dont have an account? register", to: register_path(@conn, :index), style: "color:#5ec22d;" %></p>
+					    <p  ><%= link "Forgot password??", to: reset_path(@conn, :index), style: "color:#808080;" %></p>
+                                        </div>
+                                     </div>
+					
+
+																		 <% end %>
+                                 </div>
+				<p style="text-align:center;"><%= link "Back to Thamani Online site", to: page_path(@conn, :index), style: "color:grey;font-weight:600;;" %></p>
+
+                         </div>
+                     </div>
+                 </div>
+             </div>
+
+         </div>
+     </div>

@@ -1,0 +1,128 @@
+<% alias Thamani.Sales%>
+
+<div id="sidebar" style="float:right">
+	<h3 style="margin-top: 80px;">CART DETAILS</h3>
+
+	<div id="cart">
+		<a href="/order" class="continue" rel="tooltip" title="Continue shopping" style="z-index: 10;position:fixed;right: 100px;"><i class="fa fa-tags" style="font-size: 45px;margin-top: 15px;color: white;"></i></a>
+		<a href="/panel" class="back" rel="tooltip" title="Back to panel" style="z-index: 10;position:fixed;"><i class="fa fa-reply" style="font-size: 45px;margin-top: 10px;color: white;"></i></a>
+
+	</div>
+	<div class="totals" style="font-size: 17px;font-weight: 500;">
+		<div class="totals-item">
+			<label>Subtotal</label>
+			<div class="totals-value" id="cart-subtotal"><%= :erlang.float_to_binary(((@total + Sales.get_gs1_value()) *100)/116 , decimals: 2) %></div>
+		</div>
+		<div class="totals-item">
+			<label>Tax (16%)</label>
+			<div class="totals-value" id="cart-tax"><%= :erlang.float_to_binary( ((@total + Sales.get_gs1_value()) *16)/116, decimals: 2) %></div>
+		</div>
+		<!-- <div class="totals-item">
+			<label>Shipping</label>
+			<div class="totals-value" id="cart-shipping">15.00</div>
+		</div> -->
+		<div class="totals-item totals-item-total">
+			<label>Grand Total</label>
+			<div class="totals-value" id="cart-total"><%= @total +  Sales.get_gs1_value() %></div>
+		</div>
+	</div>
+
+	<%= form_for @changeset, commerce_path(@conn, :create), fn f -> %>
+	  <%= if @changeset.action do %>
+	    <div class="alert alert-danger">
+	      <p>Oops, something went wrong! Please check the errors below.</p>
+	    </div>
+	  <% end %>
+
+		<div class="col-md-12" >
+			<div class="form-group label-floating">
+			<%= label f, :" Location ", class: "control-label" %>
+			<%= select f, :city, @list_city, class: "form-control", style: "width:100%;", title: "Choose item" , required: "required"%>
+				</div>
+			<%= error_tag f, :city %>
+		</div>
+
+		<div class="col-md-12">
+	    <div class="form-group label-floating">
+	    <%= label f, :"Extra description", class: "control-label" %>
+	    <%= textarea f, :description,  value: "Thamani Delivery" ,class: "form-control" %>
+	      </div>
+	    <%= error_tag f, :description %>
+	  </div>
+
+
+		  <div class="col-md-12">
+		    <%= if @sku == [] do %>
+
+				<% else %>
+		    <%= submit "Complete Order", class: "btn btn-success" %>
+		  	<% end %>
+		    </div>
+		<% end %>
+
+</div>
+
+<div id="grid" style="top: 100px;left:50px;padding-bottom: 50px;">
+<h1>Shopping Cart</h1>
+
+<div class="shopping-cart">
+
+	<table class="table" id ="fresh-table" style="margin-top:40px;width:1100px;font-size: 18px;" data-toggle="table" data-toolbar="#toolbar" data-search="true"  data-pagination="true" data-show-print="true" data-show-export="true"   data-export-options='{"fileName": "reports"}'>
+			<thead class="text-info">
+				<tr>
+
+					<th data-field="gtin" data-sortable="true" style="font-weight: 700;">Image</th>
+					<th data-field="number" data-sortable="true" style="font-weight: 700;">Item</th>
+					<th data-field="batch" data-sortable="true" style="font-weight: 700;">Price</th>
+					<th data-field="expiry" data-sortable="true" style="font-weight: 700;">Qty</th>
+					<th class="text-center" style="font-weight: 700;">Total</th>
+					<th class="text-center" style="font-weight: 700;">Actions</th>
+
+				</tr>
+			</thead>
+			<tbody>
+		<%= for sku <- @sku do %>
+
+				<tr>
+					<%= if is_nil(sku.sku.image) do %>
+
+		      <td> <img src="<%= static_path(@conn, "/images/placeholder.jpeg")  %>"  style="width:60px" alt="..."> </td>
+		      <% else %>
+			  <td> <a href="<%= Thamani.ImageUploader.url({sku.sku.image, sku.sku.image})%>"
+					data-lightbox="image-1" ><img src="<%= Thamani.ImageUploader.url({sku.sku.image, sku.sku.image})%>"
+		 style="width:50px;border: 1px dashed #ddd;box-shadow: 0 0 0 3px #fff, 0 0 0 5px #ddd, 0 0 0 10px #fff, 0 0 2px 10px #eee;"></a>
+		         </td>
+		      <% end %>
+					<td style="font-weight:500;"><%= sku.sku.name %></br><small><%= sku.sku.weight %> <%= sku.sku.weight2 %></small></td>
+						<td style="font-weight:500;"><%= (String.to_float(sku.sku.price) + sku.sku.markup) + Sales.get_gs1_value()  %></td>
+
+						<td id ="update" style="font-weight:500;width:10%;">
+							<input name="itemid" style="" id="itemid" type = "hidden" class="itemid"  value=<%= sku.id %> ><%= sku.id %></input>
+							<input name="qty" style="width:100%;" id="slug" type = "number" class="form"  value=<%= sku.qty %> />
+						</td>
+						<td style="font-weight:500;" class="text-center"><%= (String.to_float(sku.sku.price) + sku.sku.markup + Sales.get_gs1_value() )  * sku.qty %></td>
+
+					<td class="text-left">
+
+						<span  rel="tooltip" title="Delete Cart" class=" ">
+
+								<button class="btn btn-danger" onclick="DelToCart(<%= sku.id %>)" ><i class= "fa fa-trash"></i></button>
+
+						</span>
+					</td>
+
+				</tr>
+		<% end %>
+			</tbody>
+		</table>
+
+
+
+			<span ><%= link "Continue shopping",  to: commerce_path(@conn, :index), class: "fa fa-tags btn btn-info"  %></span>
+
+
+
+
+</div>
+
+</div>

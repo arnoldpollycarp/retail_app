@@ -1,0 +1,71 @@
+
+                                            <div class="row">
+                                                                   <div class="col-md-12">
+                                                                         <div class="card">
+                                                                           <div class="card-header" data-background-color="gold">
+                                                                               <h4 class="title">Reorder</h4>
+
+                                                                           </div>
+
+                                                                           <div class="card-content table-responsive">
+                                                                             <div id="toolbar" style="margin-top: -16px;">
+                                                                            <select class="form-control">
+                                                                              <option value="">Export Current page</option>
+                                                                              <option value="all">Export All</option>
+                                                                              <option value="selected">Export Selected</option>
+                                                                            </select>
+                                                                          </div>
+                                          <table class="table" id ="fresh-table" data-toggle="table" data-toolbar="#toolbar" data-search="true"  data-pagination="true" data-show-print="true" data-show-export="true"   data-export-options='{"fileName": "reports"}'>
+                                              <thead class="text-info">
+                                                <tr>
+                                                  <th data-field="state" data-checkbox="true"></th>
+                                                  <th data-field="retailer" data-sortable="true">Retailer </th>
+                                                  <th data-field="sku" data-sortable="true">SKU Item</th>
+                                                  <th data-field="qty" data-sortable="true">Quantity</th>
+                                                  <th data-field="name" data-sortable="true">Order from</th>
+                                                  <th data-field="man" data-sortable="true">which Manufacturer</th>
+                                                  <th data-field="ware" data-sortable="true">Which Warehouse</th>
+                                                  <th data-field="desc" data-sortable="true">Description</th>
+
+                                                  <th class="text-center" >Status</th>
+      <th class="text-center"> Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for reorder <- @reorder do %>
+    <tr>
+      <td></td>
+      <td><%= reorder.user.company %> </td>
+      <td><%= reorder.sku.name %> </td>
+      <td><%= reorder.quantity %> </td>
+      <td><%= reorder.type %> </td>
+      <td> <%= reorder.manufacturer.company%></td>
+        <%= if reorder.wid == 0 do %>
+          <td>N/A</td>
+         <% else  %>
+         <td><%= reorder.warehouse.company %> </td>
+           <% end %>
+
+      <td><%= reorder.description %> </td>
+      <%= if reorder.active == "true" do %>
+      <td><p class = "btn btn-success btn-success" >Recieved</p></td>
+        <% else  %>
+        <td><p class = "btn btn-info btn-info" >Pending</p></td>
+          <% end  %>
+      <td class="text-right">
+                                                  <span  rel="tooltip" title="View Task" class="btn btn-info btn-simple ">
+                                                      <span ><%= link "",  to: reorder_admin_path(@conn, :show,  reorder), class: "fa fa-search-plus" ,style: "color:#00bcd4 !important" %></span>
+                                                  </span>
+
+
+
+</td>
+
+    </tr>
+<% end %>
+  </tbody>
+</table>
+</div>
+                                                        </div>
+                                                      </div>
+                                                    </div>

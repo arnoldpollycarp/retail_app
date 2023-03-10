@@ -1,0 +1,55 @@
+
+
+<div class="row">
+                       <div class="col-md-12">
+
+                         <span><%= link "Back", to: user_codes_path(@conn, :index, @current_user), class: "btn btn-gold btn-gold" %></span>
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">Messages</h4>
+                                   <p class="category"><%= link "Dashboard", to: user_path(@conn, :index) %>/ Message/ Show message</p>
+
+                               </div>
+                               <%= if @current_user.id == @user.id do %>
+                               <table class="table" style="margin-left: 15px;">
+                                    <tbody>
+
+                                            <tr>
+                                                   <td>
+                                                          <h5>  GTIN: <%= @codes.barcode.code %></h5>
+                                                    </td>
+                                          </tr>
+                                          <tr>
+                                                    <td>
+                                                            <h5>  Number of codes: <%= @codes.number %> </h5>
+                                                    </td>
+                                          </tr>
+                                          <tr>
+                                                    <td>
+                                                              <h5>  Batch Number: <%= @codes.batch %>  </h5>
+                                                    </td>
+                                            </tr>
+
+                                            <tr>
+                                                      <td>
+                                                                <h5> Expiry Date: <%= @codes.expiry %>  </h5>
+
+                                                      </td>
+                                              </tr>
+                                              <tr>
+                                                        <td>
+                                                                  <h5> Production Date: <%= @codes.production %>  </h5>
+
+                                                        </td>
+                                                </tr>
+                                    </tbody>
+                                </table>
+                                <% else %>
+                                    <h1>Not authorised to access this page</h1>
+                                <% end %>
+
+<ul>
+  <span><%= link "Add Codes", to: user_codes_path(@conn, :new, @current_user), class: "btn btn-gold btn-gold" %></span>
+ <span><%= link "Edit", to: user_codes_path(@conn, :edit, @current_user, @codes) , class: "btn btn-gold btn-gold" %></span>
+
+</ul>

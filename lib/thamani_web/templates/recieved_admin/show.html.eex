@@ -1,0 +1,74 @@
+
+
+<div class="row">
+               <div class="col-md-12">
+
+
+                           <span><%= link "Back", to: recieved_admin_path(@conn, :index), class: "btn btn-gold btn-gold" %></span>
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">Recieved</h4>
+                                   <p class="category"><%= link "Dashboard", to: warehouse_admin_dashboard_path(@conn, :index) %>/Recieved/ Show </p>
+
+                               </div>
+
+                               <table class="table" style="margin-left: 15px;">
+                                  <tbody>
+                                    <tr>
+                                      <td>Shipping Code:
+                                      <%= @recieved.scode %></td>
+                                    </tr>
+
+                                    <tr>
+                                      <td>Sku Item:
+                                      <%= @recieved.sku.gtin %> (<%= @recieved.sku.name %>)</td>
+                                    </tr>
+
+                                    <tr>
+                                      <td>Quantity:
+                                      <%= @recieved.quantity %></td>
+                                    </tr>
+
+                                    <tr>
+                                      <td>Retailer:
+                                      <%= @recieved.companies.company %></td>
+                                    </tr>
+                                    <tr>
+                                      <td>warehouse:
+                                      <%= @recieved.company.company %></td>
+                                    </tr>
+
+                                    <tr>
+                                      <td>Transporter:
+                                      <%= @recieved.transporter %></td>
+                                    </tr>
+
+                                    <tr>
+                                      <td>Transporter details:
+                                      <%= @recieved.transporterid %></td>
+                                    </tr>
+
+                                    <tr>
+                                      <td>Extra description:
+                                      <%= @recieved.description %></td>
+                                    </tr>
+
+                                    <tr>
+                                      <td>Confirm Recieved:
+                                        <%= if @recieved.active == "true" do %>
+                                          <i class="fa fa-check" style= "color:#66bb6a !important"></i>
+                                        <% else  %>
+                                        <i class="fa fa-close" style= "color:#f44336 !important"></i>
+                                        <% end %>
+                                    </tr>
+                                  </tbody>
+                              </table>
+                            </div>
+                          </div>
+
+
+<ul>
+
+</ul>
+
+</div>

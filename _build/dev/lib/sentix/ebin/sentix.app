@@ -1,0 +1,11 @@
+{application,sentix,
+             [{applications,[kernel,stdlib,elixir,logger,cachex]},
+              {description,"A cross-platform file watcher for Elixir based on fswatch"},
+              {modules,['Elixir.Sentix','Elixir.Sentix.Application',
+                        'Elixir.Sentix.Bridge','Elixir.Sentix.Bridge.Command',
+                        'Elixir.Sentix.Bridge.Options','Elixir.Sentix.Cache',
+                        'Elixir.Sentix.Macro','Elixir.Sentix.Watcher']},
+              {registered,[]},
+              {vsn,"1.0.3"},
+              {included_applications,[erlexec]},
+              {mod,{'Elixir.Sentix.Application',[]}}]}.

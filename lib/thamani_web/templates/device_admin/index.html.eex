@@ -1,0 +1,72 @@
+
+<div class="row">
+           <div class="col-md-12">
+              <span><%= link "Add Device", to: device_admin_path(@conn, :new), class: "btn gold btn-gold" %></span>
+                           <div class="navbar-form navbar-right" >
+
+
+
+                         </div>
+                           <div class="card">
+                               <div class="card-header" data-background-color="gold">
+                                   <h4 class="title">Device</h4>
+                                   <p class="category"><%= link "Dashboard", to: retail_admin_dashboard_path(@conn, :index) %>/Device/</p>
+
+                               </div>
+
+                               <div class="card-content table-responsive">
+                                 <div id="toolbar" style="margin-top: -16px;">
+                                <select class="form-control">
+                                  <option value="">Export Current page</option>
+                                  <option value="all">Export All</option>
+                                  <option value="selected">Export Selected</option>
+                                </select>
+                              </div>
+ <table class="table" id ="fresh-table" data-toggle="table" data-toolbar="#toolbar" data-search="true"  data-pagination="true" data-show-print="true" data-show-export="true"   data-export-options='{"fileName": "reports"}'>
+  <thead class="text-info">
+    <tr>
+      <th data-field="state" data-checkbox="true"></th>
+      <th data-field="fullname" data-sortable="true">name</th>
+      <th data-field="email" data-sortable="true">IMEI</th>
+      <th data-field="description" data-sortable="true">Description</th>
+      <th data-field="retail" data-sortable="true">Retailer</th>
+      <th>Active</th>
+
+      <th class="text-center">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for device <- @device do %>
+    <tr>
+      <td></td>
+      <td><%= device.name %></td>
+      <td><%= device.imei %></td>
+      <td><%= device.description %></td>
+      <td><%= device.user.company %> </td>
+      <%= if device.active == "true" do %>
+      <td><i class="fa fa-check" style= "color:#66bb6a !important"></i></td>
+      <% else  %>
+      <td><i class="fa fa-close" style= "color:#f44336 !important"></i></td>
+      <% end %>
+
+      <td class="text-center">
+        <span  rel="tooltip" title="View Task" class="btn btn-info btn-simple ">
+            <span ><%= link "", to: device_admin_path(@conn, :show, device),  "data-toggle": "tooltip", title: "View Data", class: "fa fa-search-plus ",style: "color:#00bcd4 !important" %></span>
+        </span>
+        <span  rel="tooltip" title="Edit Task" class="btn btn-primary btn-simple ">
+            <span><%= link "", to: device_admin_path(@conn, :edit, device),  "data-toggle": "tooltip", title: "Edit Data", class: "fa fa-pencil", style: "color:#66bb6a !important" %></span>
+       </span>
+       <span  rel="tooltip" title="Delete Task" class="btn btn-danger btn-simple ">
+           <span><%= link "", to: device_admin_path(@conn, :delete, device), method: :delete, data: [confirm: "Are you sure?"],  "data-toggle": "tooltip", title: "Delete Data", class: "fa fa-close", style: "color:#f44336 !important" %></span>
+      </span>
+
+      </td>
+    </tr>
+<% end %>
+</tbody>
+</table>
+                </div>
+              </div>
+
+            </div>
+          </div>

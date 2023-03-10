@@ -1,0 +1,58 @@
+
+<%= form_for @changeset, @action, [multipart: true] , fn f -> %>
+  <%= if @changeset.action do %>
+    <div class="alert alert-danger">
+      <p>Oops, something went wrong! Please check the errors below.</p>
+    </div>
+  <% end %>
+
+  <div class="col-md-6">
+  <div class="form-group label-floating">
+    <%= label f, :"Inventory", class: "control-label" %>
+    <%= select f, :item, @bat , class: "selectpicker", "data-style": "btn btn-gold btn-round", disabled: "disabled",title: "Choose item" , required: "required"%>
+      </div>
+    <%= error_tag f, :item %>
+  </div>
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= label f, :price, class: "control-label" %>
+    <%= text_input f, :price, disabled: "disabled",class: "form-control" %>
+      </div>
+
+    <%= error_tag f, :price %>
+  </div>
+
+  <div class="col-md-10">
+  <div class="form-group label-floating">
+    <%= label f, :Category, class: "control-label" %>
+      <%= select f, :category,  ["Beverages": "Beverages","Bread/Bakery": "Bread/Bakery", "Canned/Jarred Goods": "Canned/Jarred Goods", "Dairy": "Dairy", "Dry/Baking Goods": "Dry/Baking Goods", "Frozen Foods": "Frozen Foods", "Meat": "Meat", "Fruits/vegetables": "Fruits/vegetables", "Cleaning products": "Cleaning products","Hygiene products": "Hygiene products",
+      "Cosmetics ": "Cosmetics", "Confections & Candies": "Confections & Candies", "Houseware & Utensils": "Houseware & Utensils",
+       "Toys & novelties": "Toys & novelties", cards: "cards", "Paper Goods": "Paper Goods", "Personal Care": "Personal Care", "Pet foods & products": "Pet foods & products", "Medicinal": "Medicinal", "Tools": "Tools", "Others": "Others", "Others": "Others"] , class: "selectpicker", "data-style": "btn btn-gold btn-round", title: "Choose Category" ,disabled: "disabled", required: "required"%>
+  </div>
+    <%= error_tag f, :category %>
+  </div>
+
+  <div class="col-md-10">
+    <div class="form-group label-floating">
+    <%= label f, :description, class: "control-label" %>
+    <%= textarea f, :description, disabled: "disabled",class: "form-control" %>
+      </div>
+    <%= error_tag f, :description %>
+  </div>
+
+  <div class="col-md-10">
+    <div class="form-group label-floating">
+
+    <%= label f, :"Confirm Re-order", class: "control-label" %>
+    <%= checkbox f, :confirm, class: "checkbox-material" %>
+      </div>
+    <%= error_tag f, :confirm %>
+  </div>
+
+  <div class="col-md-6">
+    <div class="form-group label-floating">
+    <%= submit "Submit", class: "btn btn-gold" %>
+  </div>
+    </div>
+<% end %>
